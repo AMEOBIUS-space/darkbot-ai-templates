@@ -101,6 +101,16 @@ All 17 templates have demos. Run any of them to see the template in action.
 - [FastAPI JWT Authentication](https://ameobius.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html)
 
 
+## 💡 Examples
+
+Real-world usage scenarios in [`examples/`](examples/):
+
+1. **Freelance TG Bot** — online store bot (4-6h vs 20-30h from scratch)
+2. **Scraping Service** — 10k leads ($117 vs $500+)
+3. **DeFi Token Launch** — ERC20 + presale (1 weekend vs 2-3 weeks)
+4. **.onion Deployment** — marketplace (1 day vs 1-2 weeks)
+5. **AI Automation Agency** — $200-800/client (2-4h vs 20-40h)
+
 ## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=AMEOBIUS/darkbot-ai-templates&type=Date)](https://star-history.com/#AMEOBIUS/darkbot-ai-templates&Date)
