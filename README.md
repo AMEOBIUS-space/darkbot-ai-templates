@@ -102,6 +102,22 @@ All 17 templates have demos. Run any of them to see the template in action.
 - Channel: [@darkbot_ai_templates](https://t.me/darkbot_ai_templates)
 - Payment: BTC / USDT / ETH / XMR
 
+## 🐳 Docker Support
+
+Every template includes a Dockerfile. Deploy with one command:
+
+```bash
+cd tg-bot-template
+cp .env.example .env  # Add your tokens
+docker-compose up -d  # Bot running!
+```
+
+```bash
+cd fastapi-template
+cp .env.example .env
+docker-compose up -d  # API at localhost:8000/docs
+```
+
 ## 🏗 Architecture
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for design principles, template structure, and CI pipeline.
