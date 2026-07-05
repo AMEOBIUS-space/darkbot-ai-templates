@@ -1,6 +1,11 @@
 # 🤖 DarkBot AI — 17 Production-Ready Code Templates
 
 [![CI](https://github.com/AMEOBIUS/darkbot-ai-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/AMEOBIUS/darkbot-ai-templates/actions/workflows/ci.yml)
+[![Tutorials](https://img.shields.io/badge/tutorials-18-blue)]()
+[![Demos](https://img.shields.io/badge/demos-18-green)]()
+[![Releases](https://img.shields.io/badge/releases-5-orange)]()
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Payment](https://img.shields.io/badge/payment-BTC%20%7C%20USDT%20%7C%20ETH%20%7C%20XMR-orange)]()
 [![GitHub stars](https://img.shields.io/github/stars/AMEOBIUS/darkbot-ai-templates?style=social)](https://github.com/AMEOBIUS/darkbot-ai-templates/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Products](https://img.shields.io/badge/templates-17-green)]()
@@ -96,6 +101,10 @@ All 17 templates have demos. Run any of them to see the template in action.
 - Telegram: [@darkbot_ai_bot](https://t.me/darkbot_ai_bot) or [@ameobius](https://t.me/ameobius)
 - Channel: [@darkbot_ai_templates](https://t.me/darkbot_ai_templates)
 - Payment: BTC / USDT / ETH / XMR
+
+## 🏗 Architecture
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for design principles, template structure, and CI pipeline.
 
 ## 🌐 Links
 
