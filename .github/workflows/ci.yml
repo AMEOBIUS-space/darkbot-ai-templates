@@ -17,13 +17,9 @@ jobs:
         with:
           python-version: '3.11'
       
-      - name: Install dependencies
-        run: |
-          pip install py_compile_checker || true
-      
       - name: Verify all Python templates compile
         run: |
-          for f in products/*/main.py products/*/bot.py products/*/scraper.py products/*/agent.py products/*/cdp_agent.py products/*/gateway.py products/*/setup.py products/*/rotator.py products/*/solver.py products/*/export_workflow.py; do
+          for f in */main.py */bot.py */scraper.py */agent.py */cdp_agent.py */gateway.py */setup.py */rotator.py */solver.py */export_workflow.py; do
             if [ -f "$f" ]; then
               python -m py_compile "$f" && echo "✅ $f" || echo "❌ $f"
             fi
@@ -31,7 +27,7 @@ jobs:
       
       - name: Verify all demos run
         run: |
-          for f in products/*/demo.py; do
+          for f in */demo.py; do
             if [ -f "$f" ]; then
               timeout 10 python "$f" > /dev/null 2>&1 && echo "✅ $f" || echo "❌ $f"
             fi
@@ -39,7 +35,7 @@ jobs:
       
       - name: Verify READMEs
         run: |
-          count=$(find products -name "README.md" | wc -l)
+          count=$(find . -maxdepth 2 -name "README.md" | wc -l)
           echo "READMEs: $count"
           if [ "$count" -lt 17 ]; then
             echo "❌ Expected 17 READMEs, got $count"
@@ -49,5 +45,8 @@ jobs:
       
       - name: Verify requirements.txt
         run: |
-          count=$(find products -name "requirements.txt" | wc -l)
+          count=$(find . -maxdepth 2 -name "requirements.txt" | wc -l)
           echo "Requirements files: $count"
+          if [ "$count" -lt 10 ]; then
+            echo "⚠️ Expected 10+ requirements.txt"
+          fi
