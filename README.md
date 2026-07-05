@@ -120,7 +120,7 @@ Use templates in your CI/CD:
     destination: ./bot/
 ```
 
-40 products available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
+44 products available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
 
 ## 💡 Examples
 
@@ -171,8 +171,12 @@ This repo has been used to solve 81 bounty issues across GitHub:
 | 38 | Metrics Collector | $49 | 16 |
 | 39 | Cache Layer | $49 | 18 |
 | 40 | Feature Flag Manager | $59 | 18 |
+| 41 | Secret Manager | $59 | 16 |
+| 42 | Pagination Helper | $39 | 15 |
+| 43 | AB Testing Framework | $59 | 15 |
+| 44 | Cron Scheduler | $49 | 19 |
 
-**Bundle: $399** (all 30 + 2h customization)
+**Bundle: $449** (all 30 + 2h customization)
 
 ## ⭐ Star History
 
