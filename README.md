@@ -5,10 +5,12 @@
 [![Demos](https://img.shields.io/badge/demos-18-green)]()
 [![Releases](https://img.shields.io/badge/releases-5-orange)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Docker](https://img.shields.io/badge/docker-ready-blue)]()
 [![Payment](https://img.shields.io/badge/payment-BTC%20%7C%20USDT%20%7C%20ETH%20%7C%20XMR-orange)]()
 [![GitHub stars](https://img.shields.io/github/stars/AMEOBIUS/darkbot-ai-templates?style=social)](https://github.com/AMEOBIUS/darkbot-ai-templates/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Products](https://img.shields.io/badge/templates-17-green)]()
+[![Docker](https://img.shields.io/badge/docker-ready-blue)]()
 [![Payment](https://img.shields.io/badge/payment-BTC%20%7C%20USDT%20%7C%20ETH%20%7C%20XMR-orange)]()
 
 > Python developer with 5+ years experience. Telegram bots, web scrapers, AI automation, CDP browser automation, blockchain, .onion development.
