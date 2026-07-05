@@ -120,7 +120,7 @@ Use templates in your CI/CD:
     destination: ./bot/
 ```
 
-57 products available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
+60 products available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
 
 ## 💡 Examples
 
@@ -188,6 +188,9 @@ This repo has been used to solve 81 bounty issues across GitHub:
 | 55 | URL Shortener | $49 | 20 |
 | 56 | Data Validator | $49 | 20 |
 | 57 | Async Task Runner | $49 | 17 |
+| 58 | OAuth2 Client | $59 | 19 |
+| 59 | HTML Template Engine | $49 | 20 |
+| 60 | CLI Argument Parser | $39 | 19 |
 
 **Bundle: $549** (all 30 + 2h customization)
 
