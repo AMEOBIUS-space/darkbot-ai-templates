@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Scraping for Lead Gen — DarkBot AI Tutorial</title>
+<meta name="description" content="Extract emails from websites: recursive crawling, validation, dedup, CSV/JSON export.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;background:#0d1117;color:#c9d1d9;line-height:1.7}
+h1{color:#58a6ff}h2{color:#7ee787;margin-top:30px}h3{color:#f0883e;margin-top:20px}
+code{background:#161b22;padding:2px 6px;border-radius:4px;color:#f0883e}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0}
+pre code{background:none;color:#c9d1d9;padding:0}
+a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
+.btn{display:inline-block;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;margin:16px 0;text-decoration:none}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back</a>
+<h1>Email Scraping for Lead Generation</h1>
+<p>Extract emails from websites with recursive crawling, validation, and export.</p>
+<h2>1. Regex Extraction</h2>
+<pre><code>EMAIL_REGEX = re.compile(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}')
+emails = EMAIL_REGEX.findall(html)</code></pre>
+<h2>2. Recursive Crawling</h2>
+<pre><code>async def _crawl(self, session, url, base_url, depth):
+    if depth > self.max_depth or len(self.visited) >= self.max_pages:
+        return
+    self.visited.add(url)
+    html = await self.fetch(session, url)
+    # Extract emails
+    for match in EMAIL_REGEX.finditer(html):
+        self.emails[match.group()] = url
+    # Follow same-domain links
+    links = re.findall(r'href="([^"]+)"', html)
+    for link in links:
+        full_url = urljoin(url, link)
+        if same_domain(full_url, base_url):
+            await self._crawl(session, full_url, base_url, depth+1)</code></pre>
+<h2>3. Validation</h2>
+<pre><code>def validate_email(self, email):
+    domain = email.split('@')[1]
+    return '.' in domain and len(domain) > 3</code></pre>
+<h2>4. Export</h2>
+<pre><code># JSON
+json.dump([{"email": e, "source": u} for e, u in emails.items()], f)
+# CSV
+csv.writer(f).writerow(["email", "source_url", "valid"])</code></pre>
+<h2>Template</h2>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/email-scraper-template">Email Scraper</a> $39/$149</p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
+<pre><code>python email-scraper-template/demo.py</code></pre>
+<hr>
+<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+</body>
+</html>
