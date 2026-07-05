@@ -1,0 +1,1 @@
+# Solidity templates use Foundry, not pip
