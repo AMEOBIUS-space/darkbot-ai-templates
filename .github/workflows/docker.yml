@@ -1,0 +1,29 @@
+name: Docker Build Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/Dockerfile'
+      - '**/docker-compose.yml'
+
+jobs:
+  build-tg-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build TG Bot Docker image
+        run: |
+          cd tg-bot-template
+          docker build -t darkbot-tg-bot .
+          echo "✅ TG Bot Docker image built"
+      
+  build-fastapi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build FastAPI Docker image
+        run: |
+          cd fastapi-template
+          docker build -t darkbot-api .
+          echo "✅ FastAPI Docker image built"
