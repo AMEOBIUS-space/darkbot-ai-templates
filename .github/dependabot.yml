@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/tg-bot-template"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/web-scraper-template"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/fastapi-template"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/ai-automation-template"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/cdp-automation-template"
+    schedule:
+      interval: "weekly"
