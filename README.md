@@ -120,7 +120,7 @@ Use templates in your CI/CD:
     destination: ./bot/
 ```
 
-50 products available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
+55 products available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
 
 ## 💡 Examples
 
@@ -181,8 +181,13 @@ This repo has been used to solve 81 bounty issues across GitHub:
 | 48 | Event Bus | $49 | 17 |
 | 49 | Retry and Circuit Breaker | $59 | 16 |
 | 50 | Content Generator | $49 | 16 |
+| 51 | GraphQL Client | $49 | 16 |
+| 52 | WebSocket Server | $49 | 18 |
+| 53 | API Gateway | $59 | 20 |
+| 54 | Markdown Converter | $39 | 20 |
+| 55 | URL Shortener | $49 | 20 |
 
-**Bundle: $499** (all 30 + 2h customization)
+**Bundle: $549** (all 30 + 2h customization)
 
 ## ⭐ Star History
 
