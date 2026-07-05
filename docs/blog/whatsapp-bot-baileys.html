@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Bot with Baileys — DarkBot AI Tutorial</title>
+<meta name="description" content="Build WhatsApp bot without official API: Baileys, commands, rate limiting, media.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;background:#0d1117;color:#c9d1d9;line-height:1.7}
+h1{color:#58a6ff}h2{color:#7ee787;margin-top:30px}h3{color:#f0883e;margin-top:20px}
+code{background:#161b22;padding:2px 6px;border-radius:4px;color:#f0883e}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0}
+pre code{background:none;color:#c9d1d9;padding:0}
+a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
+.btn{display:inline-block;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;margin:16px 0;text-decoration:none}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back</a>
+<h1>WhatsApp Bot with Baileys</h1>
+<p>Build a WhatsApp bot without official Business API — using Baileys library.</p>
+<h2>Why Baileys?</h2>
+<p>Baileys connects to WhatsApp Web protocol directly. No official API key needed, no $50/month Business API fee.</p>
+<h2>1. Setup (Node.js)</h2>
+<pre><code>npm install @whiskeysockets/baileys
+node wa_node.js  # Shows QR code</code></pre>
+<h2>2. Python Orchestration</h2>
+<pre><code>class WhatsAppBot:
+    def command(self, cmd):
+        def decorator(func):
+            self.handlers[cmd] = func
+            return func
+        return decorator
+
+    async def process_message(self, msg):
+        if msg.text.startswith("/"):
+            cmd = msg.text[1:].split(" ")[0]
+            if cmd in self.handlers:
+                await self.handlers[cmd](msg)</code></pre>
+<h2>3. Rate Limiting</h2>
+<pre><code>def check_rate_limit(self, sender):
+    now = time.time()
+    self.tracker[sender] = [t for t in self.tracker[sender] if now-t < 60]
+    return len(self.tracker[sender]) < 10</code></pre>
+<h2>Template</h2>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/whatsapp-bot-template">WhatsApp Bot</a> $59/$249 — Baileys + Python, commands, media, groups</p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
+<pre><code>python whatsapp-bot-template/demo.py</code></pre>
+<hr>
+<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+</body>
+</html>
