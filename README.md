@@ -120,7 +120,7 @@ Use templates in your CI/CD:
     destination: ./bot/
 ```
 
-30 products available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
+36 products available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
 
 ## 💡 Examples
 
@@ -161,8 +161,14 @@ This repo has been used to solve 81 bounty issues across GitHub:
 | 28 | Crypto Wallet Monitor | $59 | 11 |
 | 29 | Email Campaign Automation | $59 | 11 |
 | 30 | Log Analyzer | $49 | 12 |
+| 31 | API Key Manager | $49 | 13 |
+| 32 | Notification Hub | $49 | 12 |
+| 33 | Config Validator | $49 | 14 |
+| 34 | Task Queue System | $49 | 13 |
+| 35 | DB Migration Tool | $49 | 13 |
+| 36 | Health Check Monitor | $49 | 14 |
 
-**Bundle: $299** (all 30 + 2h customization)
+**Bundle: $349** (all 30 + 2h customization)
 
 ## ⭐ Star History
 
