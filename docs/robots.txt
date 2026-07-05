@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ameobius.github.io/darkbot-ai-templates/sitemap.xml
