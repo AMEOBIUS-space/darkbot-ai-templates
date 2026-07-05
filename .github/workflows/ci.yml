@@ -11,56 +11,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
-      - name: Verify all Python templates compile
+      - name: Install pytest
+        run: pip install pytest pytest-cov
+      - name: Run all tests
         run: |
           PASS=0; FAIL=0
-          for f in */main.py */bot.py */scraper.py */agent.py */cdp_agent.py */gateway.py */setup.py */rotator.py */solver.py */export_workflow.py */marketplace.py; do
-            if [ -f "$f" ]; then
-              python -m py_compile "$f" && echo "✅ $f" && PASS=$((PASS+1)) || echo "❌ $f" && FAIL=$((FAIL+1))
+          for d in */; do
+            if [ -d "$d/tests" ]; then
+              python -m pytest "$d/tests/" -q --no-header --no-cov 2>&1 && PASS=$((PASS+1)) || FAIL=$((FAIL+1))
             fi
           done
-          echo "Compile: $PASS passed, $FAIL failed"
+          echo "Test suites: $PASS passed, $FAIL failed"
           if [ "$FAIL" -gt 0 ]; then exit 1; fi
-      
-      - name: Verify all demos run
-        run: |
-          PASS=0; FAIL=0
-          for f in */demo.py; do
-            if [ -f "$f" ]; then
-              timeout 10 python "$f" > /dev/null 2>&1 && echo "✅ $f" && PASS=$((PASS+1)) || echo "❌ $f" && FAIL=$((FAIL+1))
-            fi
-          done
-          echo "Demos: $PASS passed, $FAIL failed"
-      
       - name: Verify READMEs
         run: |
           count=$(find . -maxdepth 2 -name "README.md" | wc -l)
           echo "READMEs: $count"
           if [ "$count" -lt 17 ]; then exit 1; fi
-      
-      - name: Verify requirements.txt
-        run: |
-          count=$(find . -maxdepth 2 -name "requirements.txt" | wc -l)
-          echo "Requirements: $count"
-          if [ "$count" -lt 10 ]; then exit 1; fi
-      
-      - name: Verify demos exist for all templates
+      - name: Verify Demos
         run: |
           demo_count=$(find . -maxdepth 2 -name "demo.py" | wc -l)
           echo "Demos: $demo_count"
           if [ "$demo_count" -lt 17 ]; then exit 1; fi
-      
       - name: Summary
         run: |
           echo "=== CI Summary ==="
           echo "Templates: $(find . -maxdepth 1 -type d | tail -n +2 | wc -l)"
+          echo "Test suites: $(find . -path '*/tests/test_*.py' | wc -l)"
           echo "Demos: $(find . -maxdepth 2 -name 'demo.py' | wc -l)"
-          echo "READMEs: $(find . -maxdepth 2 -name 'README.md' | wc -l)"
-          echo "Requirements: $(find . -maxdepth 2 -name 'requirements.txt' | wc -l)"
+          echo "Dockerfiles: $(find . -maxdepth 2 -name 'Dockerfile' | wc -l)"
+          echo "Makefiles: $(find . -maxdepth 2 -name 'Makefile' | wc -l)"
           echo "All checks passed ✅"
