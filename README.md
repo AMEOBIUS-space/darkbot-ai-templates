@@ -50,6 +50,38 @@
 - Smart contracts (Solidity, DeFi) — from $150
 - Backend/API (FastAPI, Django) — from $100
 
+
+## 🎮 Interactive Demos
+
+Every template includes a runnable demo (no API keys needed):
+
+```bash
+# Telegram Bot demo
+python tg-bot-template/demo.py
+
+# Web Scraper demo
+python web-scraper-template/demo.py
+
+# Crypto Trading Bot demo (fetches live BTC price!)
+python crypto-trading-bot/demo.py
+
+# FastAPI Backend demo
+python fastapi-template/demo.py
+
+# CDP Automation demo
+python cdp-automation-template/demo.py
+```
+
+All 17 templates have demos. Run any of them to see the template in action.
+
+## 📊 Repo Stats
+
+- 17 templates + 17 demos
+- CI passing (GitHub Actions)
+- MIT License
+- 20 GitHub topics
+- Release v1.0.0
+
 ## 💬 Contact
 
 - Telegram: [@darkbot_ai_bot](https://t.me/darkbot_ai_bot) or [@ameobius](https://t.me/ameobius)
