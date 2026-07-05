@@ -100,11 +100,29 @@ All 17 templates have demos. Run any of them to see the template in action.
 - [Deploying a Tor Hidden Service](https://ameobius.github.io/darkbot-ai-templates/blog/deploying-tor-hidden-service.html)
 - [FastAPI JWT Authentication](https://ameobius.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html)
 
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=AMEOBIUS/darkbot-ai-templates&type=Date)](https://star-history.com/#AMEOBIUS/darkbot-ai-templates&Date)
+
 ## 💬 Contact
 
 - Telegram: [@darkbot_ai_bot](https://t.me/darkbot_ai_bot) or [@ameobius](https://t.me/ameobius)
 - Channel: [@darkbot_ai_templates](https://t.me/darkbot_ai_templates)
 - Payment: BTC / USDT / ETH / XMR
+
+## ⚡ Quick Install
+
+```bash
+curl -sL https://raw.githubusercontent.com/AMEOBIUS/darkbot-ai-templates/main/install.sh | bash
+```
+
+Or clone manually:
+```bash
+git clone https://github.com/AMEOBIUS/darkbot-ai-templates.git
+cd darkbot-ai-templates
+python tg-bot-template/demo.py  # Try any demo — no API keys needed!
+```
 
 ## 🔧 Quick Start (Make)
 
