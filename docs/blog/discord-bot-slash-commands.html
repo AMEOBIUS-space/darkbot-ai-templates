@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discord Bot with Slash Commands — DarkBot AI Tutorial</title>
+<meta name="description" content="Build a Discord bot: slash commands, music queue, polls, moderation. discord.py guide.">
+<meta property="og:title" content="Discord Bot Slash Commands Tutorial">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;background:#0d1117;color:#c9d1d9;line-height:1.7}
+h1{color:#58a6ff}h2{color:#7ee787;margin-top:30px}h3{color:#f0883e;margin-top:20px}
+code{background:#161b22;padding:2px 6px;border-radius:4px;color:#f0883e}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0}
+pre code{background:none;color:#c9d1d9;padding:0}
+a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
+.btn{display:inline-block;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;margin:16px 0;text-decoration:none}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back</a>
+<h1>Discord Bot with Slash Commands</h1>
+<p>Build a Discord bot with slash commands, polls, music queue, and moderation.</p>
+<h2>1. Setup</h2>
+<pre><code>pip install discord.py
+export DISCORD_TOKEN=your_token</code></pre>
+<h2>2. Slash Commands</h2>
+<pre><code>import discord
+from discord.ext import commands
+from discord import app_commands
+
+bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
+
+@bot.tree.command(name="ping")
+async def ping(interaction: discord.Interaction):
+    await interaction.response.send_message(f"Pong! {round(bot.latency*1000)}ms")</code></pre>
+<h2>3. Polls with Reactions</h2>
+<pre><code>@bot.tree.command(name="poll")
+async def poll(interaction, question: str, *options: str):
+    emojis = ["1️⃣","2️⃣","3️⃣","4️⃣"]
+    embed = discord.Embed(title=f"📊 {question}")
+    for i, opt in enumerate(options):
+        embed.add_field(name=emojis[i], value=opt)
+    await interaction.response.send_message(embed=embed)
+    msg = await interaction.original_response()
+    for i in range(len(options)):
+        await msg.add_reaction(emojis[i])</code></pre>
+<h2>4. Auto-sync on Ready</h2>
+<pre><code>@bot.event
+async def on_ready():
+    synced = await bot.tree.sync()
+    print(f"Synced {len(synced)} commands")</code></pre>
+<h2>Template</h2>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/discord-bot-template">Discord Bot</a> $49/$199 — 6 slash commands, music queue, moderation</p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
+<pre><code>python discord-bot-template/demo.py</code></pre>
+<hr>
+<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+</body>
+</html>

@@ -7,4 +7,6 @@
   <url><loc>https://ameobius.github.io/darkbot-ai-templates/blog/crypto-trading-bot-basics.html</loc><priority>0.7</priority></url>
   <url><loc>https://ameobius.github.io/darkbot-ai-templates/blog/deploying-tor-hidden-service.html</loc><priority>0.7</priority></url>
   <url><loc>https://ameobius.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ameobius.github.io/darkbot-ai-templates/blog/solidity-erc20-presale.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ameobius.github.io/darkbot-ai-templates/blog/discord-bot-slash-commands.html</loc><priority>0.7</priority></url>
 </urlset>
