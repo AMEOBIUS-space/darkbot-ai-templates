@@ -1,5 +1,6 @@
 # 🤖 DarkBot AI — 17 Production-Ready Code Templates
 
+[![CI](https://github.com/AMEOBIUS/darkbot-ai-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/AMEOBIUS/darkbot-ai-templates/actions/workflows/ci.yml)
 [![GitHub stars](https://img.shields.io/github/stars/AMEOBIUS/darkbot-ai-templates?style=social)](https://github.com/AMEOBIUS/darkbot-ai-templates/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Products](https://img.shields.io/badge/templates-17-green)]()
