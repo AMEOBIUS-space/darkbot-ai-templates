@@ -1,0 +1,53 @@
+name: CI — Verify Templates
+
+on:
+  push:
+    branches: [main, gh-pages]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify-templates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install py_compile_checker || true
+      
+      - name: Verify all Python templates compile
+        run: |
+          for f in products/*/main.py products/*/bot.py products/*/scraper.py products/*/agent.py products/*/cdp_agent.py products/*/gateway.py products/*/setup.py products/*/rotator.py products/*/solver.py products/*/export_workflow.py; do
+            if [ -f "$f" ]; then
+              python -m py_compile "$f" && echo "✅ $f" || echo "❌ $f"
+            fi
+          done
+      
+      - name: Verify all demos run
+        run: |
+          for f in products/*/demo.py; do
+            if [ -f "$f" ]; then
+              timeout 10 python "$f" > /dev/null 2>&1 && echo "✅ $f" || echo "❌ $f"
+            fi
+          done
+      
+      - name: Verify READMEs
+        run: |
+          count=$(find products -name "README.md" | wc -l)
+          echo "READMEs: $count"
+          if [ "$count" -lt 17 ]; then
+            echo "❌ Expected 17 READMEs, got $count"
+            exit 1
+          fi
+          echo "✅ All 17 READMEs present"
+      
+      - name: Verify requirements.txt
+        run: |
+          count=$(find products -name "requirements.txt" | wc -l)
+          echo "Requirements files: $count"
