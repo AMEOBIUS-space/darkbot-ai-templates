@@ -82,6 +82,12 @@ All 17 templates have demos. Run any of them to see the template in action.
 - 20 GitHub topics
 - Release v1.0.0
 
+## 📝 Blog
+
+- [Building a Telegram Bot with AI](https://ameobius.github.io/darkbot-ai-templates/blog/building-telegram-bot-with-ai.html)
+- [Web Scraping with Anti-Detection](https://ameobius.github.io/darkbot-ai-templates/blog/web-scraping-anti-detection.html)
+- [Crypto Trading Bot Basics](https://ameobius.github.io/darkbot-ai-templates/blog/crypto-trading-bot-basics.html)
+
 ## 💬 Contact
 
 - Telegram: [@darkbot_ai_bot](https://t.me/darkbot_ai_bot) or [@ameobius](https://t.me/ameobius)
