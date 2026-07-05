@@ -1,0 +1,33 @@
+name: Update README Stats
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Count stats
+        id: stats
+        run: |
+          echo "templates=$(find . -maxdepth 1 -type d ! -name '.' ! -name 'docs' ! -name '.github' | wc -l)" >> $GITHUB_OUTPUT
+          echo "demos=$(find . -maxdepth 2 -name 'demo.py' | wc -l)" >> $GITHUB_OUTPUT
+          echo "tutorials=$(find docs/blog -name '*.html' ! -name 'index.html' | wc -l)" >> $GITHUB_OUTPUT
+          echo "tests=$(find . -path '*/tests/test_*.py' | wc -l)" >> $GITHUB_OUTPUT
+          echo "dockerfiles=$(find . -maxdepth 2 -name 'Dockerfile' | wc -l)" >> $GITHUB_OUTPUT
+          echo "makefiles=$(find . -maxdepth 2 -name 'Makefile' | wc -l)" >> $GITHUB_OUTPUT
+      - name: Update README badges
+        run: |
+          sed -i "s/badge\/templates-[0-9]*/badge\/templates-${{ steps.stats.outputs.templates }}/" README.md
+          sed -i "s/badge\/tutorials-[0-9]*/badge\/tutorials-${{ steps.stats.outputs.tutorials }}/" README.md
+          sed -i "s/badge\/demos-[0-9]*/badge\/demos-${{ steps.stats.outputs.demos }}/" README.md
+          sed -i "s/badge\/tests-[0-9]*%2B/badge\/tests-${{ steps.stats.outputs.tests }}%2B/" README.md
+      - name: Commit if changed
+        run: |
+          git diff --quiet README.md || (git add README.md && git commit -m "Auto-update README stats [skip ci]" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
