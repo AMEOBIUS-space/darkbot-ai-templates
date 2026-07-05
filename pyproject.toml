@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "darkbot-templates"
+version = "1.5.0"
+description = "18 production-ready Python code templates: TG bots, scrapers, AI agents, crypto trading, Tor."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "DarkBot AI", email = "darkbotai@proton.me"}
+]
+keywords = [
+    "telegram-bot", "web-scraper", "ai-automation", "cdp",
+    "solidity", "fastapi", "discord-bot", "proxy-rotation",
+    "email-scraper", "whatsapp-bot", "n8n", "captcha-solver",
+    "crypto-payment", "tor", "crypto-trading", "templates"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://ameobius.github.io/darkbot-ai-templates"
+Repository = "https://github.com/AMEOBIUS/darkbot-ai-templates"
+Documentation = "https://github.com/AMEOBIUS/darkbot-ai-templates/blob/main/ARCHITECTURE.md"
+Changelog = "https://github.com/AMEOBIUS/darkbot-ai-templates/releases"
+
+[tool.setuptools]
+packages = ["find"]
+
+[tool.pytest.ini_options]
+testpaths = ["*/tests"]
