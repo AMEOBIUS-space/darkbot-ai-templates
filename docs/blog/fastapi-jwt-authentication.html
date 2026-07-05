@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastAPI JWT Authentication — DarkBot AI Tutorial</title>
+<meta name="description" content="JWT auth in FastAPI: register, login, bearer tokens, protected routes, WebSocket.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;background:#0d1117;color:#c9d1d9;line-height:1.7}
+h1{color:#58a6ff}h2{color:#7ee787;margin-top:30px}h3{color:#f0883e;margin-top:20px}
+code{background:#161b22;padding:2px 6px;border-radius:4px;color:#f0883e}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0}
+pre code{background:none;color:#c9d1d9;padding:0}
+a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
+.btn{display:inline-block;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;margin:16px 0;text-decoration:none}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back</a>
+<h1>FastAPI JWT Authentication</h1>
+<p>Register, login, bearer tokens, protected routes, WebSocket auth.</p>
+<h2>1. JWT Token Generation</h2>
+<pre><code>import jwt
+from datetime import datetime, timedelta
+
+def make_token(user_id: int) -> str:
+    return jwt.encode(
+        {"sub": str(user_id), "exp": datetime.utcnow() + timedelta(days=7)},
+        SECRET, algorithm="HS256"
+    )</code></pre>
+<h2>2. Register Endpoint</h2>
+<pre><code>@app.post("/register")
+def register(user: UserCreate):
+    db.execute("INSERT INTO users ...", (user.email, hash_pw(user.password)))
+    return {"token": make_token(user_id)}</code></pre>
+<h2>3. Protected Routes</h2>
+<pre><code>security = HTTPBearer()
+def get_current_user(cred: HTTPAuthorizationCredentials = Depends(security)):
+    payload = jwt.decode(cred.credentials, SECRET, algorithms=["HS256"])
+    return int(payload["sub"])
+
+@app.get("/items")
+def list_items(uid: int = Depends(get_current_user)):
+    return db.execute("SELECT * FROM items WHERE user_id=?", (uid,)).fetchall()</code></pre>
+<h2>4. WebSocket Auth</h2>
+<pre><code>@app.websocket("/ws/{token}")
+async def ws(ws: WebSocket, token: str):
+    payload = jwt.decode(token, SECRET, algorithms=["HS256"])
+    await ws.accept()
+    while True:
+        data = await ws.receive_text()
+        await ws.send_text(f"Echo: {data}")</code></pre>
+<h2>Template</h2>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/fastapi-template">FastAPI Backend</a> $49/$199 — includes all above + SQLite + Swagger docs</p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
+<pre><code>python fastapi-template/demo.py</code></pre>
+<hr>
+<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+</body>
+</html>

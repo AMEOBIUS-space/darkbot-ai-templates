@@ -89,6 +89,7 @@ All 17 templates have demos. Run any of them to see the template in action.
 - [Web Scraping with Anti-Detection](https://ameobius.github.io/darkbot-ai-templates/blog/web-scraping-anti-detection.html)
 - [Crypto Trading Bot Basics](https://ameobius.github.io/darkbot-ai-templates/blog/crypto-trading-bot-basics.html)
 - [Deploying a Tor Hidden Service](https://ameobius.github.io/darkbot-ai-templates/blog/deploying-tor-hidden-service.html)
+- [FastAPI JWT Authentication](https://ameobius.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html)
 
 ## 💬 Contact
 
