@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+*.session
+*.session-journal
+auth-session/
+node_modules/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
