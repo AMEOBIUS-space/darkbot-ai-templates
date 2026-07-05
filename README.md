@@ -101,6 +101,19 @@ All 17 templates have demos. Run any of them to see the template in action.
 - [FastAPI JWT Authentication](https://ameobius.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html)
 
 
+## 🔗 GitHub Action
+
+Use templates in your CI/CD:
+
+```yaml
+- uses: AMEOBIUS/darkbot-ai-templates/.github/actions/setup-templates@main
+  with:
+    template: tg-bot
+    destination: ./bot/
+```
+
+18 templates available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
+
 ## 💡 Examples
 
 Real-world usage scenarios in [`examples/`](examples/):
