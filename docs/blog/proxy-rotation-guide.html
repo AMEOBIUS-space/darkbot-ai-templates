@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proxy Rotation Manager Guide — DarkBot AI Tutorial</title>
+<meta name="description" content="Proxy pool management: rotation, health checks, failover, SOCKS5/HTTP, latency.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;background:#0d1117;color:#c9d1d9;line-height:1.7}
+h1{color:#58a6ff}h2{color:#7ee787;margin-top:30px}h3{color:#f0883e;margin-top:20px}
+code{background:#161b22;padding:2px 6px;border-radius:4px;color:#f0883e}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0}
+pre code{background:none;color:#c9d1d9;padding:0}
+a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
+.btn{display:inline-block;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;margin:16px 0;text-decoration:none}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back</a>
+<h1>Proxy Rotation Manager Guide</h1>
+<p>Pool management, health checks, auto-failover for reliable scraping.</p>
+<h2>1. Proxy Pool</h2>
+<pre><code>proxies = [
+    Proxy("185.199.229.156", 7492, protocol="http"),
+    Proxy("37.26.86.161", 4718, protocol="socks5"),
+]</code></pre>
+<h2>2. Rotation Strategies</h2>
+<pre><code># Round-robin
+proxy = healthy[idx % len(healthy)]
+
+# Random
+proxy = random.choice(healthy)</code></pre>
+<h2>3. Health Check</h2>
+<pre><code>async def health_check(proxy):
+    start = time.time()
+    async with session.get(url, proxy=proxy.url) as resp:
+        if resp.status == 200:
+            proxy.healthy = True
+            proxy.latency = time.time() - start</code></pre>
+<h2>4. Auto-Failover</h2>
+<pre><code>def mark_failed(proxy):
+    proxy.fail_count += 1
+    if proxy.fail_count >= MAX_FAILS:
+        proxy.healthy = False</code></pre>
+<h2>Template</h2>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/proxy-rotation-template">Proxy Rotation</a> $39/$149</p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
+<pre><code>python proxy-rotation-template/demo.py</code></pre>
+<hr>
+<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+</body>
+</html>
