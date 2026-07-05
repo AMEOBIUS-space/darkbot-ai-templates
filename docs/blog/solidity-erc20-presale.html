@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solidity ERC20 Token with Presale — DarkBot AI Tutorial</title>
+<meta name="description" content="Deploy ERC20 token with whitelist presale: OpenZeppelin, Foundry, deploy script.">
+<meta property="og:title" content="Solidity ERC20 + Presale Tutorial">
+<meta property="og:description" content="OpenZeppelin, whitelist, Foundry tests, deploy.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;background:#0d1117;color:#c9d1d9;line-height:1.7}
+h1{color:#58a6ff}h2{color:#7ee787;margin-top:30px}h3{color:#f0883e;margin-top:20px}
+code{background:#161b22;padding:2px 6px;border-radius:4px;color:#f0883e}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0}
+pre code{background:none;color:#c9d1d9;padding:0}
+a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
+.btn{display:inline-block;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;margin:16px 0;text-decoration:none}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back</a>
+<h1>Solidity ERC20 Token with Presale</h1>
+<p>Deploy your own token with whitelist presale using OpenZeppelin + Foundry.</p>
+<h2>1. Contract</h2>
+<pre><code>pragma solidity ^0.8.20;
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract DarkBotToken is ERC20, Ownable {
+    uint256 public constant MAX_SUPPLY = 1_000_000 * 10**18;
+    uint256 public presalePrice = 0.001 ether;
+    bool public presaleActive = true;
+    mapping(address => bool) public whitelist;
+    
+    constructor() ERC20("DarkBot AI", "DBAI") Ownable(msg.sender) {
+        _mint(address(this), MAX_SUPPLY);
+    }
+    
+    function addToWhitelist(address[] calldata users) external onlyOwner {
+        for (uint i = 0; i < users.length; i++) whitelist[users[i]] = true;
+    }
+    
+    function buyPresale() external payable {
+        require(presaleActive && whitelist[msg.sender]);
+        uint256 tokens = (msg.value * 10**18) / presalePrice;
+        _transfer(address(this), msg.sender, tokens);
+    }
+}</code></pre>
+<h2>2. Deploy with Foundry</h2>
+<pre><code>forge create contracts/Token.sol:DarkBotToken \
+  --rpc-url $RPC_URL --private-key $KEY</code></pre>
+<h2>3. Test</h2>
+<pre><code>forge test</code></pre>
+<h2>Template</h2>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/solidity-template">Solidity Template</a> $69/$279</p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
+<pre><code>python solidity-template/demo.py</code></pre>
+<hr>
+<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+</body>
+</html>
