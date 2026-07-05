@@ -35,9 +35,10 @@
 | 15 | [Tor Hidden Service](tor-hidden-service-template/) | v3 onion, nginx, hardening, Docker | $89 | $349 |
 | 16 | [Tor Market Scraper](tor-market-scraper/) | .onion monitoring, price tracking | $69 | $279 |
 | 17 | [Crypto Trading Bot](crypto-trading-bot/) | Binance/OKX/Bybit, arbitrage, RSI | $79 | $299 |
-| **Bundle** | **[All 17 + 2h customization](https://t.me/darkbot_ai_bot)** | **Everything above** | **$199** | — |
+| 18 | [Tor .onion Marketplace](onion-marketplace-script/) — listings, escrow, XMR/BTC | $99 | $399 |
+| **Bundle** | **[All 18 + 2h customization](https://t.me/darkbot_ai_bot)** | **Everything above** | **$199** | — |
 
-## 🔥 Bundle — All 17 + 2h Customization = $199
+## 🔥 Bundle — All 18 + 2h Customization = $199
 
 ## 🛠 Custom Development
 
