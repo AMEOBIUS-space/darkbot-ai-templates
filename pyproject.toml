@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "darkbot-templates"
@@ -35,7 +35,7 @@ Documentation = "https://github.com/AMEOBIUS/darkbot-ai-templates/blob/main/ARCH
 Changelog = "https://github.com/AMEOBIUS/darkbot-ai-templates/releases"
 
 [tool.setuptools]
-packages = ["find"]
+py-modules = []
 
 [tool.pytest.ini_options]
 testpaths = ["*/tests"]
