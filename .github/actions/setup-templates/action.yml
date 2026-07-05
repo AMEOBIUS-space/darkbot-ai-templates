@@ -1,0 +1,51 @@
+name: 'Setup DarkBot Templates'
+description: 'Install production-ready Python code templates in your project'
+inputs:
+  template:
+    description: 'Template name (tg-bot, web-scraper, fastapi, etc.)'
+    required: true
+    default: 'tg-bot'
+  destination:
+    description: 'Destination directory'
+    required: false
+    default: './'
+runs:
+  using: 'composite'
+  steps:
+    - name: Clone templates
+      shell: bash
+      run: |
+        git clone --depth 1 https://github.com/AMEOBIUS/darkbot-ai-templates.git /tmp/darkbot-templates
+        TEMPLATE_MAP=$(cat <<'EOF'
+        tg-bot=tg-bot-template
+        web-scraper=web-scraper-template
+        ai-agent=ai-automation-template
+        cdp=cdp-automation-template
+        solidity=solidity-template
+        fastapi=fastapi-template
+        discord=discord-bot-template
+        proxy=proxy-rotation-template
+        email=email-scraper-template
+        whatsapp=whatsapp-bot-template
+        n8n=n8n-workflow-template
+        tg-scraper=tg-channel-scraper
+        captcha=captcha-solver-template
+        crypto-pay=crypto-payment-template
+        tor=tor-hidden-service-template
+        tor-scraper=tor-market-scraper
+        trading=crypto-trading-bot
+        marketplace=onion-marketplace-script
+        EOF
+        )
+        DIR=$(echo "$TEMPLATE_MAP" | grep "^${{ inputs.template }}=" | cut -d= -f2)
+        if [ -z "$DIR" ]; then
+          echo "❌ Template not found. Available: tg-bot, web-scraper, ai-agent, cdp, solidity, fastapi, discord, proxy, email, whatsapp, n8n, tg-scraper, captcha, crypto-pay, tor, tor-scraper, trading, marketplace"
+          exit 1
+        fi
+        cp -r /tmp/darkbot-templates/$DIR/* ${{ inputs.destination }}
+        echo "✅ Installed $DIR template to ${{ inputs.destination }}"
+        echo "Run: cd ${{ inputs.destination }} && make demo"
+        rm -rf /tmp/darkbot-templates
+branding:
+  icon: 'package'
+  color: 'blue'
