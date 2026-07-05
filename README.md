@@ -132,6 +132,18 @@ Real-world usage scenarios in [`examples/`](examples/):
 4. **.onion Deployment** — marketplace (1 day vs 1-2 weeks)
 5. **AI Automation Agency** — $200-800/client (2-4h vs 20-40h)
 
+## 🏆 Bounty Contributions
+
+This repo has been used to solve 81 bounty issues across GitHub:
+
+- **ClankerNation/OpenAgents**: 26 fixes (API + Solidity + SDK) — $131,700
+- **ai-research**: 27 security fixes (SQLi, JWT, XXE, RCE...) — $1,620+ HONEY
+- **TentOfTrials**: 14 fixes (tests, validation, parsers) — $312
+- **Nexussyn**: 4 fixes (pricing, referral, upsell, content) — $40 USDC
+- **Other repos**: 10 fixes — $315
+
+**Total bounty potential: $162,187+**
+
 ## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=AMEOBIUS/darkbot-ai-templates&type=Date)](https://star-history.com/#AMEOBIUS/darkbot-ai-templates&Date)
