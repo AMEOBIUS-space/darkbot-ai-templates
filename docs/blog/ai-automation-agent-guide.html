@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Automation Agent Guide — DarkBot AI Tutorial</title>
+<meta name="description" content="Build AI agent: email auto-reply, CRM extraction, report generation, n8n webhook.">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;background:#0d1117;color:#c9d1d9;line-height:1.7}h1{color:#58a6ff}h2{color:#7ee787;margin-top:30px}h3{color:#f0883e;margin-top:20px}code{background:#161b22;padding:2px 6px;border-radius:4px;color:#f0883e}pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0}pre code{background:none;color:#c9d1d9;padding:0}a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}.btn{display:inline-block;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;margin:16px 0;text-decoration:none}</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back</a>
+<h1>AI Automation Agent Guide</h1>
+<p>Build an AI agent for email auto-reply, CRM, reports, n8n.</p>
+<h2>1. Email Auto-Reply</h2>
+<pre><code>response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "system", "content": "Auto-reply to emails..."},
+              {"role": "user", "content": f"Subject: {subject}\nBody: {body}"}]
+)</code></pre>
+<h2>2. CRM Data Extraction</h2>
+<pre><code>def crm_entry(raw_text):
+    return process_task("crm_entry", {"text": raw_text})
+    # Returns: {name, email, interest, budget}</code></pre>
+<h2>3. Report Generation</h2>
+<pre><code>def generate_report(data, report_type="weekly"):
+    return process_task("report", {"data": data, "type": report_type})</code></pre>
+<h2>4. n8n Webhook</h2>
+<pre><code># POST /webhook → AI processes → returns result
+# Integrate with N8N AI Lead Qualification Pipeline</code></pre>
+<h2>Template</h2>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/ai-automation-template">AI Automation Agent</a> $59/$249</p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
+<pre><code>python ai-automation-template/demo.py</code></pre>
+<hr><p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+</body>
+</html>
