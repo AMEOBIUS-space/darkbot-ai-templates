@@ -120,7 +120,7 @@ Use templates in your CI/CD:
     destination: ./bot/
 ```
 
-18 templates available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
+30 products available: `tg-bot`, `web-scraper`, `ai-agent`, `cdp`, `solidity`, `fastapi`, `discord`, `proxy`, `email`, `whatsapp`, `n8n`, `tg-scraper`, `captcha`, `crypto-pay`, `tor`, `tor-scraper`, `trading`, `marketplace`
 
 ## 💡 Examples
 
@@ -143,6 +143,26 @@ This repo has been used to solve 81 bounty issues across GitHub:
 - **Other repos**: 10 fixes — $315
 
 **Total bounty potential: $162,187+**
+
+
+## New Products (v2.0)
+
+| # | Product | Price | Tests |
+|---|---------|-------|-------|
+| 19 | Bounty Hunter Toolkit | $49 | 5 |
+| 20 | MCP Server Template | $59 | 7 |
+| 21 | AI Prompt Pack | $39 | 7 |
+| 22 | CDP Toolkit | $79 | 10 |
+| 23 | Web Scraper Pro | $49 | 12 |
+| 24 | Rate Limiter Middleware | $49 | 11 |
+| 25 | Security Audit Toolkit | $69 | 11 |
+| 26 | Discord Bot v2 | $49 | 11 |
+| 27 | Webhook Server | $49 | 11 |
+| 28 | Crypto Wallet Monitor | $59 | 11 |
+| 29 | Email Campaign Automation | $59 | 11 |
+| 30 | Log Analyzer | $49 | 12 |
+
+**Bundle: $299** (all 30 + 2h customization)
 
 ## ⭐ Star History
 
