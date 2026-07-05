@@ -101,6 +101,14 @@ All 17 templates have demos. Run any of them to see the template in action.
 - [FastAPI JWT Authentication](https://ameobius.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html)
 
 
+## 🚀 GitHub Codespaces
+
+Try templates in your browser — no install needed:
+
+1. Click **Code** → **Codespaces** → **Create**
+2. Run: `python tg-bot-template/demo.py`
+3. Python 3.11 + Docker + pytest pre-installed
+
 ## 🔗 GitHub Action
 
 Use templates in your CI/CD:
