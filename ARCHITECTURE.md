@@ -41,6 +41,40 @@ products/
 5. **Runnable demos** — every template has demo.py
 6. **No API keys needed for demos** — mock data or public APIs
 
+
+## Template Relationships
+
+```
+                    DarkBot AI Templates
+                           |
+           +---------------+---------------+
+           |               |               |
+        Bots          Scraping          AI/Automation
+        |               |               |
+   +----+----+    +----+----+    +-----+-----+
+   |    |    |    |    |    |    |     |     |
+   TG  DC  WA   Web  Email  TG  AI   N8N  CDP
+   Bot  Bot  Bot  Scr  Scr   Scr  Agnt  WF   Auto
+                                        |
+                                   Captcha Solver
+                                        
+    Blockchain         Backend          Tor/Darknet
+       |                 |                 |
+  +----+----+      +----+----+      +-----+-----+
+  |    |    |      |         |      |           |
+  Sol  CT  Pay   FastAPI   Proxy   TorHS     .onion
+  id   Bot  GW              Rot    Market    Market
+```
+
+## Data Flow
+
+```
+User → make demo → demo.py (mock data, no API keys)
+User → make run → main.py (real API calls)
+User → make docker → Dockerfile → container
+CI → pytest → tests/ → verify compile + demo + files
+```
+
 ## CI Pipeline
 
 GitHub Actions verifies on every push:
