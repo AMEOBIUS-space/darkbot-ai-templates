@@ -102,6 +102,18 @@ All 17 templates have demos. Run any of them to see the template in action.
 - Channel: [@darkbot_ai_templates](https://t.me/darkbot_ai_templates)
 - Payment: BTC / USDT / ETH / XMR
 
+## 🔧 Quick Start (Make)
+
+Every template has a Makefile:
+
+```bash
+cd tg-bot-template
+make install  # pip install -r requirements.txt
+make demo     # Run demo (no API keys needed)
+make run      # Run template
+make docker   # Build and run in Docker
+```
+
 ## 🐳 Docker Support
 
 Every template includes a Dockerfile. Deploy with one command:
