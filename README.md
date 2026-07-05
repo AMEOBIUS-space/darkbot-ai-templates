@@ -88,6 +88,7 @@ All 17 templates have demos. Run any of them to see the template in action.
 - [Building a Telegram Bot with AI](https://ameobius.github.io/darkbot-ai-templates/blog/building-telegram-bot-with-ai.html)
 - [Web Scraping with Anti-Detection](https://ameobius.github.io/darkbot-ai-templates/blog/web-scraping-anti-detection.html)
 - [Crypto Trading Bot Basics](https://ameobius.github.io/darkbot-ai-templates/blog/crypto-trading-bot-basics.html)
+- [Deploying a Tor Hidden Service](https://ameobius.github.io/darkbot-ai-templates/blog/deploying-tor-hidden-service.html)
 
 ## 💬 Contact
 

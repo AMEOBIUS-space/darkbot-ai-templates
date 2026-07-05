@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deploying a Tor Hidden Service — DarkBot AI Tutorial</title>
+<meta name="description" content="Deploy .onion website: v3 address generation, nginx hardening, Docker, security.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;background:#0d1117;color:#c9d1d9;line-height:1.7}
+h1{color:#58a6ff}h2{color:#7ee787;margin-top:30px}h3{color:#f0883e;margin-top:20px}
+code{background:#161b22;padding:2px 6px;border-radius:4px;color:#f0883e}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0}
+pre code{background:none;color:#c9d1d9;padding:0}
+a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
+.btn{display:inline-block;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;margin:16px 0;text-decoration:none}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back</a>
+<h1>Deploying a Tor Hidden Service</h1>
+<p>Generate v3 .onion address, configure nginx, harden server.</p>
+
+<h2>1. Generate v3 Onion Address</h2>
+<pre><code>from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+import hashlib, base64
+
+# Generate ed25519 keypair
+private_key = Ed25519PrivateKey.generate()
+pub_bytes = private_key.public_key().public_bytes(
+    serialization.Encoding.Raw, serialization.PublicFormat.Raw)
+
+# v3 address = base32(pubkey + checksum + version)
+checksum = hashlib.sha3_256(b".onion checksum" + pub_bytes + b"\x03").digest()[:2]
+address = base64.b32encode(pub_bytes + checksum + b"\x03").decode().lower().rstrip("=")
+print(f"{address}.onion")</code></pre>
+
+<h2>2. torrc Configuration</h2>
+<pre><code>HiddenServiceDir /var/lib/tor/darkbot
+HiddenServicePort 80 127.0.0.1:8080
+HiddenServiceVersion 3</code></pre>
+
+<h2>3. nginx Hardening</h2>
+<pre><code>server {
+    listen 127.0.0.1:8080;
+    access_log off;
+    server_tokens off;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-Frame-Options DENY;
+}</code></pre>
+
+<h2>4. Docker Deployment</h2>
+<pre><code>docker-compose up -d  # tor + nginx containers</code></pre>
+
+<h2>Templates</h2>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/tor-hidden-service-template">Tor Hidden Service</a> $89 | <a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/onion-marketplace-script">.onion Marketplace</a> $99</p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
+<pre><code>python tor-hidden-service-template/demo.py</code></pre>
+<hr>
+<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+</body>
+</html>
