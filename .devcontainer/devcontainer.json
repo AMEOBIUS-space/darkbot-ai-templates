@@ -1,0 +1,14 @@
+{
+  "name": "DarkBot AI Templates",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "postCreateCommand": "pip install pytest && echo '🤖 DarkBot AI Templates ready! Try: python tg-bot-template/demo.py'",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance"]
+    }
+  },
+  "forwardPorts": [8000, 8080]
+}
