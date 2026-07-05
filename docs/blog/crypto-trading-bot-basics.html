@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Trading Bot Basics — DarkBot AI Tutorial</title>
+<meta name="description" content="Build a crypto trading bot: Binance API, RSI, arbitrage, multi-exchange.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;background:#0d1117;color:#c9d1d9;line-height:1.7}
+h1{color:#58a6ff}h2{color:#7ee787;margin-top:30px}h3{color:#f0883e;margin-top:20px}
+code{background:#161b22;padding:2px 6px;border-radius:4px;color:#f0883e}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0}
+pre code{background:none;color:#c9d1d9;padding:0}
+a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
+.btn{display:inline-block;background:#238636;color:#fff;padding:10px 20px;border-radius:6px;margin:16px 0;text-decoration:none}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← Back</a>
+<h1>Crypto Trading Bot Basics</h1>
+<p>Multi-exchange monitoring, RSI signals, arbitrage.</p>
+<h2>1. Binance Price</h2>
+<pre><code>async def get_price(symbol="BTCUSDT"):
+    async with aiohttp.ClientSession() as s:
+        async with s.get(f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}") as r:
+            return float((await r.json())["price"])</code></pre>
+<h2>2. RSI</h2>
+<pre><code>def rsi(prices, period=14):
+    gains = [max(prices[i]-prices[i-1],0) for i in range(1,len(prices))]
+    losses = [max(-prices[i]+prices[i-1],0) for i in range(1,len(prices))]
+    return 100 - (100 / (1 + sum(gains[-period:])/max(sum(losses[-period:]),0.01)))</code></pre>
+<h2>3. Arbitrage</h2>
+<pre><code>spread = (okx_price - binance_price) / binance_price
+if spread > 0.003: print("ARBITRAGE!")</code></pre>
+<h2>Template</h2>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/crypto-trading-bot">Crypto Trading Bot</a> $79/$299</p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
+<pre><code>python crypto-trading-bot/demo.py  # Live BTC!</code></pre>
+<hr>
+<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+</body>
+</html>
