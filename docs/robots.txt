@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
 Sitemap: https://ameobius.github.io/darkbot-ai-templates/sitemap.xml
+RSS: https://ameobius.github.io/darkbot-ai-templates/rss.xml

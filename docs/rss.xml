@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>DarkBot AI Blog — Tutorials</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/</link>
+<description>18 tutorials: TG bots, web scraping, AI agents, crypto trading, Tor, FastAPI, Solidity, Discord, WhatsApp, captcha, crypto payments.</description>
+<language>en</language>
+<item>
+<title>Building a Telegram Bot with AI</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/building-telegram-bot-with-ai.html</link>
+<description>aiogram 3, OpenAI, FSM multi-step conversations.</description>
+</item>
+<item>
+<title>Web Scraping with Anti-Detection</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/web-scraping-anti-detection.html</link>
+<description>Proxy rotation, CF bypass, CDP mouse events.</description>
+</item>
+<item>
+<title>Crypto Trading Bot Basics</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/crypto-trading-bot-basics.html</link>
+<description>Binance API, RSI, arbitrage detection.</description>
+</item>
+<item>
+<title>Deploying a Tor Hidden Service</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/deploying-tor-hidden-service.html</link>
+<description>v3 onion, nginx hardening, Docker.</description>
+</item>
+<item>
+<title>FastAPI JWT Authentication</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html</link>
+<description>Register, login, bearer tokens, WebSocket auth.</description>
+</item>
+<item>
+<title>Solidity ERC20 + Presale</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/solidity-erc20-presale.html</link>
+<description>OpenZeppelin, whitelist, Foundry tests.</description>
+</item>
+<item>
+<title>Discord Bot with Slash Commands</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/discord-bot-slash-commands.html</link>
+<description>Slash commands, polls, music queue, moderation.</description>
+</item>
+<item>
+<title>WhatsApp Bot with Baileys</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/whatsapp-bot-baileys.html</link>
+<description>Baileys, commands, rate limiting, media.</description>
+</item>
+<item>
+<title>Captcha Solving Guide</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/captcha-solving-guide.html</link>
+<description>reCAPTCHA, hCaptcha, Turnstile, Yandex.</description>
+</item>
+<item>
+<title>Crypto Payment Gateway Guide</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/crypto-payment-gateway-guide.html</link>
+<description>BTC, USDT, ETH, XMR invoices, webhooks.</description>
+</item>
+<item>
+<title>Proxy Rotation Manager Guide</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/proxy-rotation-guide.html</link>
+<description>Pool, health checks, failover, SOCKS5.</description>
+</item>
+<item>
+<title>N8N AI Workflow Guide</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/n8n-ai-workflow-guide.html</link>
+<description>Lead qualification, OpenAI, routing, Telegram.</description>
+</item>
+<item>
+<title>Email Scraping for Lead Gen</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/email-scraping-lead-generation.html</link>
+<description>Recursive crawl, validation, export.</description>
+</item>
+<item>
+<title>Tor Market Monitoring</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/tor-market-monitoring.html</link>
+<description>.onion scraping via Tor SOCKS5.</description>
+</item>
+<item>
+<title>AI Automation Agent Guide</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/ai-automation-agent-guide.html</link>
+<description>Email, CRM, reports, n8n webhook.</description>
+</item>
+<item>
+<title>TG Channel Scraper Guide</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/tg-channel-scraper-guide.html</link>
+<description>Keyword monitoring, analytics.</description>
+</item>
+<item>
+<title>.onion Marketplace Guide</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/onion-marketplace-guide.html</link>
+<description>Escrow, XMR/BTC, order tracking.</description>
+</item>
+<item>
+<title>CDP Automation Deep Dive</title>
+<link>https://ameobius.github.io/darkbot-ai-templates/blog/cdp-automation-deep-dive.html</link>
+<description>Mouse events, React/Vue bypass, CF.</description>
+</item>
+</channel>
+</rss>
