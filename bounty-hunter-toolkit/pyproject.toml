@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bounty-hunter-toolkit"
+version = "1.0.0"
+description = "Bug bounty automation: recon, BOLA, reporting"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [{name = "AMEOBIUS"}]
+keywords = ["bugbounty", "security", "bola", "recon"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+Homepage = "https://github.com/AMEOBIUS/bounty-hunter-toolkit"
