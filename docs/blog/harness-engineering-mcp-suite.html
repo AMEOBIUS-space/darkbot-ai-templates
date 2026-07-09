@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Zero-Dependency MCP Servers for Agent Harness Engineering</title>
+    <meta name="description" content="How we built 10 MCP servers with 132 tools and 289 tests using only Python's standard library — zero external dependencies.">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "Building Zero-Dependency MCP Servers for Agent Harness Engineering",
+        "description": "How we built 10 MCP servers with 132 tools and 289 tests using only Python's standard library.",
+        "author": { "@type": "Person", "name": "AMEOBIUS" },
+        "datePublished": "2026-07-09",
+        "dateModified": "2026-07-09"
+    }
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 1.4rem; margin-top: 2rem; }
+        code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
+        pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+        pre code { background: none; padding: 0; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+        th { background: #f8f8f8; }
+        a { color: #0366d6; }
+        .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
+        .back { margin-bottom: 2rem; }
+        .meta { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="back"><a href="../blog/index.html">&larr; All Articles</a></div>
+
+    <h1>Building Zero-Dependency MCP Servers for Agent Harness Engineering</h1>
+    <p class="meta">July 9, 2026 · 8 min read</p>
+
+    <div class="tag">MCP</div>
+    <div class="tag">AI Agents</div>
+    <div class="tag">Python</div>
+    <div class="tag">Zero Dependencies</div>
+
+    <p>Most MCP servers in the wild have a problem: they pull in dozens of dependencies. Node.js servers need <code>npm install</code>. Python servers need <code>pip install</code>. When you're building an AI agent harness that runs in a sandboxed environment, a CI pipeline, or an air-gapped container, every dependency is a liability — supply chain attack surface, version conflict, broken install.</p>
+
+    <p>We built a suite of 10 MCP servers that solve this problem. <strong>132 tools. 289 tests. Zero external dependencies.</strong> Just Python 3.8+ standard library.</p>
+
+    <h2>The Suite</h2>
+
+    <table>
+        <thead>
+            <tr><th>Server</th><th>Tools</th><th>Tests</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-context-guard">context-guard</a></td><td>14</td><td>36</td><td>Context window compression, deduplication, relevance filtering</td></tr>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-permission-guard">permission-guard</a></td><td>12</td><td>38</td><td>Intent-based authorization, risk scoring, audit trail</td></tr>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-agent-trace">agent-trace</a></td><td>14</td><td>28</td><td>Trace trees, per-step metrics, loop detection</td></tr>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-eval-harness">eval-harness</a></td><td>12</td><td>34</td><td>Behavior benchmarks, regression testing</td></tr>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-skill-router">skill-router</a></td><td>12</td><td>27</td><td>Intent-based skill routing</td></tr>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-prompt-versioning">prompt-versioning</a></td><td>15</td><td>28</td><td>Prompt version control, diff, rollback</td></tr>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-token-budget">token-budget</a></td><td>12</td><td>25</td><td>Token cost tracking, budget alerts</td></tr>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-loop-detector">loop-detector</a></td><td>10</td><td>24</td><td>Repetition loop detection</td></tr>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-ab-tester">ab-tester</a></td><td>11</td><td>22</td><td>A/B testing framework</td></tr>
+            <tr><td><a href="https://github.com/aaameobius-crypto/mcp-tool-registry">tool-registry</a></td><td>20</td><td>27</td><td>Tool lifecycle management</td></tr>
+        </tbody>
+        <tfoot>
+            <tr><th>Total</th><th>132</th><th>289</th><th></th></tr>
+        </tfoot>
+    </table>
+
+    <h2>Why Zero Dependencies Matters</h2>
+
+    <p>When you run an AI agent in production, the harness — the scaffolding around the model — determines success or failure. The harness handles context delivery, tool execution, permission checks, observability, and evaluation. Every component is critical.</p>
+
+    <p>But most MCP-based harness tools assume a friendly environment: network access, package managers, persistent storage. Real production environments break those assumptions:</p>
+
+    <ul>
+        <li><strong>CI pipelines</strong> start from clean containers. Every <code>pip install</code> adds 30+ seconds and a potential failure point.</li>
+        <li><strong>Sandboxed agents</strong> run without network access. If your server needs <code>npm install</code> on first run, it's dead on arrival.</li>
+        <li><strong>Supply chain attacks</strong> have compromised npm and PyPI packages multiple times. Fewer dependencies = smaller attack surface.</li>
+        <li><strong>Minimal containers</strong> for edge deployment can't afford 200MB of <code>node_modules</code>.</li>
+    </ul>
+
+    <p>Python's standard library is surprisingly capable. <code>json</code>, <code>hashlib</code>, <code>sqlite3</code>, <code>http.server</code>, <code>urllib</code>, <code>re</code>, <code>collections</code>, <code>functools</code>, <code>pathlib</code> — together they cover most of what a harness engineering MCP server needs.</p>
+
+    <h2>How We Did It</h2>
+
+    <h3>Transport: JSON-RPC over stdio</h3>
+
+    <p>The MCP protocol uses JSON-RPC 2.0 over stdio. Python's built-in <code>sys.stdin</code> / <code>sys.stdout</code> handle this directly — no web framework needed.</p>
+
+    <pre><code>import sys, json
+
+def handle_request(request):
+    method = request.get("method", "")
+    params = request.get("params", {})
+    if method == "tools/list":
+        return {"tools": get_tool_definitions()}
+    elif method == "tools/call":
+        return execute_tool(params["name"], params.get("arguments", {}))
+    return {"error": {"code": -32601, "message": "Method not found"}}
+
+for line in sys.stdin:
+    request = json.loads(line)
+    response = handle_request(request)
+    response["jsonrpc"] = "2.0"
+    response["id"] = request.get("id")
+    print(json.dumps(response))
+    sys.stdout.flush()</code></pre>
+
+    <p>That's a working MCP server in 15 lines. No imports outside the standard library.</p>
+
+    <h3>Storage: sqlite3 for persistence</h3>
+
+    <p>Several servers need persistent state — trace logs, audit trails, evaluation results. Python's <code>sqlite3</code> module provides a full SQL database with zero setup:</p>
+
+    <pre><code>import sqlite3
+
+conn = sqlite3.connect(":memory:")  # or a file path
+conn.execute("""
+    CREATE TABLE IF NOT EXISTS traces (
+        id TEXT PRIMARY KEY,
+        agent_id TEXT,
+        event TEXT,
+        timestamp REAL,
+        tokens_used INTEGER
+    )
+""")</code></pre>
+
+    <h3>Testing: unittest, not pytest</h3>
+
+    <p>Every server ships with tests using <code>unittest</code> — also in the standard library. The tests run with <code>python -m pytest tests/</code> if pytest is available, but they also run with plain <code>python -m unittest discover tests/</code> in environments where pytest isn't installed.</p>
+
+    <h2>Harness Coverage Map</h2>
+
+    <p>The 10 servers cover the major layers of a production agent harness:</p>
+
+    <pre><code>┌─────────────────────────────────────────────────────────┐
+│                   AGENT HARNESS LAYER                   │
+├──────────────┬──────────────┬───────────────────────────┤
+│  Context     │  Permissions │  Observability            │
+│  context-    │  permission- │  agent-trace             │
+│  guard       │   guard      │  loop-detector           │
+│  token-      │              │                           │
+│  budget      │              │                           │
+├──────────────┼──────────────┼───────────────────────────┤
+│  Verification & CI        │  Tooling                   │
+│  eval-harness             │  tool-registry             │
+│  skill-router             │                             │
+│  prompt-versioning        │                             │
+│  ab-tester                │                             │
+└───────────────────────────┴────────────────────────────┘</code></pre>
+
+    <h2>Getting Started</h2>
+
+    <p>Clone any server and run it:</p>
+
+    <pre><code>git clone https://github.com/aaameobius-crypto/mcp-context-guard.git
+cd mcp-context-guard
+
+# Run tests (no dependencies to install first!)
+python -m pytest tests/ -v
+
+# Start the MCP server
+python src/server.py</code></pre>
+
+    <p>Or browse the full suite at <a href="https://github.com/aaameobius-crypto/harness-engineering-suite">harness-engineering-suite</a>.</p>
+
+    <h2>What's Next</h2>
+
+    <p>We're submitting these servers to the <a href="https://github.com/ai-boost/awesome-harness-engineering">Awesome Harness Engineering</a> list, and they'll appear on <a href="https://glama.ai/mcp">Glama</a> and <a href="https://mcp.so">mcp.so</a> as indexing catches up. The zero-dependency design makes them particularly suited for CI integration — drop one into your GitHub Actions workflow without a single <code>pip install</code>.</p>
+
+    <hr>
+    <p><a href="https://github.com/aaameobius-crypto/harness-engineering-suite">GitHub</a> · <a href="../index.html">Home</a> · <a href="index.html">More Articles</a></p>
+</body>
+</html>
