@@ -33,4 +33,24 @@
   <url><loc>https://ameobius.github.io/darkbot-ai-templates/blog/9-zero-dep-mcp-servers.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://ameobius.github.io/darkbot-ai-templates/blog/19-zero-dep-mcp-servers.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://ameobius.github.io/darkbot-ai-templates/blog/30-zero-dep-mcp-servers.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url>
+    <loc>https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/agent-context-compression.html</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/agent-loop-detection.html</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/mcp-server-testing.html</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/token-budget-management.html</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
+  <url>
+    <loc>https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/permission-systems-for-agents.html</loc>
+    <lastmod>2026-07-09</lastmod>
+  </url>
 </urlset>

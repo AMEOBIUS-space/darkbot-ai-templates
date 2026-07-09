@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-eval-harness"
+version = "1.0.0"
+description = "Evaluation harness: run test suites against AI agent outputs"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "aaameobius-crypto"}]
+keywords = ["mcp", "ai", "agent", "harness", "tools"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/aaameobius-crypto/darkbot-ai-templates"
+Repository = "https://github.com/aaameobius-crypto/darkbot-ai-templates"
+
+[tool.setuptools]
+packages = ["src"]
+package-dir = {"" = "."}

@@ -1,23 +1,24 @@
-# 🤖 DarkBot AI — 17 Production-Ready Code Templates
+# 🤖 DarkBot AI — 168 Production-Ready Code Templates
 
-[![CI](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml)
-[![Tutorials](https://img.shields.io/badge/tutorials-18-blue)]()
+[![![PyPI](https://img.shields.io/pypi/v/darkbot-templates)](https://pypi.org/project/darkbot-templates/)
+[CI](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml)
+[![Tutorials](https://img.shields.io/badge/tutorials-28-blue)]()
 [![Demos](https://img.shields.io/badge/demos-18-green)]()
 [![Releases](https://img.shields.io/badge/releases-5-orange)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-65%2B-green)]()
+[![Tests](https://img.shields.io/badge/tests-733%2B-green)]()
 [![Docker](https://img.shields.io/badge/docker-ready-blue)]()
 [![Payment](https://img.shields.io/badge/payment-BTC%20%7C%20USDT%20%7C%20ETH%20%7C%20XMR-orange)]()
 [![GitHub stars](https://img.shields.io/github/stars/aaameobius-crypto/darkbot-ai-templates?style=social)](https://github.com/aaameobius-crypto/darkbot-ai-templates/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Products](https://img.shields.io/badge/templates-17-green)]()
-[![Tests](https://img.shields.io/badge/tests-65%2B-green)]()
+[![Products](https://img.shields.io/badge/templates-168-green)]()
+[![Tests](https://img.shields.io/badge/tests-733%2B-green)]()
 [![Docker](https://img.shields.io/badge/docker-ready-blue)]()
 [![Payment](https://img.shields.io/badge/payment-BTC%20%7C%20USDT%20%7C%20ETH%20%7C%20XMR-orange)]()
 
 > Python developer with 5+ years experience. Telegram bots, web scrapers, AI automation, CDP browser automation, blockchain, .onion development.
 
-🌐 **Live Portfolio**: [ameobius.github.io/darkbot-ai-templates](https://ameobius.github.io/darkbot-ai-templates)
+🌐 **Live Portfolio**: [aaameobius-crypto.github.io/darkbot-ai-templates](https://aaameobius-crypto.github.io/darkbot-ai-templates)
 
 📺 **Telegram Channel**: [@darkbot_ai_templates](https://t.me/darkbot_ai_templates)
 
@@ -94,11 +95,11 @@ All 17 templates have demos. Run any of them to see the template in action.
 
 ## 📝 Blog
 
-- [Building a Telegram Bot with AI](https://ameobius.github.io/darkbot-ai-templates/blog/building-telegram-bot-with-ai.html)
-- [Web Scraping with Anti-Detection](https://ameobius.github.io/darkbot-ai-templates/blog/web-scraping-anti-detection.html)
-- [Crypto Trading Bot Basics](https://ameobius.github.io/darkbot-ai-templates/blog/crypto-trading-bot-basics.html)
-- [Deploying a Tor Hidden Service](https://ameobius.github.io/darkbot-ai-templates/blog/deploying-tor-hidden-service.html)
-- [FastAPI JWT Authentication](https://ameobius.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html)
+- [Building a Telegram Bot with AI](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/building-telegram-bot-with-ai.html)
+- [Web Scraping with Anti-Detection](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/web-scraping-anti-detection.html)
+- [Crypto Trading Bot Basics](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/crypto-trading-bot-basics.html)
+- [Deploying a Tor Hidden Service](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/deploying-tor-hidden-service.html)
+- [FastAPI JWT Authentication](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html)
 
 
 ## 🚀 GitHub Codespaces
@@ -251,5 +252,5 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design principles, template structure
 
 ## 🌐 Links
 
-- [Portfolio](https://ameobius.github.io/darkbot-ai-templates)
+- [Portfolio](https://aaameobius-crypto.github.io/darkbot-ai-templates)
 - [GitHub](https://github.com/aaameobius-crypto/darkbot-ai-templates)

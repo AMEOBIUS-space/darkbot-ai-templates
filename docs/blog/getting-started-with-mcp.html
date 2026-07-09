@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started with MCP: A Beginner's Guide to AI Agent Tools</title>
+    <meta name="description" content="Build your first MCP server in 10 minutes. No npm, no Node.js, no frameworks. Just Python and the Model Context Protocol.">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"TechArticle","headline":"Getting Started with MCP: A Beginner's Guide","author":{"@type":"Person","name":"aaameobius-crypto"},"datePublished":"2026-07-09"}
+    </script>
+    <style>
+        body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
+        h1{font-size:2rem;margin-bottom:.5rem} h2{font-size:1.4rem;margin-top:2rem} h3{font-size:1.1rem;margin-top:1.5rem}
+        code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+        pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}
+        pre code{background:none;padding:0}
+        table{width:100%;border-collapse:collapse;margin:1rem 0}
+        th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd} th{background:#f8f8f8}
+        a{color:#0366d6}
+        .tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+        .tip{background:#d1ecf1;border-left:4px solid #17a2b8;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+        .warning{background:#fff3cd;border-left:4px solid #ffc107;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+    </style>
+</head>
+<body>
+    <h1>Getting Started with MCP: A Beginner's Guide</h1>
+    <p><span class="tag">MCP</span> <span class="tag">Tutorial</span> <span class="tag">Python</span></p>
+    <p><em>2026-07-09</em></p>
+
+    <p>The Model Context Protocol (MCP) is how AI agents talk to external tools. Instead of hard-coding API calls into your agent, you expose tools through MCP, and any MCP-compatible client (Claude, Cursor, your own agent) can use them.</p>
+
+    <p>This guide builds a working MCP server in 10 minutes. No npm. No Node.js. No frameworks. Just Python.</p>
+
+    <h2>What You Need</h2>
+    <ul>
+        <li>Python 3.10 or later</li>
+        <li>A text editor</li>
+        <li>10 minutes</li>
+    </ul>
+    <p>That is it. No pip install. No virtual environment. No build step.</p>
+
+    <h2>What is MCP?</h2>
+    <p>MCP is a protocol — a set of rules for communication. An MCP server exposes <strong>tools</strong>. An MCP client (like Claude Desktop) calls those tools. The protocol uses JSON-RPC 2.0 over stdio (standard input/output).</p>
+
+    <pre><code>┌────────┐     JSON-RPC      ┌────────┐
+│ Client  │ ◄───────────────▶ │ Server  │
+│(Claude) │   stdio (lines)   │(Python) │
+└────────┘                    └────────┘</code></pre>
+
+    <p>The client sends a request like "list your tools" or "call tool X with args Y". The server responds with JSON.</p>
+
+    <h2>Step 1: Create the Server</h2>
+    <p>Create a file called <code>server.py</code>:</p>
+
+    <pre><code>#!/usr/bin/env python3
+"""Minimal MCP server — 3 tools, zero dependencies."""
+import sys
+import json
+import hashlib
+import urllib.request
+
+def handle_request(request):
+    """Process a single JSON-RPC request."""
+    method = request.get("method", "")
+    params = request.get("params", {})
+    req_id = request.get("id")
+    
+    if method == "initialize":
+        return ok(req_id, {
+            "protocolVersion": "2024-11-05",
+            "capabilities": {"tools": {}},
+            "serverInfo": {"name": "my-first-server", "version": "1.0.0"}
+        })
+    
+    if method == "tools/list":
+        return ok(req_id, {"tools": [
+            {
+                "name": "hash_text",
+                "description": "Hash text using SHA-256",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "text": {"type": "string", "description": "Text to hash"}
+                    },
+                    "required": ["text"]
+                }
+            },
+            {
+                "name": "fetch_url",
+                "description": "Fetch the content of a URL",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "url": {"type": "string", "description": "URL to fetch"}
+                    },
+                    "required": ["url"]
+                }
+            },
+            {
+                "name": "timestamp",
+                "description": "Get current timestamp",
+                "inputSchema": {"type": "object", "properties": {}}
+            }
+        ]})
+    
+    if method == "tools/call":
+        name = params.get("name")
+        args = params.get("arguments", {})
+        
+        if name == "hash_text":
+            h = hashlib.sha256(args["text"].encode()).hexdigest()
+            return ok(req_id, {"content": [{"type": "text", "text": h}]})
+        
+        if name == "fetch_url":
+            resp = urllib.request.urlopen(args["url"], timeout=10)
+            content = resp.read().decode()[:5000]
+            return ok(req_id, {"content": [{"type": "text", "text": content}]})
+        
+        if name == "timestamp":
+            from datetime import datetime
+            ts = datetime.now().isoformat()
+            return ok(req_id, {"content": [{"type": "text", "text": ts}]})
+    
+    return error(req_id, -32601, f"Unknown method: {method}")
+
+def ok(req_id, result):
+    return {"jsonrpc": "2.0", "id": req_id, "result": result}
+
+def error(req_id, code, message):
+    return {"jsonrpc": "2.0", "id": req_id, 
+            "error": {"code": code, "message": message}}
+
+# Main loop: read lines from stdin, write responses to stdout
+if __name__ == "__main__":
+    for line in sys.stdin:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            request = json.loads(line)
+            response = handle_request(request)
+            print(json.dumps(response))
+            sys.stdout.flush()
+        except Exception as e:
+            print(json.dumps(error(None, -32603, str(e))))
+            sys.stdout.flush()</code></pre>
+
+    <h2>Step 2: Test the Server</h2>
+    <p>Test it directly from the terminal:</p>
+
+    <pre><code># Initialize
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | python3 server.py
+
+# List tools
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | python3 server.py
+
+# Call hash_text
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"hash_text","arguments":{"text":"hello"}}}' | python3 server.py</code></pre>
+
+    <p>You should see JSON responses with the tool results.</p>
+
+    <h2>Step 3: Connect to Claude Desktop</h2>
+    <p>Add your server to Claude's MCP config file:</p>
+
+    <p><strong>Mac:</strong> <code>~/Library/Application Support/Claude/claude_desktop_config.json</code><br>
+    <strong>Linux:</strong> <code>~/.config/claude/claude_desktop_config.json</code></p>
+
+    <pre><code>{
+  "mcpServers": {
+    "my-tools": {
+      "command": "python3",
+      "args": ["/absolute/path/to/server.py"]
+    }
+  }
+}</code></pre>
+
+    <p>Restart Claude Desktop. Your tools now appear in the conversation.</p>
+
+    <div class="tip">Use absolute paths in the config. Relative paths do not work — Claude does not know your working directory.</div>
+
+    <h2>How It Works</h2>
+
+    <table>
+        <tr><th>Step</th><th>What happens</th></tr>
+        <tr><td>1. Client sends <code>initialize</code></td><td>Server responds with capabilities</td></tr>
+        <tr><td>2. Client sends <code>tools/list</code></td><td>Server returns tool schemas (JSON Schema)</td></tr>
+        <tr><td>3. User asks a question</td><td>Client (Claude) decides which tool to call</td></tr>
+        <tr><td>4. Client sends <code>tools/call</code></td><td>Server executes handler, returns result</td></tr>
+        <tr><td>5. Client uses result</td><td>Claude incorporates the result into its response</td></tr>
+    </table>
+
+    <h2>Tool Schema Anatomy</h2>
+    <p>Each tool is defined by a JSON Schema. The schema tells the client what arguments the tool accepts:</p>
+
+    <pre><code>{
+  "name": "hash_text",           // unique identifier
+  "description": "Hash text",    // what the tool does (LLM reads this)
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "text": {
+        "type": "string",
+        "description": "Text to hash"  // helps LLM use the tool correctly
+      },
+      "algorithm": {
+        "type": "string",
+        "enum": ["sha256", "md5", "sha512"],  // constrained choices
+        "default": "sha256"
+      }
+    },
+    "required": ["text"]  // must always provide "text"
+  }
+}</code></pre>
+
+    <div class="warning">Write clear descriptions. The LLM uses the description to decide when to call the tool. A vague description like "process data" leads to wrong tool calls.</div>
+
+    <h2>Common Patterns</h2>
+
+    <h3>Returning Errors</h3>
+    <pre><code>if name == "hash_text":
+    text = args.get("text")
+    if not text:
+        return ok(req_id, {
+            "content": [{"type": "text", "text": "Error: 'text' is required"}],
+            "isError": true
+        })</code></pre>
+
+    <h3>Returning Structured Data</h3>
+    <pre><code># Return JSON that the LLM can parse
+return ok(req_id, {
+    "content": [{
+        "type": "text", 
+        "text": json.dumps({"hash": h, "algorithm": "sha256", "length": 64})
+    }]
+})</code></pre>
+
+    <h3>Stateful Tools</h3>
+    <pre><code># Tools can share state via module-level variables
+cache = {}
+
+def handle_fetch(args):
+    url = args["url"]
+    if url in cache:
+        return cache[url]
+    result = urllib.request.urlopen(url).read().decode()
+    cache[url] = result
+    return result</code></pre>
+
+    <h2>Next Steps</h2>
+    <ul>
+        <li>Install production-ready servers: <code>pip install mcp-tools-bundle</code></li>
+        <li>Read the <a href="https://modelcontextprotocol.io">MCP specification</a></li>
+        <li>Browse <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">168 templates</a> for ideas</li>
+        <li>Read about <a href="agent-context-compression.html">context compression</a> and <a href="agent-loop-detection.html">loop detection</a></li>
+    </ul>
+
+    <h2>Install Production Servers</h2>
+    <pre><code>pip install darkbot-templates mcp-tools-bundle cdp-toolkit
+pip install mcp-context-guard mcp-permission-guard mcp-agent-trace</code></pre>
+
+    <hr>
+    <p><em>168 production-ready Python templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
+</body>
+</html>

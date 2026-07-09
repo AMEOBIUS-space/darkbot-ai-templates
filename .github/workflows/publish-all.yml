@@ -1,0 +1,40 @@
+name: Publish All to PyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Packages to publish (comma-separated, or "all")'
+        required: false
+        default: 'all'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - mcp-eval-harness
+          - mcp-skill-router
+          - mcp-prompt-versioning
+          - mcp-token-budget
+          - mcp-loop-detector
+          - mcp-ab-tester
+          - mcp-tool-registry
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Install tools
+      run: pip install build twine
+    - name: Build ${{ matrix.package }}
+      working-directory: ${{ matrix.package }}
+      run: python -m build
+    - name: Publish ${{ matrix.package }}
+      working-directory: ${{ matrix.package }}
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: twine upload --skip-existing dist/*

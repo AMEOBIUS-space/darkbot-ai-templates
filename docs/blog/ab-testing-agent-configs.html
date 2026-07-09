@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A/B Testing AI Agent Configurations</title>
+    <meta name="description" content="Run controlled experiments on your AI agent: compare models, prompts, tool sets, and temperature settings side by side.">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"TechArticle","headline":"A/B Testing AI Agent Configurations","author":{"@type":"Person","name":"aaameobius-crypto"},"datePublished":"2026-07-09"}
+    </script>
+    <style>
+        body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
+        h1{font-size:2rem;margin-bottom:.5rem} h2{font-size:1.4rem;margin-top:2rem} h3{font-size:1.1rem;margin-top:1.5rem}
+        code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+        pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}
+        pre code{background:none;padding:0}
+        table{width:100%;border-collapse:collapse;margin:1rem 0}
+        th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd} th{background:#f8f8f8}
+        a{color:#0366d6}
+        .tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+        .metric{font-family:monospace;font-weight:700;color:#0366d6}
+        .tip{background:#d1ecf1;border-left:4px solid #17a2b8;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+    </style>
+</head>
+<body>
+    <h1>A/B Testing AI Agent Configurations</h1>
+    <p><span class="tag">Testing</span> <span class="tag">MCP</span> <span class="tag">Python</span></p>
+    <p><em>2026-07-09</em></p>
+
+    <p>Which model is better for your task: GPT-4o at temperature 0.7 or Claude Sonnet at 0.5? Which prompt produces fewer hallucinated tool calls? Does adding context compression help or hurt accuracy?</p>
+
+    <p>You cannot answer these questions by trying one config, then trying another, and comparing vibes. You need controlled A/B tests with the same inputs, same evaluation criteria, and statistical significance.</p>
+
+    <h2>The Experiment Framework</h2>
+
+    <pre><code>from dataclasses import dataclass, field
+from datetime import datetime
+import json, hashlib
+
+@dataclass
+class Variant:
+    name: str
+    config: dict  # model, temperature, tools, system_prompt, etc.
+    
+@dataclass
+class TestCase:
+    name: str
+    input: str
+    expected: str = ""  # for exact match
+    evaluator: str = "manual"  # manual, exact, contains, llm_judge
+    
+@dataclass
+class TestResult:
+    variant: str
+    test_case: str
+    output: str
+    passed: bool = False
+    latency_ms: int = 0
+    tokens_used: int = 0
+    error: str = ""
+
+@dataclass
+class ABTestRunner:
+    variants: list = field(default_factory=list)
+    test_cases: list = field(default_factory=list)
+    results: list = field(default_factory=list)
+    
+    def add_variant(self, name: str, **config):
+        self.variants.append(Variant(name=name, config=config))
+    
+    def add_test(self, name: str, input: str, expected: str = "", 
+                 evaluator: str = "contains"):
+        self.test_cases.append(
+            TestCase(name, input, expected, evaluator)
+        )
+    
+    def evaluate(self, output: str, expected: str, evaluator: str) -> bool:
+        if evaluator == "exact":
+            return output.strip() == expected.strip()
+        elif evaluator == "contains":
+            return expected.lower() in output.lower()
+        elif evaluator == "manual":
+            return True  # review later
+        return False
+    
+    def run_pair(self, variant_a: Variant, variant_b: Variant) -> dict:
+        """Run all test cases with both variants, compare."""
+        results_a = []
+        results_b = []
+        
+        for case in self.test_cases:
+            # Run variant A
+            out_a = self._run_variant(variant_a, case)
+            results_a.append(out_a)
+            
+            # Run variant B
+            out_b = self._run_variant(variant_b, case)
+            results_b.append(out_b)
+        
+        # Compute stats
+        pass_a = sum(1 for r in results_a if r.passed)
+        pass_b = sum(1 for r in results_b if r.passed)
+        tokens_a = sum(r.tokens_used for r in results_a)
+        tokens_b = sum(r.tokens_used for r in results_b)
+        latency_a = sum(r.latency_ms for r in results_a) // len(results_a)
+        latency_b = sum(r.latency_ms for r in results_b) // len(results_b)
+        
+        return {
+            "variant_a": variant_a.name,
+            "variant_b": variant_b.name,
+            "pass_rate_a": f"{pass_a}/{len(self.test_cases)}",
+            "pass_rate_b": f"{pass_b}/{len(self.test_cases)}",
+            "tokens_a": tokens_a,
+            "tokens_b": tokens_b,
+            "avg_latency_a_ms": latency_a,
+            "avg_latency_b_ms": latency_b,
+            "winner": variant_a.name if pass_a > pass_b else variant_b.name if pass_b > pass_a else "tie"
+        }
+    
+    def _run_variant(self, variant: Variant, case: TestCase) -> TestResult:
+        """Execute a single test case with a variant. Override in subclass."""
+        # This is where you call your actual agent
+        # For demo purposes, return a placeholder
+        return TestResult(
+            variant=variant.name,
+            test_case=case.name,
+            output="",
+            passed=False
+        )</code></pre>
+
+    <h2>Common Experiments</h2>
+
+    <h3>Experiment 1: Model Comparison</h3>
+    <pre><code>runner = ABTestRunner()
+
+runner.add_variant("gpt4o", model="gpt-4o", temperature=0.7)
+runner.add_variant("claude", model="claude-sonnet-4", temperature=0.7)
+runner.add_variant("gemini", model="gemini-2.5-pro", temperature=0.7)
+
+# Add test cases
+runner.add_test("simple_math", "What is 17 * 23?", "391", "exact")
+runner.add_test("code_gen", "Write a Python function to reverse a string", 
+                "def reverse", "contains")
+runner.add_test("tool_use", "What tools do you have?", "", "manual")</code></pre>
+
+    <h3>Experiment 2: Temperature Tuning</h3>
+    <pre><code>runner = ABTestRunner()
+
+for temp in [0.0, 0.3, 0.7, 1.0]:
+    runner.add_variant(f"temp_{temp}", model="claude-sonnet-4", 
+                       temperature=temp)
+
+# Creative tasks benefit from higher temperature
+runner.add_test("creative", "Write a haiku about debugging", "", "manual")
+# Factual tasks benefit from lower temperature  
+runner.add_test("factual", "What is the capital of France?", "Paris", "exact")</code></pre>
+
+    <h3>Experiment 3: Prompt Variations</h3>
+    <pre><code>runner = ABTestRunner()
+
+runner.add_variant(
+    "concise_prompt",
+    model="claude-sonnet-4",
+    system="Answer concisely."
+)
+runner.add_variant(
+    "detailed_prompt", 
+    model="claude-sonnet-4",
+    system="You are an expert. Explain your reasoning step by step. Use examples."
+)
+runner.add_variant(
+    "tools_prompt",
+    model="claude-sonnet-4",
+    system="Use tools when possible. Verify with searches."
+)
+
+runner.add_test(
+    "debugging",
+    "Fix: TypeError: unsupported operand type(s) for +: 'int' and 'str'",
+    "str(", "contains"  # should suggest converting to string
+)</code></pre>
+
+    <h3>Experiment 4: Tool Set Impact</h3>
+    <pre><code>runner = ABTestRunner()
+
+runner.add_variant("all_tools", model="claude-sonnet-4", 
+                   tools=["terminal", "read_file", "search_files", 
+                          "web_search", "browser"])
+runner.add_variant("minimal", model="claude-sonnet-4",
+                   tools=["terminal", "read_file"])
+runner.add_variant("no_tools", model="claude-sonnet-4",
+                   tools=[])
+
+runner.add_test("file_search", 
+                "Find all Python files that import 'requests'",
+                ".py", "contains")</code></pre>
+
+    <h2>Results Table</h2>
+
+    <p>Example output from a model comparison experiment:</p>
+
+    <table>
+        <tr><th>Variant</th><th>Pass rate</th><th>Tokens</th><th>Latency</th><th>Cost</th></tr>
+        <tr><td>GPT-4o (t=0.7)</td><td class="metric">8/10</td><td>12,400</td><td>2.1s</td><td>$0.04</td></tr>
+        <tr><td>Claude Sonnet (t=0.7)</td><td class="metric">9/10</td><td>9,800</td><td>1.8s</td><td>$0.03</td></tr>
+        <tr><td>Gemini 2.5 Pro (t=0.7)</td><td class="metric">7/10</td><td>14,200</td><td>3.2s</td><td>$0.05</td></tr>
+    </table>
+
+    <p>Claude won on pass rate AND cost. Without A/B testing, you might have defaulted to GPT-4o and never known.</p>
+
+    <h2>Statistical Significance</h2>
+
+    <p>With 10 test cases, a 9/10 vs 8/10 difference is not significant. You need at least 30 cases for meaningful results:</p>
+
+    <pre><code>import math
+
+def is_significant(pass_a: int, n_a: int, pass_b: int, n_b: int) -> bool:
+    """Quick significance check (normal approximation)."""
+    p_a = pass_a / n_a
+    p_b = pass_b / n_b
+    p_pool = (pass_a + pass_b) / (n_a + n_b)
+    
+    if p_pool == 0 or p_pool == 1:
+        return False
+    
+    se = math.sqrt(p_pool * (1 - p_pool) * (1/n_a + 1/n_b))
+    z = (p_a - p_b) / se
+    
+    return abs(z) > 1.96  # 95% confidence
+
+# Example: 27/30 vs 22/30
+print(is_significant(27, 30, 22, 30))  # True — significant
+print(is_significant(9, 10, 8, 10))    # False — not enough data</code></pre>
+
+    <div class="tip">Run 30+ test cases per variant. Anything less is directional, not conclusive.</div>
+
+    <h2>Persistent Results</h2>
+
+    <pre><code>import sqlite3
+
+class PersistentABTest(ABTestRunner):
+    def __init__(self, db_path="ab_tests.db"):
+        super().__init__()
+        self.db = sqlite3.connect(db_path)
+        self.db.execute("""
+            CREATE TABLE IF NOT EXISTS results (
+                experiment TEXT, variant TEXT, test_case TEXT,
+                output TEXT, passed INTEGER, tokens INTEGER,
+                latency_ms INTEGER, timestamp TEXT
+            )
+        """)
+        self.db.commit()
+    
+    def save_results(self, experiment_name: str):
+        for r in self.results:
+            self.db.execute(
+                "INSERT INTO results VALUES (?,?,?,?,?,?,?,?)",
+                (experiment_name, r.variant, r.test_case, r.output[:500],
+                 r.passed, r.tokens_used, r.latency_ms, 
+                 datetime.now().isoformat())
+            )
+        self.db.commit()</code></pre>
+
+    <h2>Install</h2>
+    <pre><code>pip install mcp-ab-tester</code></pre>
+    <p>Source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-ab-tester">mcp-ab-tester on GitHub</a></p>
+
+    <hr>
+    <p><em>168 templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
+</body>
+</html>

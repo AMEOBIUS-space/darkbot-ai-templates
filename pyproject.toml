@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "darkbot-templates"
-version = "1.5.1"
+version = "1.5.0"
 description = "18 production-ready Python code templates: TG bots, scrapers, AI agents, crypto trading, Tor."
 readme = "README.md"
 license = {text = "MIT"}
