@@ -1,6 +1,6 @@
 # 🤖 DarkBot AI — 17 Production-Ready Code Templates
 
-[![CI](https://github.com/AMEOBIUS/darkbot-ai-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/AMEOBIUS/darkbot-ai-templates/actions/workflows/ci.yml)
+[![CI](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml)
 [![Tutorials](https://img.shields.io/badge/tutorials-18-blue)]()
 [![Demos](https://img.shields.io/badge/demos-18-green)]()
 [![Releases](https://img.shields.io/badge/releases-5-orange)]()
@@ -8,7 +8,7 @@
 [![Tests](https://img.shields.io/badge/tests-65%2B-green)]()
 [![Docker](https://img.shields.io/badge/docker-ready-blue)]()
 [![Payment](https://img.shields.io/badge/payment-BTC%20%7C%20USDT%20%7C%20ETH%20%7C%20XMR-orange)]()
-[![GitHub stars](https://img.shields.io/github/stars/AMEOBIUS/darkbot-ai-templates?style=social)](https://github.com/AMEOBIUS/darkbot-ai-templates/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/aaameobius-crypto/darkbot-ai-templates?style=social)](https://github.com/aaameobius-crypto/darkbot-ai-templates/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Products](https://img.shields.io/badge/templates-17-green)]()
 [![Tests](https://img.shields.io/badge/tests-65%2B-green)]()
@@ -114,7 +114,7 @@ Try templates in your browser — no install needed:
 Use templates in your CI/CD:
 
 ```yaml
-- uses: AMEOBIUS/darkbot-ai-templates/.github/actions/setup-templates@main
+- uses: aaameobius-crypto/darkbot-ai-templates/.github/actions/setup-templates@main
   with:
     template: tg-bot
     destination: ./bot/
@@ -196,7 +196,7 @@ This repo has been used to solve 81 bounty issues across GitHub:
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=AMEOBIUS/darkbot-ai-templates&type=Date)](https://star-history.com/#AMEOBIUS/darkbot-ai-templates&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=aaameobius-crypto/darkbot-ai-templates&type=Date)](https://star-history.com/#aaameobius-crypto/darkbot-ai-templates&Date)
 
 ## 💬 Contact
 
@@ -207,12 +207,12 @@ This repo has been used to solve 81 bounty issues across GitHub:
 ## ⚡ Quick Install
 
 ```bash
-curl -sL https://raw.githubusercontent.com/AMEOBIUS/darkbot-ai-templates/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/aaameobius-crypto/darkbot-ai-templates/main/install.sh | bash
 ```
 
 Or clone manually:
 ```bash
-git clone https://github.com/AMEOBIUS/darkbot-ai-templates.git
+git clone https://github.com/aaameobius-crypto/darkbot-ai-templates.git
 cd darkbot-ai-templates
 python tg-bot-template/demo.py  # Try any demo — no API keys needed!
 ```
@@ -252,4 +252,4 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design principles, template structure
 ## 🌐 Links
 
 - [Portfolio](https://ameobius.github.io/darkbot-ai-templates)
-- [GitHub](https://github.com/AMEOBIUS/darkbot-ai-templates)
+- [GitHub](https://github.com/aaameobius-crypto/darkbot-ai-templates)

@@ -2,7 +2,7 @@
 
 ## 🙏 Contributors
 
-- [@AMEOBIUS](https://github.com/AMEOBIUS) — Creator, maintainer
+- [@aaameobius-crypto](https://github.com/aaameobius-crypto) — Creator, maintainer
 
 ## Adding a New Template
 
@@ -45,4 +45,4 @@
 
 - Telegram: [@darkbot_ai_bot](https://t.me/darkbot_ai_bot)
 - Payment: BTC / USDT / ETH / XMR
-- Discussions: [GitHub Discussions](https://github.com/AMEOBIUS/darkbot-ai-templates/discussions)
+- Discussions: [GitHub Discussions](https://github.com/aaameobius-crypto/darkbot-ai-templates/discussions)

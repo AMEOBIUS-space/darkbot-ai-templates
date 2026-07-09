@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "darkbot-templates"
-version = "1.5.0"
+version = "1.5.1"
 description = "18 production-ready Python code templates: TG bots, scrapers, AI agents, crypto trading, Tor."
 readme = "README.md"
 license = {text = "MIT"}
@@ -29,10 +29,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://ameobius.github.io/darkbot-ai-templates"
-Repository = "https://github.com/AMEOBIUS/darkbot-ai-templates"
-Documentation = "https://github.com/AMEOBIUS/darkbot-ai-templates/blob/main/ARCHITECTURE.md"
-Changelog = "https://github.com/AMEOBIUS/darkbot-ai-templates/releases"
+Homepage = "https://aaameobius-crypto.github.io/darkbot-ai-templates"
+Repository = "https://github.com/aaameobius-crypto/darkbot-ai-templates"
+Documentation = "https://github.com/aaameobius-crypto/darkbot-ai-templates/blob/main/ARCHITECTURE.md"
+Changelog = "https://github.com/aaameobius-crypto/darkbot-ai-templates/releases"
 
 [tool.setuptools]
 py-modules = []
