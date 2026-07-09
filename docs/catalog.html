@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>138 Repositories: The Full MCP Server Catalog</title>
+<meta name="description" content="Complete catalog of 138 zero-dependency Python MCP servers — harness engineering, utility tools, and templates.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"138 Repositories: The Full MCP Server Catalog","datePublished":"2026-07-09","author":{"@type":"Person","name":"AMEOBIUS"}}
+</script>
+<style>
+body{font-family:-apple-system,sans-serif;max-width:900px;margin:0 auto;padding:40px 20px;line-height:1.7;color:#1a1a1a}
+h1{font-size:2rem}h2{font-size:1.3rem;margin-top:2rem}h3{font-size:1.1rem;margin-top:1.5rem}
+code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd}
+th{background:#f8f8f8}.back{margin-bottom:2rem}.meta{color:#666;font-size:.9rem;margin-bottom:2rem}
+.tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+.repo-list{columns:2;column-gap:2rem}
+.repo-list li{break-inside:avoid;margin-bottom:.3rem}
+.repo-list a{color:#0366d6;text-decoration:none;font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="back"><a href="../index.html">&larr; Home</a></div>
+<h1>138 Repositories: The Full MCP Server Catalog</h1>
+<p class="meta">July 9, 2026</p>
+<span class="tag">MCP</span> <span class="tag">Python</span> <span class="tag">Zero Dependencies</span>
+
+<p>What started as a handful of utility MCP servers grew into <strong>138 public repositories</strong> on <a href="https://github.com/aaameobius-crypto">GitHub/aaameobius-crypto</a>. Every single one runs on pure Python standard library — no <code>pip install</code>, no <code>npm install</code>, no supply chain risk.</p>
+
+<h2>The Numbers</h2>
+<table>
+<tr><th>Category</th><th>Count</th><th>Description</th></tr>
+<tr><td>Harness Engineering</td><td>10</td><td>Context, permissions, tracing, evaluation, routing</td></tr>
+<tr><td>MCP Utility Servers</td><td>~88</td><td>JSON, CSV, crypto, web scraping, email, SQLite, HTTP</td></tr>
+<tr><td>Templates & Tools</td><td>~34</td><td>Telegram bots, FastAPI, Docker, OAuth, WebSocket</td></tr>
+<tr><td>Meta-repos</td><td>6</td><td>Bundle, profile, awesome fork, landing pages</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>138</strong></td><td></td></tr>
+</table>
+
+<h2>Harness Engineering Suite (10 servers)</h2>
+<p>The flagship product line. <a href="https://github.com/aaameobius-crypto/harness-engineering-suite">harness-engineering-suite</a> aggregates all 10 into a single entry point.</p>
+<table>
+<tr><th>Server</th><th>Tools</th><th>Tests</th><th>Layer</th></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-context-guard">context-guard</a></td><td>14</td><td>36</td><td>Context Delivery</td></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-token-budget">token-budget</a></td><td>12</td><td>25</td><td>Context Delivery</td></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-permission-guard">permission-guard</a></td><td>12</td><td>38</td><td>Permissions</td></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-agent-trace">agent-trace</a></td><td>14</td><td>28</td><td>Observability</td></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-loop-detector">loop-detector</a></td><td>10</td><td>24</td><td>Observability</td></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-eval-harness">eval-harness</a></td><td>12</td><td>34</td><td>Verification</td></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-skill-router">skill-router</a></td><td>12</td><td>27</td><td>Verification</td></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-prompt-versioning">prompt-versioning</a></td><td>15</td><td>28</td><td>Verification</td></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-ab-tester">ab-tester</a></td><td>11</td><td>22</td><td>Verification</td></tr>
+<tr><td><a href="https://github.com/aaameobius-crypto/mcp-tool-registry">tool-registry</a></td><td>20</td><td>27</td><td>Tooling</td></tr>
+</table>
+
+<h2>How to Use Any Server</h2>
+<pre><code># 1. Clone
+git clone https://github.com/aaameobius-crypto/mcp-context-guard.git
+
+# 2. No dependencies to install!
+
+# 3. Run tests
+python -m pytest tests/ -v
+
+# 4. Start the server (stdio JSON-RPC)
+python src/server.py</code></pre>
+
+<h3>Claude Desktop config</h3>
+<pre><code>{
+  "mcpServers": {
+    "context-guard": {
+      "command": "python",
+      "args": ["/path/to/mcp-context-guard/src/server.py"]
+    }
+  }
+}</code></pre>
+
+<h2>Why Zero Dependencies?</h2>
+<p>Every dependency is a liability — supply chain attack surface, version conflicts, broken installs in CI. Python's stdlib has <code>json</code>, <code>sqlite3</code>, <code>hashlib</code>, <code>http.server</code>, <code>re</code>, <code>collections</code>, <code>pathlib</code>, <code>urllib</code>. That covers 95% of what an MCP server needs.</p>
+
+<p>The 5% that needs external libraries (heavy NLP, ML inference) doesn't belong in a utility MCP server anyway — those belong in dedicated model-serving infrastructure.</p>
+
+<hr>
+<p><a href="https://github.com/aaameobius-crypto">GitHub</a> · <a href="https://github.com/aaameobius-crypto/harness-engineering-suite">Harness Suite</a> · <a href="blog/index.html">Blog</a></p>
+</body>
+</html>
