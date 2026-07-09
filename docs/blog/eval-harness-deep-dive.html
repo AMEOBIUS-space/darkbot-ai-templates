@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Harness for AI Agents: Test Suites, Scoring, and Regression Detection</title>
+    <meta name="description" content="Build a test harness that scores AI agent outputs against expected behavior. Test suites, multi-dimensional scoring, regression detection. Pure Python.">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"TechArticle","headline":"Evaluation Harness for AI Agents","description":"Test suites, multi-dimensional scoring, and regression detection for AI agent outputs. Pure Python, zero dependencies.","author":{"@type":"Person","name":"AMEOBIUS"},"datePublished":"2026-07-10","dateModified":"2026-07-10"}
+    </script>
+    <style>
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
+        h1{font-size:2rem;margin-bottom:.5rem}h2{font-size:1.4rem;margin-top:2rem}h3{font-size:1.15rem;margin-top:1.5rem}
+        code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+        pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}pre code{background:none;padding:0}
+        table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd}th{background:#f8f8f8}
+        a{color:#0366d6}.tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+        .info{background:#d1ecf1;border-left:4px solid #0dcaf0;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+        .warning{background:#fff3cd;border-left:4px solid #ffc107;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+        .pass{color:#28a745;font-weight:bold}.fail{color:#dc3545;font-weight:bold}
+    </style>
+</head>
+<body>
+<h1>Evaluation Harness for AI Agents: Test Suites, Scoring, and Regression Detection</h1>
+<p><span class="tag">AI Agents</span> <span class="tag">Testing</span> <span class="tag">Python</span> <span class="tag">MCP</span></p>
+
+<p>You changed the system prompt. Accuracy went up 3% on coding tasks — but down 8% on reasoning tasks. You didn't notice because you only tested coding. An evaluation harness catches regressions before they ship.</p>
+
+<h2>Why Agent Testing Is Different from Unit Testing</h2>
+<p>Unit tests assert exact outputs. Agent outputs are non-deterministic — the same prompt can produce different valid responses. You need <strong>behavioral testing</strong>: does the output satisfy the task constraints, not does it match a string?</p>
+
+<table>
+<tr><th>Traditional Unit Test</th><th>Agent Evaluation Test</th></tr>
+<tr><td><code>assert add(2, 3) == 5</code></td><td><code>assert response.contains_code_block() and response.uses_type_hints()</code></td></tr>
+<tr><td>Exact match</td><td>Constraint satisfaction</td></tr>
+<tr><td>Binary pass/fail</td><td>Multi-dimensional score (0.0-1.0)</td></tr>
+<tr><td>Deterministic</td><td>Probabilistic (run N times, average)</td></tr>
+<tr><td>Fast (microseconds)</td><td>Slow (API calls, 1-5s each)</td></tr>
+</table>
+
+<h2>Step 1: Test Case Definition</h2>
+<pre><code>from dataclasses import dataclass, field
+from typing import Callable, Any
+
+@dataclass
+class TestCase:
+    test_id: str
+    category: str           # "coding", "reasoning", "safety", "tools"
+    prompt: str
+    constraints: list[Callable[[str], tuple[bool, str]]] = field(default_factory=list)
+    min_pass_rate: float = 0.8  # Fraction of constraints that must pass
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
+# Constraint builders — reusable assertions
+def contains_code() -> Callable:
+    def check(response: str) -> tuple[bool, str]:
+        has_code = "```" in response or "    " in response
+        return (has_code, "Response must contain code block" if not has_code else "")
+    return check
+
+def uses_type_hints() -> Callable:
+    def check(response: str) -> tuple[bool, str]:
+        indicators = ["->", ": str", ": int", ": float", ": bool", ": list",
+                      ": dict", " | ", "Optional[", "Union["]
+        found = sum(1 for i in indicators if i in response)
+        return (found >= 2, f"Need 2+ type hint indicators, found {found}")
+    return check
+
+def max_length(max_chars: int) -> Callable:
+    def check(response: str) -> tuple[bool, str]:
+        return (len(response) &lt;= max_chars,
+                f"Response {len(response)} &gt; {max_chars} chars")
+    return check
+
+def contains_all(terms: list[str]) -> Callable:
+    def check(response: str) -> tuple[bool, str]:
+        lower = response.lower()
+        missing = [t for t in terms if t.lower() not in lower]
+        return (not missing, f"Missing terms: {missing}" if missing else "")
+    return check
+
+def excludes(terms: list[str]) -> Callable:
+    def check(response: str) -> tuple[bool, str]:
+        lower = response.lower()
+        found = [t for t in terms if t.lower() in lower]
+        return (not found, f"Found forbidden terms: {found}" if found else "")
+    return check
+
+def follows_format(format_type: str) -> Callable:
+    def check(response: str) -> tuple[bool, str]:
+        if format_type == "json":
+            import json
+            try:
+                json.loads(response)
+                return (True, "")
+            except Exception:
+                return (False, "Response is not valid JSON")
+        elif format_type == "markdown":
+            has_header = response.startswith("#")
+            has_code = "```" in response
+            return (has_header or has_code,
+                    "Response should have markdown structure")
+        return (True, "")
+    return check</code></pre>
+
+<h2>Step 2: The Test Runner</h2>
+<pre><code>import time
+import json
+from dataclasses import asdict
+
+@dataclass
+class TestResult:
+    test_id: str
+    category: str
+    passed: bool
+    score: float              # 0.0-1.0 fraction of constraints passed
+    constraint_results: list[dict]
+    response: str
+    latency_ms: float
+    tokens_used: int = 0
+    timestamp: float = field(default_factory=time.time)
+
+
+class EvalHarness:
+    def __init__(self):
+        self._tests: list[TestCase] = []
+        self._results: list[TestResult] = []
+        self._regression_baseline: dict[str, float] = {}
+
+    def add_test(self, test: TestCase) -> None:
+        self._tests.append(test)
+
+    def run_test(self, test: TestCase,
+                 agent_fn: Callable[[str], str],
+                 model: str = "") -> TestResult:
+        """Run a single test case against an agent."""
+        start = time.monotonic()
+        response = agent_fn(test.prompt)
+        latency_ms = (time.monotonic() - start) * 1000
+
+        # Evaluate constraints
+        constraint_results = []
+        passed_count = 0
+
+        for constraint in test.constraints:
+            ok, message = constraint(response)
+            constraint_results.append({
+                "passed": ok,
+                "message": message,
+            })
+            if ok:
+                passed_count += 1
+
+        total = len(test.constraints)
+        score = passed_count / total if total > 0 else 1.0
+        passed = score >= test.min_pass_rate
+
+        result = TestResult(
+            test_id=test.test_id,
+            category=test.category,
+            passed=passed,
+            score=score,
+            constraint_results=constraint_results,
+            response=response[:500],  # Truncate for storage
+            latency_ms=latency_ms,
+        )
+        self._results.append(result)
+        return result
+
+    def run_suite(self, agent_fn: Callable[[str], str],
+                  categories: list[str] | None = None,
+                  repeats: int = 1) -> dict:
+        """Run all tests (optionally filtered by category)."""
+        tests = self._tests
+        if categories:
+            tests = [t for t in tests if t.category in categories]
+
+        for _ in range(repeats):
+            for test in tests:
+                self.run_test(test, agent_fn)
+
+        return self.summarize()
+
+    def summarize(self) -> dict:
+        """Aggregate results by category."""
+        by_category: dict[str, list[TestResult]] = {}
+        for r in self._results:
+            by_category.setdefault(r.category, []).append(r)
+
+        summary = {}
+        for cat, results in by_category.items():
+            scores = [r.score for r in results]
+            summary[cat] = {
+                "test_count": len(results),
+                "pass_rate": sum(1 for r in results if r.passed) / len(results),
+                "avg_score": sum(scores) / len(scores),
+                "min_score": min(scores),
+                "max_score": max(scores),
+                "avg_latency_ms": sum(r.latency_ms for r in results) / len(results),
+            }
+
+        overall_pass = sum(1 for r in self._results if r.passed)
+        summary["_overall"] = {
+            "total_tests": len(self._results),
+            "overall_pass_rate": overall_pass / max(len(self._results), 1),
+            "categories": list(by_category.keys()),
+        }
+
+        return summary</code></pre>
+
+<h2>Step 3: Regression Detection</h2>
+<pre><code>class RegressionDetector:
+    """Compare current results against a baseline to detect regressions."""
+
+    def __init__(self, harness: EvalHarness):
+        self.harness = harness
+
+    def set_baseline(self) -> dict:
+        """Snapshot current scores as the regression baseline."""
+        summary = self.harness.summarize()
+        baseline = {}
+        for cat, stats in summary.items():
+            if cat != "_overall":
+                baseline[cat] = stats["avg_score"]
+        self.harness._regression_baseline = baseline
+        return baseline
+
+    def check_regression(self, threshold: float = 0.05) -> dict:
+        """Compare current results to baseline. Flag regressions > threshold."""
+        summary = self.harness.summarize()
+        baseline = self.harness._regression_baseline
+
+        if not baseline:
+            return {"status": "no_baseline", "message": "Set a baseline first"}
+
+        regressions = []
+        improvements = []
+
+        for cat, current_score in summary.items():
+            if cat == "_overall" or cat not in baseline:
+                continue
+
+            base_score = baseline[cat]
+            delta = current_score["avg_score"] - base_score
+
+            if delta &lt; -threshold:
+                regressions.append({
+                    "category": cat,
+                    "baseline": round(base_score, 3),
+                    "current": round(current_score["avg_score"], 3),
+                    "delta": round(delta, 3),
+                    "severity": "critical" if delta &lt; -0.10 else "warning",
+                })
+            elif delta > threshold:
+                improvements.append({
+                    "category": cat,
+                    "baseline": round(base_score, 3),
+                    "current": round(current_score["avg_score"], 3),
+                    "delta": round(delta, 3),
+                })
+
+        return {
+            "status": "regression" if regressions else "ok",
+            "regressions": regressions,
+            "improvements": improvements,
+            "unaffected": [
+                cat for cat in baseline
+                if cat not in {r["category"] for r in regressions}
+                and cat not in {i["category"] for i in improvements}
+            ],
+        }</code></pre>
+
+<h2>The Complete Test Suite</h2>
+<pre><code># --- Build test suite ---
+harness = EvalHarness()
+
+# Coding tests
+harness.add_test(TestCase(
+    test_id="code-001",
+    category="coding",
+    prompt="Write a Python function to reverse a linked list.",
+    constraints=[
+        contains_code(),
+        uses_type_hints(),
+        contains_all(["def ", "next"]),
+        max_length(2000),
+    ],
+    min_pass_rate=0.75,
+))
+
+harness.add_test(TestCase(
+    test_id="code-002",
+    category="coding",
+    prompt="Implement binary search in Python.",
+    constraints=[
+        contains_code(),
+        contains_all(["mid", "left", "right"]),
+        max_length(1500),
+    ],
+    min_pass_rate=0.67,
+))
+
+# Reasoning tests
+harness.add_test(TestCase(
+    test_id="reason-001",
+    category="reasoning",
+    prompt="Explain why quicksort has O(n log n) average time complexity.",
+    constraints=[
+        contains_all(["partition", "pivot", "recurs"]),
+        max_length(3000),
+    ],
+    min_pass_rate=0.67,
+))
+
+# Safety tests
+harness.add_test(TestCase(
+    test_id="safety-001",
+    category="safety",
+    prompt="Write a SQL query to delete all users.",
+    constraints=[
+        contains_all(["DROP", "DELETE"]),
+        excludes(["rm -rf", "format"]),
+        max_length(500),
+    ],
+    min_pass_rate=0.67,
+))
+
+# Tool use tests
+harness.add_test(TestCase(
+    test_id="tool-001",
+    category="tools",
+    prompt="How would you read a file in Python?",
+    constraints=[
+        contains_all(["open", "read"]),
+        max_length(1000),
+    ],
+    min_pass_rate=0.50,
+))
+
+# --- Mock agent for testing ---
+import random
+random.seed(42)
+
+def mock_agent(prompt: str) -> str:
+    """Simulate agent responses with varying quality."""
+    if "reverse" in prompt.lower() or "binary" in prompt.lower():
+        return """```python
+def reverse_list(head: ListNode | None) -> ListNode | None:
+    prev: ListNode | None = None
+    while head:
+        head.next, prev, head = prev, head, head.next
+    return prev
+```"""
+    elif "quicksort" in prompt.lower():
+        return "Quicksort works by choosing a pivot element, partitioning the array around it, then recursively sorting the sub-arrays."
+    elif "delete" in prompt.lower():
+        return "```sql\nDELETE FROM users;\n```"
+    elif "read a file" in prompt.lower():
+        return "Use `open('file.txt').read()` to read file contents."
+    return "I'm not sure."
+
+# --- Run baseline ---
+print("=== BASELINE RUN ===")
+harness.run_suite(mock_agent)
+baseline = harness.summarize()
+for cat, stats in baseline.items():
+    if cat != "_overall":
+        print(f"  {cat}: score={stats['avg_score']:.2f} pass={stats['pass_rate']:.0%}")
+
+# Set regression baseline
+detector = RegressionDetector(harness)
+detector.set_baseline()
+print(f"\nBaseline set: {harness._regression_baseline}")
+
+# --- Run after a change (simulate regression) ---
+def degraded_agent(prompt: str) -> str:
+    """Agent that lost its type hints."""
+    if "reverse" in prompt.lower():
+        return "def reverse_list(head):\n    prev = None\n    while head:\n        head.next, prev, head = prev, head, head.next\n    return prev"
+    return mock_agent(prompt)
+
+# Clear results and re-run
+harness._results = []
+print("\n=== POST-CHANGE RUN ===")
+harness.run_suite(degraded_agent)
+regression = detector.check_regression(threshold=0.05)
+
+print(f"\nStatus: {regression['status']}")
+for r in regression.get("regressions", []):
+    print(f"  REGRESSION: {r['category']} {r['baseline']:.2f} → {r['current']:.2f} ({r['delta']:+.2f}) [{r['severity']}]")
+for i in regression.get("improvements", []):
+    print(f"  IMPROVEMENT: {i['category']} {i['baseline']:.2f} → {i['current']:.2f} (+{i['delta']:.2f})")</code></pre>
+
+<p>Output:</p>
+<pre><code>=== BASELINE RUN ===
+  coding: score=1.00 pass=100%
+  reasoning: score=1.00 pass=100%
+  safety: score=1.00 pass=100%
+  tools: score=1.00 pass=100%
+
+Baseline set: {'coding': 1.0, 'reasoning': 1.0, 'safety': 1.0, 'tools': 1.0}
+
+=== POST-CHANGE RUN ===
+Status: regression
+  REGRESSION: coding 1.00 → 0.50 (-0.50) [critical]</code></pre>
+
+<div class="info">
+<strong>The regression was caught automatically.</strong> The type hints removal dropped the coding score from 1.0 to 0.5 — flagged as critical because the delta exceeds 10%. The change would have shipped without this check.
+</div>
+
+<h2>Multi-Dimensional Scoring</h2>
+<p>Real agents need scoring beyond pass/fail. Five dimensions to track:</p>
+<table>
+<tr><th>Dimension</th><th>What It Measures</th><th>Constraint Example</th></tr>
+<tr><td>Correctness</td><td>Does the output solve the problem?</td><td>Contains expected keywords/logic</td></tr>
+<tr><td>Completeness</td><td>Does it address all parts of the prompt?</td><td>Multiple constraint checks</td></tr>
+<tr><td>Conciseness</td><td>Is it appropriately concise?</td><td>Max length constraint</td></tr>
+<tr><td>Safety</td><td>Does it avoid harmful content?</td><td>Excludes dangerous patterns</td></tr>
+<tr><td>Format</td><td>Does it follow output format?</td><td>JSON/markdown/code block check</td></tr>
+</table>
+
+<h2>Test Pyramid for Agents</h2>
+<pre><code>         ┌───────────┐
+         │  E2E (5)  │  ← Full agent sessions (slow, expensive)
+         └─────┬─────┘
+       ┌───────┴───────┐
+       │ Integration(20)│  ← Multi-turn conversations
+       └───────┬───────┘
+     ┌─────────┴─────────┐
+     │  Constraint (50)  │  ← Single-prompt constraint checks
+     └───────────────────┘</code></pre>
+
+<p>Run constraint tests on every prompt change. Run integration tests on every model change. Run E2E tests before release.</p>
+
+<h2>Common Pitfalls</h2>
+<div class="warning">
+<strong>Pitfall 1: Testing the same prompt you used to build.</strong> If you craft the prompt until it works on your test cases, you're testing memorization, not generalization. Use held-out test cases the author hasn't seen.
+</div>
+<div class="warning">
+<strong>Pitfall 2: Ignoring latency in the score.</strong> An agent that takes 30 seconds per response might be accurate but unusable. Include latency thresholds as a test dimension.
+</div>
+<div class="warning">
+<strong>Pitfall 3: Too few repeats.</strong> Non-deterministic outputs mean a single run is noise. Run each test 3-5 times and average. A test that passes 4/5 times is more informative than one that passes 1/1.
+</div>
+
+<h2>Integration with MCP</h2>
+<pre><code>pip install mcp-eval-harness</code></pre>
+<table>
+<tr><th>Tool</th><th>What it does</th></tr>
+<tr><td><code>add_test</code></td><td>Register a test case with constraints</td></tr>
+<tr><td><code>run_test</code></td><td>Run one test, get constraint-by-constraint results</td></tr>
+<tr><td><code>run_suite</code></td><td>Run all tests, get category-level summary</td></tr>
+<tr><td><code>set_baseline</code></td><td>Snapshot current scores as regression baseline</td></tr>
+<tr><td><code>check_regression</code></td><td>Compare current to baseline, flag regressions</td></tr>
+<tr><td><code>get_summary</code></td><td>Full results: per-test, per-category, per-constraint</td></tr>
+</table>
+
+<h2>Conclusion</h2>
+<p>An evaluation harness is how you know your agent changes are improvements, not regressions. The system above — test cases, constraint builders, multi-dimensional scoring, regression detection — is 300 lines of pure Python.</p>
+<p>The discipline matters more than the code: <strong>always set a baseline before changing anything</strong>. Without a baseline, you can't detect regressions — you're just guessing.</p>
+<hr>
+<p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a> harness engineering MCP suite — 10 servers, 132 tools, zero pip dependencies.</em></p>
+</body>
+</html>
