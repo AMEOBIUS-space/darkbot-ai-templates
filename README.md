@@ -2,7 +2,7 @@
 
 [![![PyPI](https://img.shields.io/pypi/v/darkbot-templates)](https://pypi.org/project/darkbot-templates/)
 [CI](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml)
-[![Tutorials](https://img.shields.io/badge/tutorials-28-blue)]()
+[![Tutorials](https://img.shields.io/badge/tutorials-30-blue)]()
 [![Demos](https://img.shields.io/badge/demos-18-green)]()
 [![Releases](https://img.shields.io/badge/releases-5-orange)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
