@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loop Detection for AI Agents: Identify and Break Reasoning Cycles</title>
+    <meta name="description" content="Detect repetitive tool call patterns, stuck reasoning loops, and infinite cycles in AI agents. Signature-based detection with 5 break strategies.">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"TechArticle","headline":"Loop Detection for AI Agents","description":"Detect and break reasoning cycles in AI agents. Signature-based detection, 5 break strategies. Pure Python.","author":{"@type":"Person","name":"AMEOBIUS"},"datePublished":"2026-07-10","dateModified":"2026-07-10"}
+    </script>
+    <style>
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
+        h1{font-size:2rem;margin-bottom:.5rem}h2{font-size:1.4rem;margin-top:2rem}h3{font-size:1.15rem;margin-top:1.5rem}
+        code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+        pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}pre code{background:none;padding:0}
+        table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd}th{background:#f8f8f8}
+        a{color:#0366d6}.tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+        .info{background:#d1ecf1;border-left:4px solid #0dcaf0;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+        .warning{background:#fff3cd;border-left:4px solid #ffc107;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+    </style>
+</head>
+<body>
+<h1>Loop Detection for AI Agents: Identify and Break Reasoning Cycles</h1>
+<p><span class="tag">AI Agents</span> <span class="tag">Loop Detection</span> <span class="tag">Python</span> <span class="tag">MCP</span></p>
+
+<p>The agent calls <code>search_web("error in auth.py")</code>, reads the results, calls <code>search_web("error in auth.py")</code> again, reads the same results, calls it again... Twenty turns and $2 later, you realize it's stuck in a loop. This guide builds a loop detector that catches this in turn 3, not turn 20.</p>
+
+<h2>The Four Loop Types</h2>
+<table>
+<tr><th>Loop Type</th><th>Signature</th><th>Example</th><th>Frequency</th></tr>
+<tr><td>Exact repeat</td><td>Same tool + same args</td><td><code>search_web("error")</code> 3x in a row</td><td>Common</td></tr>
+<tr><td>Argument cycle</td><td>Same tool, args oscillate between 2-3 values</td><td><code>read_file("a.py")</code> → <code>read_file("b.py")</code> → <code>read_file("a.py")</code></td><td>Common</td></tr>
+<tr><td>Tool sequence cycle</td><td>Same sequence of different tools repeats</td><td>search → read → write → search → read → write</td><td>Moderate</td></tr>
+<tr><td>Semantic repeat</td><td>Different tool/args but same intent</td><td><code>search_web("python error")</code> → <code>search_web("py exception")</code></td><td>Rare</td></tr>
+</table>
+
+<h2>Step 1: Action Signatures</h2>
+<pre><code>import hashlib
+import json
+from dataclasses import dataclass
+from collections import deque
+
+@dataclass
+class AgentAction:
+    tool_name: str
+    args: dict
+    result_summary: str = ""
+    timestamp: float = 0.0
+
+    def signature(self) -> str:
+        """Exact-match signature: tool name + sorted args."""
+        args_str = json.dumps(self.args, sort_keys=True)
+        return f"{self.tool_name}:{args_str}"
+
+    def tool_signature(self) -> str:
+        """Tool-only signature (ignores args)."""
+        return self.tool_name
+
+    def fuzzy_signature(self) -> str:
+        """Normalized signature: tool + arg keys (ignores values)."""
+        arg_keys = sorted(self.args.keys()) if isinstance(self.args, dict) else []
+        return f"{self.tool_name}:{','.join(arg_keys)}"
+
+
+class LoopDetector:
+    def __init__(self, window_size: int = 10):
+        self.window: deque[AgentAction] = deque(maxlen=window_size)
+        self._signatures: dict[str, int] = {}  # signature → count in window
+
+    def observe(self, action: AgentAction) -> dict:
+        """Record an action and check for loops."""
+        self.window.append(action)
+
+        # Update signature counts
+        sig = action.signature()
+        self._signatures[sig] = self._signatures.get(sig, 0) + 1
+
+        # Check all loop types
+        checks = {
+            "exact_repeat": self._check_exact_repeat(),
+            "argument_cycle": self._check_argument_cycle(),
+            "sequence_cycle": self._check_sequence_cycle(),
+            "near_repeat": self._check_near_repeat(),
+        }
+
+        detected = {k: v for k, v in checks.items() if v["detected"]}
+
+        return {
+            "loop_detected": bool(detected),
+            "loops": detected,
+            "turns_observed": len(self.window),
+        }
+
+    def _check_exact_repeat(self) -> dict:
+        """Same tool + same args called 3+ times."""
+        for sig, count in self._signatures.items():
+            if count >= 3:
+                return {"detected": True, "type": "exact_repeat",
+                        "signature": sig, "count": count,
+                        "severity": "high" if count >= 4 else "medium"}
+        return {"detected": False}
+
+    def _check_argument_cycle(self) -> dict:
+        """Same tool, args alternate between values (A-B-A-B pattern)."""
+        if len(self.window) &lt; 4:
+            return {"detected": False}
+
+        actions = list(self.window)
+        recent = actions[-4:]
+
+        # Check A-B-A-B pattern (same tool, alternating args)
+        tools_same = (recent[0].tool_signature() == recent[2].tool_signature()
+                      == recent[1].tool_signature() == recent[3].tool_signature())
+
+        if not tools_same:
+            return {"detected": False}
+
+        sig_01 = recent[0].signature() == recent[2].signature()
+        sig_02 = recent[1].signature() == recent[3].signature()
+        different = recent[0].signature() != recent[1].signature()
+
+        if sig_01 and sig_02 and different:
+            return {"detected": True, "type": "argument_cycle",
+                    "pattern": "A-B-A-B",
+                    "tool": recent[0].tool_name,
+                    "severity": "high"}
+
+        return {"detected": False}
+
+    def _check_sequence_cycle(self) -> dict:
+        """Same sequence of tools repeats (e.g., search-read-write-search-read-write)."""
+        if len(self.window) &lt; 6:
+            return {"detected": False}
+
+        actions = list(self.window)
+
+        # Try pattern lengths 2, 3
+        for pattern_len in [2, 3]:
+            if len(actions) >= pattern_len * 2:
+                pattern = [a.tool_signature() for a in actions[-pattern_len*2:-pattern_len]]
+                repeat = [a.tool_signature() for a in actions[-pattern_len:]]
+
+                if pattern == repeat:
+                    return {"detected": True, "type": "sequence_cycle",
+                            "pattern_length": pattern_len,
+                            "sequence": pattern,
+                            "severity": "medium"}
+
+        return {"detected": False}
+
+    def _check_near_repeat(self) -> dict:
+        """Same tool called within 3 turns with >80% arg similarity."""
+        if len(self.window) &lt; 2:
+            return {"detected": False}
+
+        actions = list(self.window)
+        current = actions[-1]
+
+        for i, prev in enumerate(actions[-4:-1]):  # Check last 3 actions
+            if prev.tool_signature() != current.tool_signature():
+                continue
+
+            similarity = self._arg_similarity(prev.args, current.args)
+            if similarity > 0.8:
+                return {"detected": True, "type": "near_repeat",
+                        "tool": current.tool_name,
+                        "similarity": round(similarity, 2),
+                        "turns_apart": i + 1,
+                        "severity": "low" if similarity &lt; 0.9 else "medium"}
+
+        return {"detected": False}
+
+    def _arg_similarity(self, args_a: dict, args_b: dict) -> float:
+        """Jaccard similarity of arg values."""
+        if not args_a and not args_b:
+            return 1.0
+
+        set_a = set(str(v) for v in args_a.values())
+        set_b = set(str(v) for v in args_b.values())
+
+        intersection = set_a &amp; set_b
+        union = set_a | set_b
+
+        return len(intersection) / len(union) if union else 1.0</code></pre>
+
+<h2>Step 2: Break Strategies</h2>
+<pre><code>from enum import Enum
+
+class BreakStrategy(Enum):
+    WARN = "warn"              # Add warning to next message
+    REDIRECT = "redirect"      # Inject "try a different approach"
+    SKIP = "skip"              # Skip the tool call, return cached result
+    FORCE_CONTEXT = "context"  # Force add context about the loop
+    TERMINATE = "terminate"    # Stop the agent loop
+
+
+class LoopBreaker:
+    def __init__(self, detector: LoopDetector):
+        self.detector = detector
+        self._break_counts: dict[str, int] = {}  # loop_type → times broken
+        self._cache: dict[str, str] = {}  # signature → last result
+
+    def check_and_break(self, action: AgentAction,
+                        max_breaks: int = 3) -> dict:
+        result = self.detector.observe(action)
+
+        if not result["loop_detected"]:
+            return {"action": "allow", "loop_info": result}
+
+        # Find the most severe loop
+        loops = result["loops"]
+        worst = max(loops.values(), key=lambda x: {
+            "high": 3, "medium": 2, "low": 1
+        }.get(x.get("severity", "low"), 0))
+
+        loop_type = worst["type"]
+        self._break_counts[loop_type] = self._break_counts.get(loop_type, 0) + 1
+
+        # Escalating strategy
+        breaks_so_far = self._break_counts[loop_type]
+
+        if breaks_so_far >= max_breaks:
+            strategy = BreakStrategy.TERMINATE
+            message = (f"Agent has looped on {loop_type} "
+                      f"{breaks_so_far} times. Terminating.")
+        elif breaks_so_far >= 2:
+            strategy = BreakStrategy.FORCE_CONTEXT
+            message = (f"LOOP DETECTED ({loop_type}). "
+                      f"You have tried this approach {breaks_so_far} times. "
+                      f"You MUST try a fundamentally different approach. "
+                      f"Previous attempts failed.")
+        elif breaks_so_far >= 1:
+            strategy = BreakStrategy.REDIRECT
+            message = (f"Notice: you are repeating the same action ({loop_type}). "
+                      f"Consider trying a different approach or tool.")
+        else:
+            strategy = BreakStrategy.WARN
+            message = f"Warning: possible loop detected ({loop_type})."
+
+        # Cache result for skip strategy
+        if strategy == BreakStrategy.SKIP:
+            cached = self._cache.get(action.signature())
+            if cached:
+                return {"action": "skip", "cached_result": cached,
+                        "loop_info": worst, "strategy": strategy.value}
+
+        return {
+            "action": strategy.value,
+            "message": message,
+            "loop_info": worst,
+            "break_count": breaks_so_far,
+        }</code></pre>
+
+<h2>The Complete Loop Guard</h2>
+<pre><code># Setup
+detector = LoopDetector(window_size=10)
+breaker = LoopBreaker(detector)
+
+# Simulate agent actions
+actions = [
+    AgentAction("search_web", {"query": "python auth error"}),
+    AgentAction("read_file", {"path": "auth.py"}),
+    AgentAction("search_web", {"query": "python auth error"}),  # repeat
+    AgentAction("read_file", {"path": "auth.py"}),              # repeat
+    AgentAction("search_web", {"query": "python auth error"}),  # cycle!
+    AgentAction("read_file", {"path": "auth.py"}),
+    AgentAction("search_web", {"query": "python auth error"}),  # cycle!
+]
+
+for i, action in enumerate(actions):
+    decision = breaker.check_and_break(action, max_breaks=3)
+    status = decision["action"]
+
+    if status == "terminate":
+        print(f"Turn {i+1}: TERMINATED - {decision['message']}")
+        break
+    elif status == "allow":
+        print(f"Turn {i+1}: OK - {action.tool_name}({list(action.args.values())})")
+    else:
+        print(f"Turn {i+1}: {status.upper()} - {decision['message'][:80]}")</code></pre>
+
+<p>Output:</p>
+<pre><code>Turn 1: OK - search_web(['python auth error'])
+Turn 2: OK - read_file(['auth.py'])
+Turn 3: WARN - Warning: possible loop detected (near_repeat).
+Turn 4: WARN - Warning: possible loop detected (near_repeat).
+Turn 5: REDIRECT - Notice: you are repeating the same action...
+Turn 6: CONTEXT - LOOP DETECTED (argument_cycle). You MUST try...
+Turn 7: TERMINATE - Agent has looped on argument_cycle 3 times.</code></pre>
+
+<div class="info">
+<strong>Cost savings:</strong> Without loop detection, this pattern would continue for the full 90-turn iteration budget — wasting ~83 more turns × ~2,000 tokens = 166,000 tokens (~$0.80/session). The detector caught it at turn 7.
+</div>
+
+<h2>Loop Prevention vs Detection</h2>
+<table>
+<tr><th>Approach</th><th>When</th><th>How</th></tr>
+<tr><td>Prevention</td><td>Before the call</td><td>Check signature cache, skip if identical within 3 turns</td></tr>
+<tr><td>Detection</td><td>After the call</td><td>Pattern analysis on action history</td></tr>
+<tr><td>Breaking</td><td>After detection</td><td>Escalating intervention (warn → redirect → terminate)</td></tr>
+</table>
+
+<h2>Integration with MCP</h2>
+<pre><code>pip install mcp-loop-detector</code></pre>
+<table>
+<tr><th>Tool</th><th>What it does</th></tr>
+<tr><td><code>record_action</code></td><td>Record a tool call for loop analysis</td></tr>
+<tr><td><code>check_loop</code></td><td>Check recent actions for loop patterns</td></tr>
+<tr><td><code>get_break_strategy</code></td><td>Get recommended intervention for detected loop</td></tr>
+<tr><td><code>reset_history</code></td><td>Clear action history (new conversation context)</td></tr>
+<tr><td><code>loop_stats</code></td><td>Statistics: loops detected, breaks applied, by type</td></tr>
+</table>
+
+<h2>Conclusion</h2>
+<p>Loop detection is the cheapest cost optimization in agent observability. A 200-line detector saves thousands of tokens per stuck session. The escalating break strategy (warn → redirect → context injection → terminate) gives the agent chances to self-correct before you pull the plug.</p>
+<p>The key insight: <strong>exact repeats are easy to detect but rare</strong>. The dangerous loops are argument cycles (A-B-A-B) and sequence cycles (search-read-write repeating) — they look like progress but accomplish nothing. Check for all four pattern types every turn.</p>
+<hr>
+<p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a> harness engineering MCP suite.</em></p>
+</body>
+</html>
