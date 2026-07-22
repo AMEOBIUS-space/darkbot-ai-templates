@@ -12,24 +12,24 @@
 <p>Build an AI agent for email auto-reply, CRM, reports, n8n.</p>
 <h2>1. Email Auto-Reply</h2>
 <pre><code>response = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[{"role": "system", "content": "Auto-reply to emails..."},
-              {"role": "user", "content": f"Subject: {subject}\nBody: {body}"}]
+ model="gpt-4o-mini",
+ messages=[{"role": "system", "content": "Auto-reply to emails..."},
+ {"role": "user", "content": f"Subject: {subject}\nBody: {body}"}]
 )</code></pre>
 <h2>2. CRM Data Extraction</h2>
 <pre><code>def crm_entry(raw_text):
-    return process_task("crm_entry", {"text": raw_text})
-    # Returns: {name, email, interest, budget}</code></pre>
+ return process_task("crm_entry", {"text": raw_text})
+ # Returns: {name, email, interest, budget}</code></pre>
 <h2>3. Report Generation</h2>
 <pre><code>def generate_report(data, report_type="weekly"):
-    return process_task("report", {"data": data, "type": report_type})</code></pre>
+ return process_task("report", {"data": data, "type": report_type})</code></pre>
 <h2>4. n8n Webhook</h2>
 <pre><code># POST /webhook → AI processes → returns result
 # Integrate with N8N AI Lead Qualification Pipeline</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/ai-automation-template">AI Automation Agent</a> $59/$249</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/ai-automation-template">AI Automation Agent</a>$59/$249</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python ai-automation-template/demo.py</code></pre>
-<hr><p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<hr><p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

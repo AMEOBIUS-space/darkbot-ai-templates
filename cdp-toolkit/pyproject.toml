@@ -4,17 +4,45 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cdp-toolkit"
-version = "1.0.0"
-description = "Chrome DevTools Protocol automation toolkit"
+version = "1.4.0"
+description = "Chrome DevTools Protocol automation toolkit — zero-dependency, ~15KB vs 300MB Playwright"
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.8"
-authors = [{name = "AMEOBIUS"}]
-keywords = ["cdp", "chrome", "automation", "browser"]
+requires-python = ">=3.10"
+authors = [{name = "AMEOBIUS-team"}]
+keywords = ["cdp", "chrome", "automation", "browser", "devtools", "playwright-alternative", "puppeteer-alternative", "selenium-alternative", "testing", "web-scraping", "zero-dependency"]
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: Browsers",
 ]
 
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.4"]
+
 [project.urls]
-Homepage = "https://github.com/AMEOBIUS/cdp-toolkit"
+Homepage = "https://github.com/AMEOBIUS-team/cdp-toolkit"
+Repository = "https://github.com/AMEOBIUS-team/cdp-toolkit"
+Issues = "https://github.com/AMEOBIUS-team/cdp-toolkit/issues"
+
+[tool.setuptools]
+package-data = {"cdp_toolkit" = ["py.typed"], "cdp_client" = ["py.typed"]}
+package-dir = {"cdp_toolkit" = "src/cdp_toolkit", "" = "src"}
+packages = ["cdp_toolkit"]
+py-modules = ["cdp_client"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

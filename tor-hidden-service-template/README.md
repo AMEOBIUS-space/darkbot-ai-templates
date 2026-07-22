@@ -1,22 +1,51 @@
-# Tor Hidden Service Setup Template — .onion Deployment + Hardening
+# Tor Hidden Service Template
 
-Production-ready .onion site deployment:
-- v3 .onion address generation (ed25519)
-- torrc configuration
-- nginx config (privacy-hardened)
-- Server hardening script (firewall, no logs, no tokens)
-- Docker Compose for isolated deployment
-- PHP support (optional)
-- Client authorization (optional)
+Generate v3 `.onion` configs + hardened nginx + optional Docker layout.
 
-## Quick Start
+- ed25519 v3 onion address generation
+- torrc snippet
+- privacy-hardened nginx (no logs, no tokens)
+- server hardening shell script
+- docker-compose skeleton
+- optional PHP location block
+
+## Quick start
+
 ```bash
 pip install -r requirements.txt
-python setup.py  # Generate configs + onion address
-# Or run hardening script on server:
-# bash $(python -c "from setup import TorHiddenService; print(TorHiddenService().generate_hardening_script())")
+python setup.py
+# or
+python demo.py
 ```
 
-## Price: $89 (license) / $349 (with customization)
-Contact: @darkbot_ai_bot or @ameobius
-Payment: BTC / USDT / ETH / XMR
+Hardening script (print only — review before running on a host):
+
+```bash
+python -c "from setup import TorHiddenService; print(TorHiddenService().generate_hardening_script())"
+```
+
+## Tests
+
+```bash
+python3 -m pytest tests/ -q
+```
+
+## Layout
+
+- `setup.py` — `TorHiddenService` generators
+- `demo.py` — offline smoke demo (no network)
+- `Dockerfile` / `Makefile`
+- `tests/` — compile + demo smoke
+
+## License
+
+MIT · AMEOBIUS-team
+
+## Related
+
+- https://github.com/AMEOBIUS-team/security-audit-toolkit
+- https://github.com/AMEOBIUS-team/fastapi-template
+- https://github.com/AMEOBIUS-team/cdp-automation-template
+- Portfolio: https://ameobius-team.github.io/kwork-portfolio/
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

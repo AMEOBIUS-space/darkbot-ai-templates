@@ -24,30 +24,30 @@ a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
 <p>Baileys connects to WhatsApp Web protocol directly. No official API key needed, no $50/month Business API fee.</p>
 <h2>1. Setup (Node.js)</h2>
 <pre><code>npm install @whiskeysockets/baileys
-node wa_node.js  # Shows QR code</code></pre>
+node wa_node.js # Shows QR code</code></pre>
 <h2>2. Python Orchestration</h2>
 <pre><code>class WhatsAppBot:
-    def command(self, cmd):
-        def decorator(func):
-            self.handlers[cmd] = func
-            return func
-        return decorator
+ def command(self, cmd):
+ def decorator(func):
+ self.handlers[cmd] = func
+ return func
+ return decorator
 
-    async def process_message(self, msg):
-        if msg.text.startswith("/"):
-            cmd = msg.text[1:].split(" ")[0]
-            if cmd in self.handlers:
-                await self.handlers[cmd](msg)</code></pre>
+ async def process_message(self, msg):
+ if msg.text.startswith("/"):
+ cmd = msg.text[1:].split(" ")[0]
+ if cmd in self.handlers:
+ await self.handlers[cmd](msg)</code></pre>
 <h2>3. Rate Limiting</h2>
 <pre><code>def check_rate_limit(self, sender):
-    now = time.time()
-    self.tracker[sender] = [t for t in self.tracker[sender] if now-t < 60]
-    return len(self.tracker[sender]) < 10</code></pre>
+ now = time.time()
+ self.tracker[sender] = [t for t in self.tracker[sender] if now-t < 60]
+ return len(self.tracker[sender]) < 10</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/whatsapp-bot-template">WhatsApp Bot</a> $59/$249 — Baileys + Python, commands, media, groups</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/whatsapp-bot-template">WhatsApp Bot</a>$59/$249 — Baileys + Python, commands, media, groups</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python whatsapp-bot-template/demo.py</code></pre>
 <hr>
-<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

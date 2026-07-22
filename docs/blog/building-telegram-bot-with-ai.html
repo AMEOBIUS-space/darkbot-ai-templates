@@ -20,24 +20,16 @@ a{color:#58a6ff}
 </style>
 </head>
 <body>
-<a class="back" href="../index.html">← Back to templates</a>
-
-<h1>Building a Telegram Bot with AI Integration</h1>
-<p>A practical guide using aiogram 3, OpenAI, and FSM for production bots.</p>
-
-<h2>Why aiogram 3?</h2>
+<a class="back" href="../index.html">← Back to templates</a>><h1>Building a Telegram Bot with AI Integration</h1>
+<p>A practical guide using aiogram 3, OpenAI, and FSM for production bots.</p>><h2>Why aiogram 3?</h2>
 <p>aiogram 3 is the most modern async Telegram bot framework for Python. It supports:</p>
 <ul>
 <li>Finite State Machine (FSM) for conversation flows</li>
 <li>Inline keyboards for interactive UI</li>
 <li>Middleware for rate limiting, logging</li>
 <li>Full async/await support</li>
-</ul>
-
-<h2>Quick Start</h2>
-<pre><code>pip install aiogram openai python-dotenv</code></pre>
-
-<h3>1. Bot Setup</h3>
+</ul>><h2>Quick Start</h2>
+<pre><code>pip install aiogram openai python-dotenv</code></pre>><h3>1. Bot Setup</h3>
 <pre><code>from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -47,36 +39,30 @@ dp = Dispatcher()
 
 @dp.message(Command("start"))
 async def start(msg: Message):
-    await msg.answer("Hello! I'm an AI bot. Ask me anything!")
+ await msg.answer("Hello! I'm an AI bot. Ask me anything!")
 
 if __name__ == "__main__":
-    import asyncio
-    asyncio.run(dp.start_polling(bot))</code></pre>
-
-<h3>2. Add AI Integration</h3>
+ import asyncio
+ asyncio.run(dp.start_polling(bot))</code></pre>><h3>2. Add AI Integration</h3>
 <pre><code>from openai import OpenAI
 client = OpenAI(api_key="YOUR_KEY")
 
 @dp.message()
 async def ai_reply(msg: Message):
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": msg.text}]
-    )
-    await msg.answer(response.choices[0].message.content)</code></pre>
-
-<h3>3. FSM for Multi-step Conversations</h3>
+ response = client.chat.completions.create(
+ model="gpt-4o-mini",
+ messages=[{"role": "user", "content": msg.text}]
+ )
+ await msg.answer(response.choices[0].message.content)</code></pre>><h3>3. FSM for Multi-step Conversations</h3>
 <pre><code>class Form(StatesGroup):
-    name = State()
-    question = State()
+ name = State()
+ question = State()
 
 @dp.message(Command("ask"))
 async def ask_start(msg: Message, state: FSMContext):
-    await state.set_state(Form.name)
-    await msg.answer("What's your name?")</code></pre>
-
-<h2>Production Template</h2>
-<p>Our <a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/tg-bot-template">TG Bot Template</a> includes all of the above plus:</p>
+ await state.set_state(Form.name)
+ await msg.answer("What's your name?")</code></pre>><h2>Production Template</h2>
+<p>Our <a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/tg-bot-template">TG Bot Template</a>includes all of the above plus:</p>
 <ul>
 <li>SQLite database integration</li>
 <li>Admin panel</li>
@@ -84,17 +70,11 @@ async def ask_start(msg: Message, state: FSMContext):
 <li>Inline keyboards</li>
 <li>Error handling</li>
 <li>Interactive demo (no API keys needed)</li>
-</ul>
-
-<p><strong>Price: $49 (license) / $199 (with customization)</strong></p>
-<a class="btn" href="https://t.me/darkbot_ai_bot">Order via Telegram →</a>
-
-<h2>Run the Demo</h2>
+</ul>><p><strong>Price: $49 (license) / $199 (with customization)</strong></p>
+<a class="btn" href="https://t.me/darkbot_ai_bot">Order via Telegram →</a>><h2>Run the Demo</h2>
 <pre><code>python tg-bot-template/demo.py</code></pre>
-<p>See the bot in action without any API keys or setup!</p>
-
-<hr>
-<p>💬 <a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a> | 💰 BTC/USDT/ETH/XMR</p>
-<p>📦 <a href="https://github.com/AMEOBIUS/darkbot-ai-templates">github.com/AMEOBIUS/darkbot-ai-templates</a></p>
+<p>See the bot in action without any API keys or setup!</p>><hr>
+<p><a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a>| BTC/USDT/ETH/XMR</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates">github.com/AMEOBIUS/darkbot-ai-templates</a></p>
 </body>
 </html>

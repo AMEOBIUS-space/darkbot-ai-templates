@@ -11,3 +11,5 @@ python -m pytest tests/ -v  # 25 tests
 ```
 
 MIT - aaameobius-crypto
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

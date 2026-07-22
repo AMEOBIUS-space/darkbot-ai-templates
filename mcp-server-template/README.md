@@ -47,3 +47,5 @@ server.register_tool(Tool(
 ## License
 
 MIT
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

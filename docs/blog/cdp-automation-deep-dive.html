@@ -15,24 +15,24 @@
 ws = await websockets.connect(tab["webSocketDebuggerUrl"])</code></pre>
 <h2>2. Mouse Events (Real Pointer)</h2>
 <pre><code>await ws.send(json.dumps({
-    "method": "Input.dispatchMouseEvent",
-    "params": {"type": "mousePressed", "button": "left", "x": 298, "y": 276}
+ "method": "Input.dispatchMouseEvent",
+ "params": {"type": "mousePressed", "button": "left", "x": 298, "y": 276}
 }))</code></pre>
 <h2>3. Native Value Setter (React/Vue)</h2>
 <pre><code>setter = Object.getOwnPropertyDescriptor(
-    HTMLInputElement.prototype, "value"
+ HTMLInputElement.prototype, "value"
 ).set
 setter.call(input, "value")
 input.dispatchEvent(new Event("input", {bubbles: true}))</code></pre>
 <h2>4. Insert Text (Typeaheads)</h2>
 <pre><code>await ws.send(json.dumps({
-    "method": "Input.insertText",
-    "params": {"text": "Python"}
+ "method": "Input.insertText",
+ "params": {"text": "Python"}
 }))</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/cdp-automation-template">CDP Automation</a> $79/$299</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/cdp-automation-template">CDP Automation</a>$79/$299</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python cdp-automation-template/demo.py</code></pre>
-<hr><p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<hr><p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

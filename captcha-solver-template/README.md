@@ -20,3 +20,5 @@ python solver.py
 ## Price: $79 (license) / $299 (with customization)
 Contact: @darkbot_ai_bot or @ameobius
 Payment: BTC / USDT / ETH / XMR
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

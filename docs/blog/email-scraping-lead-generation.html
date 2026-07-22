@@ -25,33 +25,33 @@ a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
 emails = EMAIL_REGEX.findall(html)</code></pre>
 <h2>2. Recursive Crawling</h2>
 <pre><code>async def _crawl(self, session, url, base_url, depth):
-    if depth > self.max_depth or len(self.visited) >= self.max_pages:
-        return
-    self.visited.add(url)
-    html = await self.fetch(session, url)
-    # Extract emails
-    for match in EMAIL_REGEX.finditer(html):
-        self.emails[match.group()] = url
-    # Follow same-domain links
-    links = re.findall(r'href="([^"]+)"', html)
-    for link in links:
-        full_url = urljoin(url, link)
-        if same_domain(full_url, base_url):
-            await self._crawl(session, full_url, base_url, depth+1)</code></pre>
+ if depth >self.max_depth or len(self.visited) >= self.max_pages:
+ return
+ self.visited.add(url)
+ html = await self.fetch(session, url)
+ # Extract emails
+ for match in EMAIL_REGEX.finditer(html):
+ self.emails[match.group()] = url
+ # Follow same-domain links
+ links = re.findall(r'href="([^"]+)"', html)
+ for link in links:
+ full_url = urljoin(url, link)
+ if same_domain(full_url, base_url):
+ await self._crawl(session, full_url, base_url, depth+1)</code></pre>
 <h2>3. Validation</h2>
 <pre><code>def validate_email(self, email):
-    domain = email.split('@')[1]
-    return '.' in domain and len(domain) > 3</code></pre>
+ domain = email.split('@')[1]
+ return '.' in domain and len(domain) >3</code></pre>
 <h2>4. Export</h2>
 <pre><code># JSON
 json.dump([{"email": e, "source": u} for e, u in emails.items()], f)
 # CSV
 csv.writer(f).writerow(["email", "source_url", "valid"])</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/email-scraper-template">Email Scraper</a> $39/$149</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/email-scraper-template">Email Scraper</a>$39/$149</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python email-scraper-template/demo.py</code></pre>
 <hr>
-<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

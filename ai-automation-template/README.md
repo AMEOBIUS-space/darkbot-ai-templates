@@ -18,3 +18,5 @@ python agent.py
 ## Price: $59 (single license) / $249 (with customization)
 Contact: @darkbot_ai_bot or @ameobius
 Payment: BTC / USDT / ETH / XMR
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

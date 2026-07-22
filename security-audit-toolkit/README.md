@@ -1,8 +1,6 @@
 # Security Audit Toolkit
 
-> OWASP Top 10 vulnerability scanner for Python code — 12 detection rules
-
-## Rules
+OWASP-oriented static scanner for Python — 12 regex rules covering injection, secrets, unsafe loaders, and misconfig.
 
 | ID | Vulnerability | Severity |
 |---|---|---|
@@ -19,7 +17,15 @@
 | EVAL-001 | Code injection (eval) | CRITICAL |
 | SHELL-001 | Shell injection | CRITICAL |
 
-## Quick Start
+## Quick start
+
+```bash
+python demo.py
+# or
+python -c "from src.scanner import SecurityScanner; print(SecurityScanner().scan_file('app.py'))"
+```
+
+Library usage:
 
 ```python
 from scanner import SecurityScanner
@@ -34,9 +40,24 @@ for v in vulns:
 ## Tests
 
 ```bash
-python -m pytest tests/ -v
+python3 -m pytest tests/ -q
 ```
+
+## Layout
+
+- `src/scanner.py` — rules + scanner
+- `demo.py` — offline smoke on synthetic vulns
+- `tests/` — rule coverage
 
 ## License
 
-MIT
+MIT · AMEOBIUS-team
+
+## Related
+
+- https://github.com/AMEOBIUS-team/tor-hidden-service-template
+- https://github.com/AMEOBIUS-team/bounty-hunter-toolkit
+- https://github.com/AMEOBIUS-team/fastapi-template
+- Portfolio: https://ameobius-team.github.io/kwork-portfolio/
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

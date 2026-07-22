@@ -24,38 +24,38 @@ a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
 <pre><code>import jwt
 from datetime import datetime, timedelta
 
-def make_token(user_id: int) -> str:
-    return jwt.encode(
-        {"sub": str(user_id), "exp": datetime.utcnow() + timedelta(days=7)},
-        SECRET, algorithm="HS256"
-    )</code></pre>
+def make_token(user_id: int) ->str:
+ return jwt.encode(
+ {"sub": str(user_id), "exp": datetime.utcnow() + timedelta(days=7)},
+ SECRET, algorithm="HS256"
+ )</code></pre>
 <h2>2. Register Endpoint</h2>
 <pre><code>@app.post("/register")
 def register(user: UserCreate):
-    db.execute("INSERT INTO users ...", (user.email, hash_pw(user.password)))
-    return {"token": make_token(user_id)}</code></pre>
+ db.execute("INSERT INTO users ...", (user.email, hash_pw(user.password)))
+ return {"token": make_token(user_id)}</code></pre>
 <h2>3. Protected Routes</h2>
 <pre><code>security = HTTPBearer()
 def get_current_user(cred: HTTPAuthorizationCredentials = Depends(security)):
-    payload = jwt.decode(cred.credentials, SECRET, algorithms=["HS256"])
-    return int(payload["sub"])
+ payload = jwt.decode(cred.credentials, SECRET, algorithms=["HS256"])
+ return int(payload["sub"])
 
 @app.get("/items")
 def list_items(uid: int = Depends(get_current_user)):
-    return db.execute("SELECT * FROM items WHERE user_id=?", (uid,)).fetchall()</code></pre>
+ return db.execute("SELECT * FROM items WHERE user_id=?", (uid,)).fetchall()</code></pre>
 <h2>4. WebSocket Auth</h2>
 <pre><code>@app.websocket("/ws/{token}")
 async def ws(ws: WebSocket, token: str):
-    payload = jwt.decode(token, SECRET, algorithms=["HS256"])
-    await ws.accept()
-    while True:
-        data = await ws.receive_text()
-        await ws.send_text(f"Echo: {data}")</code></pre>
+ payload = jwt.decode(token, SECRET, algorithms=["HS256"])
+ await ws.accept()
+ while True:
+ data = await ws.receive_text()
+ await ws.send_text(f"Echo: {data}")</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/fastapi-template">FastAPI Backend</a> $49/$199 — includes all above + SQLite + Swagger docs</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/fastapi-template">FastAPI Backend</a>$49/$199 — includes all above + SQLite + Swagger docs</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python fastapi-template/demo.py</code></pre>
 <hr>
-<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

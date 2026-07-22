@@ -1,20 +1,50 @@
-# FastAPI Backend Template — Production Ready
+# FastAPI Backend Template
 
-Production-ready REST API with:
-- JWT authentication (register/login)
-- SQLite database with migrations
+Minimal production-shaped REST API skeleton:
+
+- JWT register/login
+- SQLite + simple migrations pattern
 - CRUD items with user isolation
-- WebSocket endpoint (real-time)
+- WebSocket endpoint
 - Pydantic validation
-- Bearer token security
-- Auto docs at /docs (Swagger)
+- Auto OpenAPI at `/docs`
 
-## Quick Start
+## Quick start
+
 ```bash
 pip install -r requirements.txt
-python main.py  # -> http://localhost:8000/docs
+python main.py
+# open http://localhost:8000/docs
 ```
 
-## Price: $49 (license) / $199 (with customization)
-Contact: @darkbot_ai_bot or @ameobius
-Payment: BTC / USDT / ETH / XMR
+Docker:
+
+```bash
+docker compose up --build
+```
+
+## Tests
+
+```bash
+python3 -m pytest tests/ -q
+```
+
+## Layout
+
+- `main.py` — app + routes
+- `demo.py` — smoke client
+- `docker-compose.yml` / `Dockerfile`
+- `tests/` — API tests
+
+## License
+
+MIT · AMEOBIUS-team
+
+## Related
+
+- https://github.com/AMEOBIUS-team/context-mode
+- https://github.com/AMEOBIUS-team/agentops-lite
+- https://github.com/AMEOBIUS-team/cdp-automation-template
+- Portfolio: https://ameobius-team.github.io/kwork-portfolio/
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

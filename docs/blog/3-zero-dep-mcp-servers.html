@@ -11,13 +11,13 @@
 <meta name="keywords" content="MCP, Model Context Protocol, Python, zero dependency, web scraping, crypto, email, AI agent, CDP, Chrome DevTools Protocol">
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "TechArticle",
-  "headline": "3 Zero-Dependency MCP Servers in Pure Python",
-  "description": "30 tools, 105 tests, zero dependencies. Web scraping via CDP, crypto monitoring, email validation.",
-  "author": {"@type": "Person", "name": "AMEOBIUS"},
-  "datePublished": "2026-07-06",
-  "url": "https://ameobius.github.io/darkbot-ai-templates/blog/3-zero-dep-mcp-servers.html"
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "3 Zero-Dependency MCP Servers in Pure Python",
+ "description": "30 tools, 105 tests, zero dependencies. Web scraping via CDP, crypto monitoring, email validation.",
+ "author": {"@type": "Person", "name": "AMEOBIUS"},
+ "datePublished": "2026-07-06",
+ "url": "https://ameobius.github.io/darkbot-ai-templates/blog/3-zero-dep-mcp-servers.html"
 }
 </script>
 <style>
@@ -49,134 +49,98 @@ th{background:#161b22;color:#58a6ff}
 <span class="tag">Crypto</span>
 <span class="tag">Email</span>
 <span class="tag">AI Agents</span>
-</div>
-
-<h2>The Problem</h2>
-<p>Most MCP servers for web scraping, crypto monitoring, and email wrap heavy libraries: Playwright (190MB), Selenium (WebDriver binary), requests (unnecessary dependency), npm/Puppeteer (Node.js runtime in a Python project). What if you could give your AI agent 30 tools with <strong>nothing but Python's standard library</strong>?</p>
-
-<h2>The Solution</h2>
-<p>Three MCP servers using only Python stdlib (socket, urllib, smtplib, json, re, struct, base64). No pip installs. No npm. No API keys (for crypto and email). Just Python 3.10+.</p>
-
-<table>
+</div>><h2>The Problem</h2>
+<p>Most MCP servers for web scraping, crypto monitoring, and email wrap heavy libraries: Playwright (190MB), Selenium (WebDriver binary), requests (unnecessary dependency), npm/Puppeteer (Node.js runtime in a Python project). What if you could give your AI agent 30 tools with <strong>nothing but Python's standard library</strong>?</p>><h2>The Solution</h2>
+<p>Three MCP servers using only Python stdlib (socket, urllib, smtplib, json, re, struct, base64). No pip installs. No npm. No API keys (for crypto and email). Just Python 3.10+.</p>><table>
 <tr><th>Server</th><th>Tools</th><th>Tests</th><th>What It Does</th></tr>
 <tr><td><a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">mcp-cdp-scraper</a></td><td>12</td><td>38</td><td>Web scraping via Chrome DevTools Protocol</td></tr>
 <tr><td><a href="https://github.com/AMEOBIUS/mcp-crypto-monitor">mcp-crypto-monitor</a></td><td>10</td><td>30</td><td>Crypto wallet balances &amp; price tracking</td></tr>
 <tr><td><a href="https://github.com/AMEOBIUS/mcp-email-sender">mcp-email-sender</a></td><td>8</td><td>37</td><td>Email validation &amp; SMTP sending</td></tr>
 <tr><td><strong>Total</strong></td><td><strong>30</strong></td><td><strong>105</strong></td><td></td></tr>
-</table>
-
-<h2>1. mcp-cdp-scraper — Web Scraping via CDP</h2>
-<p>Connects to any Chrome/Chromium instance via raw WebSocket CDP commands. No Playwright, no Selenium.</p>
-
-<h3>The WebSocket Trick</h3>
-<p>Chrome's DevTools Protocol speaks WebSocket, and Python's <code>socket</code> module can implement RFC 6455 from scratch in ~100 lines:</p>
+</table>><h2>1. mcp-cdp-scraper — Web Scraping via CDP</h2>
+<p>Connects to any Chrome/Chromium instance via raw WebSocket CDP commands. No Playwright, no Selenium.</p>><h3>The WebSocket Trick</h3>
+<p>Chrome's DevTools Protocol speaks WebSocket, and Python's <code>socket</code>module can implement RFC 6455 from scratch in ~100 lines:</p>
 <pre><code>class CDPConnection:
-    def connect(self):
-        host, port, path = self._parse_ws_url()
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((host, port))
-        key = base64.b64encode(os.urandom(16)).decode()
-        handshake = f"GET {path} HTTP/1.1\r\n..."
-        self.sock.sendall(handshake.encode())
+ def connect(self):
+ host, port, path = self._parse_ws_url()
+ self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ self.sock.connect((host, port))
+ key = base64.b64encode(os.urandom(16)).decode()
+ handshake = f"GET {path} HTTP/1.1\r\n..."
+ self.sock.sendall(handshake.encode())
 
-    def send_command(self, method, params):
-        self.msg_id += 1
-        payload = json.dumps({"id": self.msg_id, "method": method, "params": params})
-        self._send_ws_frame(payload)
-        return self._recv_response()</code></pre>
-
-<h3>12 Tools</h3>
-<p><code>scrape_page</code> (navigate + extract everything), <code>extract_text</code>, <code>extract_links</code>, <code>extract_images</code>, <code>extract_table</code>, <code>fill_form</code> (React/Vue compatible), <code>click_element</code>, <code>screenshot</code>, <code>get_html</code>, <code>wait_for</code>, <code>scroll_to</code>, <code>list_tabs</code>.</p>
-
-<h3>React/Vue Form Filling</h3>
-<p>Direct <code>element.value = "x"</code> doesn't work in React/Vue. The solution uses native setters + synthetic events:</p>
+ def send_command(self, method, params):
+ self.msg_id += 1
+ payload = json.dumps({"id": self.msg_id, "method": method, "params": params})
+ self._send_ws_frame(payload)
+ return self._recv_response()</code></pre>><h3>12 Tools</h3>
+<p><code>scrape_page</code>(navigate + extract everything), <code>extract_text</code>, <code>extract_links</code>, <code>extract_images</code>, <code>extract_table</code>, <code>fill_form</code>(React/Vue compatible), <code>click_element</code>, <code>screenshot</code>, <code>get_html</code>, <code>wait_for</code>, <code>scroll_to</code>, <code>list_tabs</code>.</p>><h3>React/Vue Form Filling</h3>
+<p>Direct <code>element.value = "x"</code>doesn't work in React/Vue. The solution uses native setters + synthetic events:</p>
 <pre><code>const setter = Object.getOwnPropertyDescriptor(
-    HTMLInputElement.prototype, "value"
+ HTMLInputElement.prototype, "value"
 ).set
 setter.call(el, "value")
 el.dispatchEvent(new Event("input", {bubbles: true}))
-el.dispatchEvent(new Event("change", {bubbles: true}))</code></pre>
-
-<h2>2. mcp-crypto-monitor — Free API Crypto Monitoring</h2>
-<p>Uses <strong>only free public APIs</strong> — no API keys: Blockchain.info (BTC), Etherscan (ETH/gas), CoinGecko (prices), Binance (pairs), alternative.me (Fear &amp; Greed).</p>
-
-<h3>Portfolio Calculation</h3>
+el.dispatchEvent(new Event("change", {bubbles: true}))</code></pre>><h2>2. mcp-crypto-monitor — Free API Crypto Monitoring</h2>
+<p>Uses <strong>only free public APIs</strong>— no API keys: Blockchain.info (BTC), Etherscan (ETH/gas), CoinGecko (prices), Binance (pairs), alternative.me (Fear &amp; Greed).</p>><h3>Portfolio Calculation</h3>
 <pre><code>result = server.handle_tool_call("get_portfolio_value", {
-    "holdings": {"BTC": 0.5, "ETH": 10.0, "USDT": 5000.0}
+ "holdings": {"BTC": 0.5, "ETH": 10.0, "USDT": 5000.0}
 })
-# {"total_value_usd": 100000.0, "holdings": {...}}</code></pre>
-
-<h2>3. mcp-email-sender — Validation &amp; SMTP</h2>
-<p>Four validation layers: format (RFC 5322 regex), disposable (16 domains), role-based (admin@, info@), MX records (DNS lookup). SMTP via stdlib <code>smtplib</code> with TLS/SSL.</p>
-
-<pre><code>result = server.handle_tool_call("send_email", {
-    "to": "recipient@example.com",
-    "subject": "Hello from AI",
-    "body": "Sent via MCP with zero dependencies",
-    "smtp_host": "smtp.gmail.com",
-    "smtp_port": 587,
-    "use_tls": True
-})</code></pre>
-
-<h2>Claude Desktop Integration</h2>
+# {"total_value_usd": 100000.0, "holdings": {...}}</code></pre>><h2>3. mcp-email-sender — Validation &amp; SMTP</h2>
+<p>Four validation layers: format (RFC 5322 regex), disposable (16 domains), role-based (admin@, info@), MX records (DNS lookup). SMTP via stdlib <code>smtplib</code>with TLS/SSL.</p>><pre><code>result = server.handle_tool_call("send_email", {
+ "to": "recipient@example.com",
+ "subject": "Hello from AI",
+ "body": "Sent via MCP with zero dependencies",
+ "smtp_host": "smtp.gmail.com",
+ "smtp_port": 587,
+ "use_tls": True
+})</code></pre>><h2>Claude Desktop Integration</h2>
 <pre><code>{
-  "mcpServers": {
-    "cdp-scraper": {
-      "command": "python",
-      "args": ["-m", "src.server", "--stdio"],
-      "cwd": "/path/to/mcp-cdp-scraper"
-    },
-    "crypto-monitor": {
-      "command": "python",
-      "args": ["-m", "src.server", "--stdio"],
-      "cwd": "/path/to/mcp-crypto-monitor"
-    },
-    "email-sender": {
-      "command": "python",
-      "args": ["-m", "src.server", "--stdio"],
-      "cwd": "/path/to/mcp-email-sender"
-    }
-  }
-}</code></pre>
-
-<h2>Architecture Pattern</h2>
+ "mcpServers": {
+ "cdp-scraper": {
+ "command": "python",
+ "args": ["-m", "src.server", "--stdio"],
+ "cwd": "/path/to/mcp-cdp-scraper"
+ },
+ "crypto-monitor": {
+ "command": "python",
+ "args": ["-m", "src.server", "--stdio"],
+ "cwd": "/path/to/mcp-crypto-monitor"
+ },
+ "email-sender": {
+ "command": "python",
+ "args": ["-m", "src.server", "--stdio"],
+ "cwd": "/path/to/mcp-email-sender"
+ }
+ }
+}</code></pre>><h2>Architecture Pattern</h2>
 <pre><code>MCP Client (Claude / Hermes / any)
-    │  JSON-RPC over STDIO
-    ▼
+ │ JSON-RPC over STDIO
+ ▼
 MCPServer (src/server.py)
-    │  Tool dispatch + schema
-    ▼
+ │ Tool dispatch + schema
+ ▼
 Engine (src/<engine>.py)
-    │  Zero-dep business logic
-    ▼
-External API / Chrome / SMTP</code></pre>
-
-<h2>Testing</h2>
-<p>All 105 tests pass without external services. Tests use <code>unittest.mock</code> to mock HTTP, SMTP, and CDP WebSocket. No live network calls:</p>
-<pre><code>cd mcp-cdp-scraper && python -m pytest tests/ -q    # 38 passed
-cd mcp-crypto-monitor && python -m pytest tests/ -q  # 30 passed
-cd mcp-email-sender && python -m pytest tests/ -q    # 37 passed</code></pre>
-
-<h2>Why This Matters</h2>
+ │ Zero-dep business logic
+ ▼
+External API / Chrome / SMTP</code></pre>><h2>Testing</h2>
+<p>All 105 tests pass without external services. Tests use <code>unittest.mock</code>to mock HTTP, SMTP, and CDP WebSocket. No live network calls:</p>
+<pre><code>cd mcp-cdp-scraper && python -m pytest tests/ -q # 38 passed
+cd mcp-crypto-monitor && python -m pytest tests/ -q # 30 passed
+cd mcp-email-sender && python -m pytest tests/ -q # 37 passed</code></pre>><h2>Why This Matters</h2>
 <ul>
-<li><strong>Docker images stay tiny</strong> (~50MB vs 250MB+ with Playwright)</li>
-<li><strong>No supply chain risk</strong> — no third-party packages to audit</li>
-<li><strong>Fast CI</strong> — no dependency resolution</li>
-<li><strong>Portable</strong> — works in any Python 3.10+ environment</li>
-<li><strong>Auditable</strong> — the entire codebase is readable in an afternoon</li>
-</ul>
-
-<h2>Links</h2>
+<li><strong>Docker images stay tiny</strong>(~50MB vs 250MB+ with Playwright)</li>
+<li><strong>No supply chain risk</strong>— no third-party packages to audit</li>
+<li><strong>Fast CI</strong>— no dependency resolution</li>
+<li><strong>Portable</strong>— works in any Python 3.10+ environment</li>
+<li><strong>Auditable</strong>— the entire codebase is readable in an afternoon</li>
+</ul>><h2>Links</h2>
 <ul>
-<li><a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">mcp-cdp-scraper</a> — 12 scraping tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-crypto-monitor">mcp-crypto-monitor</a> — 10 crypto tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-email-sender">mcp-email-sender</a> — 8 email tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-tools-bundle">mcp-tools-bundle</a> — all 3 + install script</li>
-</ul>
-
-<a class="btn" href="https://github.com/AMEOBIUS/mcp-tools-bundle">Get the Bundle →</a>
-
-<hr>
-<p>💬 <a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a> | BTC/USDT/ETH/XMR</p>
+<li><a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">mcp-cdp-scraper</a>— 12 scraping tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-crypto-monitor">mcp-crypto-monitor</a>— 10 crypto tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-email-sender">mcp-email-sender</a>— 8 email tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-tools-bundle">mcp-tools-bundle</a>— all 3 + install script</li>
+</ul>><a class="btn" href="https://github.com/AMEOBIUS/mcp-tools-bundle">Get the Bundle →</a>><hr>
+<p><a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a>| BTC/USDT/ETH/XMR</p>
 </body>
 </html>

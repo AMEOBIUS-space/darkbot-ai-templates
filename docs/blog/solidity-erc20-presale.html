@@ -28,35 +28,35 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract DarkBotToken is ERC20, Ownable {
-    uint256 public constant MAX_SUPPLY = 1_000_000 * 10**18;
-    uint256 public presalePrice = 0.001 ether;
-    bool public presaleActive = true;
-    mapping(address => bool) public whitelist;
-    
-    constructor() ERC20("DarkBot AI", "DBAI") Ownable(msg.sender) {
-        _mint(address(this), MAX_SUPPLY);
-    }
-    
-    function addToWhitelist(address[] calldata users) external onlyOwner {
-        for (uint i = 0; i < users.length; i++) whitelist[users[i]] = true;
-    }
-    
-    function buyPresale() external payable {
-        require(presaleActive && whitelist[msg.sender]);
-        uint256 tokens = (msg.value * 10**18) / presalePrice;
-        _transfer(address(this), msg.sender, tokens);
-    }
+ uint256 public constant MAX_SUPPLY = 1_000_000 * 10**18;
+ uint256 public presalePrice = 0.001 ether;
+ bool public presaleActive = true;
+ mapping(address =>bool) public whitelist;
+ 
+ constructor() ERC20("DarkBot AI", "DBAI") Ownable(msg.sender) {
+ _mint(address(this), MAX_SUPPLY);
+ }
+ 
+ function addToWhitelist(address[] calldata users) external onlyOwner {
+ for (uint i = 0; i < users.length; i++) whitelist[users[i]] = true;
+ }
+ 
+ function buyPresale() external payable {
+ require(presaleActive && whitelist[msg.sender]);
+ uint256 tokens = (msg.value * 10**18) / presalePrice;
+ _transfer(address(this), msg.sender, tokens);
+ }
 }</code></pre>
 <h2>2. Deploy with Foundry</h2>
 <pre><code>forge create contracts/Token.sol:DarkBotToken \
-  --rpc-url $RPC_URL --private-key $KEY</code></pre>
+ --rpc-url $RPC_URL --private-key $KEY</code></pre>
 <h2>3. Test</h2>
 <pre><code>forge test</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/solidity-template">Solidity Template</a> $69/$279</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/solidity-template">Solidity Template</a>$69/$279</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python solidity-template/demo.py</code></pre>
 <hr>
-<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

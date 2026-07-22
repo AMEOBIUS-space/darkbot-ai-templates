@@ -14,26 +14,26 @@
 <pre><code>from aiohttp_socks import ProxyConnector
 connector = ProxyConnector.from_url("socks5://127.0.0.1:9050")
 async with aiohttp.ClientSession(connector=connector) as s:
-    async with s.get("http://example.onion") as r:
-        html = await r.text()</code></pre>
+ async with s.get("http://example.onion") as r:
+ html = await r.text()</code></pre>
 <h2>2. Extract Listings</h2>
 <pre><code># JSON-LD structured data
 for item in jsonld:
-    if item["@type"] == "Product":
-        listings.append({
-            "title": item["name"],
-            "price": item["offers"]["price"]
-        })</code></pre>
+ if item["@type"] == "Product":
+ listings.append({
+ "title": item["name"],
+ "price": item["offers"]["price"]
+ })</code></pre>
 <h2>3. Price Monitoring</h2>
 <pre><code>async def monitor(url, interval=3600):
-    while True:
-        listings = await scrape_market(url)
-        if callback: await callback(listings)
-        await asyncio.sleep(interval)</code></pre>
+ while True:
+ listings = await scrape_market(url)
+ if callback: await callback(listings)
+ await asyncio.sleep(interval)</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/tor-market-scraper">Tor Market Scraper</a> $69/$279</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/tor-market-scraper">Tor Market Scraper</a>$69/$279</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python tor-market-scraper/demo.py</code></pre>
-<hr><p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<hr><p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

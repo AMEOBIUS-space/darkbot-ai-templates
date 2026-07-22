@@ -21,3 +21,5 @@ node wa_node.js        # WhatsApp connection (shows QR)
 ## Price: $59 (license) / $249 (with customization)
 Contact: @darkbot_ai_bot or @ameobius
 Payment: BTC / USDT / ETH / XMR
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

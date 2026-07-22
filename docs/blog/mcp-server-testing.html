@@ -1,289 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Testing MCP Servers: A Practical Framework</title>
-    <meta name="description" content="How to test Model Context Protocol servers without mocking the protocol layer. Real integration tests in pure Python.">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "TechArticle",
-        "headline": "Testing MCP Servers: A Practical Framework",
-        "description": "How to test MCP servers without mocking the protocol layer.",
-        "author": { "@type": "Person", "name": "aaameobius-crypto" },
-        "datePublished": "2026-07-09"
-    }
-    </script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
-        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-        h2 { font-size: 1.4rem; margin-top: 2rem; }
-        h3 { font-size: 1.1rem; margin-top: 1.5rem; }
-        code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
-        pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
-        pre code { background: none; padding: 0; }
-        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-        th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
-        th { background: #f8f8f8; }
-        a { color: #0366d6; }
-        .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
-        .tip { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>Testing MCP Servers: A Practical Framework</title>><meta name="description" content="How to test Model Context Protocol servers without mocking the protocol layer. Real integration tests in pure Python.">><script type="application/ld+json">>{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Testing MCP Servers: A Practical Framework",
+ "description": "How to test MCP servers without mocking the protocol layer.",
+ "author": { "@type": "Person", "name": "aaameobius-crypto" },
+ "datePublished": "2026-07-09"
+ }
+ </script>><style>>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
+ h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+ h2 { font-size: 1.4rem; margin-top: 2rem; }
+ h3 { font-size: 1.1rem; margin-top: 1.5rem; }
+ code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
+ pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+ pre code { background: none; padding: 0; }
+ table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+ th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+ th { background: #f8f8f8; }
+ a { color: #0366d6; }
+ .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
+ .tip { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ </style>
 </head>
-<body>
-    <h1>Testing MCP Servers: A Practical Framework</h1>
-    <p><span class="tag">MCP</span> <span class="tag">Testing</span> <span class="tag">Python</span></p>
-    <p><em>2026-07-09</em></p>
-
-    <p>Most MCP server tutorials show you how to build a server. Almost none show you how to test it. This matters because an untested MCP server is a liability — one broken tool can stall an agent's entire workflow.</p>
-
-    <p>After writing 168 MCP tools across 14 servers (<a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a>), here is the testing framework that actually works.</p>
-
-    <h2>The Three Layers</h2>
-
-    <table>
-        <tr><th>Layer</th><th>What it tests</th><th>Speed</th><th>Coverage</th></tr>
-        <tr><td>Unit</td><td>Individual tool handlers</td><td><1s</td><td>Logic correctness</td></tr>
-        <tr><td>Integration</td><td>JSON-RPC protocol handling</td><td>1-2s</td><td>Wire format, error handling</td></tr>
-        <tr><td>E2E</td><td>Real MCP client ↔ server</td><td>5-10s</td><td>Full pipeline, edge cases</td></tr>
-    </table>
-
-    <h2>Layer 1: Unit Tests (Tool Handlers)</h2>
-
-    <p>Test the handler function directly, bypassing the protocol layer. Fast, deterministic, no I/O:</p>
-
-    <pre><code>import unittest
+<body>><h1>Testing MCP Servers: A Practical Framework</h1>><p><span class="tag">MCP</span><span class="tag">Testing</span><span class="tag">Python</span></p>><p><em>2026-07-09</em></p>><p>Most MCP server tutorials show you how to build a server. Almost none show you how to test it. This matters because an untested MCP server is a liability — one broken tool can stall an agent's entire workflow.</p>><p>After writing 168 MCP tools across 14 servers (<a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a>), here is the testing framework that actually works.</p>><h2>The Three Layers</h2>><table>><tr><th>Layer</th><th>What it tests</th><th>Speed</th><th>Coverage</th></tr>><tr><td>Unit</td><td>Individual tool handlers</td><td><1s</td><td>Logic correctness</td></tr>><tr><td>Integration</td><td>JSON-RPC protocol handling</td><td>1-2s</td><td>Wire format, error handling</td></tr>><tr><td>E2E</td><td>Real MCP client ↔ server</td><td>5-10s</td><td>Full pipeline, edge cases</td></tr>></table>><h2>Layer 1: Unit Tests (Tool Handlers)</h2>><p>Test the handler function directly, bypassing the protocol layer. Fast, deterministic, no I/O:</p>><pre><code>import unittest
 from src.server import hash_text, encode_base64
 
 class TestHashTool(unittest.TestCase):
-    """Test the hash_text tool handler in isolation."""
-    
-    def test_sha256_basic(self):
-        result = hash_text({"text": "hello", "algorithm": "sha256"})
-        self.assertEqual(result, 
-            "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824")
-    
-    def test_md5_basic(self):
-        result = hash_text({"text": "hello", "algorithm": "md5"})
-        self.assertEqual(result, "5d41402abc4b2a76b9719d911017c592")
-    
-    def test_empty_input(self):
-        result = hash_text({"text": "", "algorithm": "sha256"})
-        self.assertEqual(len(result), 64)
-    
-    def test_invalid_algorithm(self):
-        with self.assertRaises(ValueError):
-            hash_text({"text": "hello", "algorithm": "invalid"})
-    
-    def test_missing_text(self):
-        with self.assertRaises(KeyError):
-            hash_text({"algorithm": "sha256"})
-    
-    def test_unicode(self):
-        result = hash_text({"text": "héllo世界", "algorithm": "sha256"})
-        self.assertEqual(len(result), 64)
+ """Test the hash_text tool handler in isolation."""
+ 
+ def test_sha256_basic(self):
+ result = hash_text({"text": "hello", "algorithm": "sha256"})
+ self.assertEqual(result, 
+ "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824")
+ 
+ def test_md5_basic(self):
+ result = hash_text({"text": "hello", "algorithm": "md5"})
+ self.assertEqual(result, "5d41402abc4b2a76b9719d911017c592")
+ 
+ def test_empty_input(self):
+ result = hash_text({"text": "", "algorithm": "sha256"})
+ self.assertEqual(len(result), 64)
+ 
+ def test_invalid_algorithm(self):
+ with self.assertRaises(ValueError):
+ hash_text({"text": "hello", "algorithm": "invalid"})
+ 
+ def test_missing_text(self):
+ with self.assertRaises(KeyError):
+ hash_text({"algorithm": "sha256"})
+ 
+ def test_unicode(self):
+ result = hash_text({"text": "héllo世界", "algorithm": "sha256"})
+ self.assertEqual(len(result), 64)
 
 
 class TestBase64Tool(unittest.TestCase):
-    def test_encode(self):
-        result = encode_base64({"text": "Hello, World!"})
-        self.assertEqual(result, "SGVsbG8sIFdvcmxkIQ==")
-    
-    def test_encode_unicode(self):
-        result = encode_base64({"text": "Привет"})
-        self.assertEqual(len(result) > 0, True)
-    
-    def test_round_trip(self):
-        import base64
-        original = "Test string 123"
-        encoded = encode_base64({"text": original})
-        decoded = base64.b64decode(encoded).decode()
-        self.assertEqual(decoded, original)</code></pre>
-
-    <div class="tip">Name tests after the BEHAVIOR, not the implementation. <code>test_sha256_basic</code> describes what it tests. <code>test_1</code> does not.</div>
-
-    <h2>Layer 2: Integration Tests (Protocol)</h2>
-
-    <p>Test that your server correctly handles JSON-RPC requests. This catches serialization bugs, missing fields, and error format issues:</p>
-
-    <pre><code>import unittest
+ def test_encode(self):
+ result = encode_base64({"text": "Hello, World!"})
+ self.assertEqual(result, "SGVsbG8sIFdvcmxkIQ==")
+ 
+ def test_encode_unicode(self):
+ result = encode_base64({"text": "Привет"})
+ self.assertEqual(len(result) >0, True)
+ 
+ def test_round_trip(self):
+ import base64
+ original = "Test string 123"
+ encoded = encode_base64({"text": original})
+ decoded = base64.b64decode(encoded).decode()
+ self.assertEqual(decoded, original)</code></pre>><div class="tip">Name tests after the BEHAVIOR, not the implementation. <code>test_sha256_basic</code>describes what it tests. <code>test_1</code>does not.</div>><h2>Layer 2: Integration Tests (Protocol)</h2>><p>Test that your server correctly handles JSON-RPC requests. This catches serialization bugs, missing fields, and error format issues:</p>><pre><code>import unittest
 import json
 from src.server import MCPServer
 
 class TestProtocolLayer(unittest.TestCase):
-    """Test JSON-RPC protocol compliance."""
-    
-    def setUp(self):
-        self.server = MCPServer()
-        # Register test tools
-        self.server.register("echo", "Echo input", {
-            "type": "object",
-            "properties": {"text": {"type": "string"}},
-            "required": ["text"]
-        }, lambda args: args["text"])
-    
-    def _send(self, request: dict) -> dict:
-        """Send a JSON-RPC request and get response."""
-        return self.server.handle_request(request)
-    
-    def test_tools_list(self):
-        """Server must respond to tools/list with correct schema."""
-        resp = self._send({
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "tools/list"
-        })
-        self.assertEqual(resp["jsonrpc"], "2.0")
-        self.assertEqual(resp["id"], 1)
-        self.assertIn("result", resp)
-        self.assertIn("tools", resp["result"])
-        
-        tool = resp["result"]["tools"][0]
-        self.assertEqual(tool["name"], "echo")
-        self.assertIn("description", tool)
-        self.assertIn("inputSchema", tool)
-        self.assertEqual(tool["inputSchema"]["type"], "object")
-    
-    def test_tools_call_success(self):
-        resp = self._send({
-            "jsonrpc": "2.0",
-            "id": 2,
-            "method": "tools/call",
-            "params": {"name": "echo", "arguments": {"text": "hello"}}
-        })
-        self.assertEqual(resp["id"], 2)
-        self.assertIn("result", resp)
-        self.assertIn("content", resp["result"])
-        self.assertEqual(resp["result"]["content"][0]["type"], "text")
-        self.assertEqual(resp["result"]["content"][0]["text"], "hello")
-    
-    def test_tools_call_missing_tool(self):
-        resp = self._send({
-            "jsonrpc": "2.0",
-            "id": 3,
-            "method": "tools/call",
-            "params": {"name": "nonexistent", "arguments": {}}
-        })
-        self.assertIn("error", resp)
-        self.assertEqual(resp["error"]["code"], -32601)
-    
-    def test_tools_call_missing_required_arg(self):
-        resp = self._send({
-            "jsonrpc": "2.0",
-            "id": 4,
-            "method": "tools/call",
-            "params": {"name": "echo", "arguments": {}}
-        })
-        self.assertIn("error", resp)
-    
-    def test_unknown_method(self):
-        resp = self._send({
-            "jsonrpc": "2.0",
-            "id": 5,
-            "method": "invalid/method"
-        })
-        self.assertIn("error", resp)
-        self.assertEqual(resp["error"]["code"], -32601)
-    
-    def test_notification_no_response(self):
-        """Notifications (no id) should not get a response."""
-        resp = self._send({
-            "jsonrpc": "2.0",
-            "method": "tools/list"
-        })
-        # Notifications don't get responses
-        self.assertNotIn("id", resp)</code></pre>
-
-    <h2>Layer 3: E2E Tests (Real Pipeline)</h2>
-
-    <p>Spin up the server as a subprocess and communicate over stdio. This tests the full pipeline including JSON serialization, stdio buffering, and process lifecycle:</p>
-
-    <pre><code>import unittest
+ """Test JSON-RPC protocol compliance."""
+ 
+ def setUp(self):
+ self.server = MCPServer()
+ # Register test tools
+ self.server.register("echo", "Echo input", {
+ "type": "object",
+ "properties": {"text": {"type": "string"}},
+ "required": ["text"]
+ }, lambda args: args["text"])
+ 
+ def _send(self, request: dict) ->dict:
+ """Send a JSON-RPC request and get response."""
+ return self.server.handle_request(request)
+ 
+ def test_tools_list(self):
+ """Server must respond to tools/list with correct schema."""
+ resp = self._send({
+ "jsonrpc": "2.0",
+ "id": 1,
+ "method": "tools/list"
+ })
+ self.assertEqual(resp["jsonrpc"], "2.0")
+ self.assertEqual(resp["id"], 1)
+ self.assertIn("result", resp)
+ self.assertIn("tools", resp["result"])
+ 
+ tool = resp["result"]["tools"][0]
+ self.assertEqual(tool["name"], "echo")
+ self.assertIn("description", tool)
+ self.assertIn("inputSchema", tool)
+ self.assertEqual(tool["inputSchema"]["type"], "object")
+ 
+ def test_tools_call_success(self):
+ resp = self._send({
+ "jsonrpc": "2.0",
+ "id": 2,
+ "method": "tools/call",
+ "params": {"name": "echo", "arguments": {"text": "hello"}}
+ })
+ self.assertEqual(resp["id"], 2)
+ self.assertIn("result", resp)
+ self.assertIn("content", resp["result"])
+ self.assertEqual(resp["result"]["content"][0]["type"], "text")
+ self.assertEqual(resp["result"]["content"][0]["text"], "hello")
+ 
+ def test_tools_call_missing_tool(self):
+ resp = self._send({
+ "jsonrpc": "2.0",
+ "id": 3,
+ "method": "tools/call",
+ "params": {"name": "nonexistent", "arguments": {}}
+ })
+ self.assertIn("error", resp)
+ self.assertEqual(resp["error"]["code"], -32601)
+ 
+ def test_tools_call_missing_required_arg(self):
+ resp = self._send({
+ "jsonrpc": "2.0",
+ "id": 4,
+ "method": "tools/call",
+ "params": {"name": "echo", "arguments": {}}
+ })
+ self.assertIn("error", resp)
+ 
+ def test_unknown_method(self):
+ resp = self._send({
+ "jsonrpc": "2.0",
+ "id": 5,
+ "method": "invalid/method"
+ })
+ self.assertIn("error", resp)
+ self.assertEqual(resp["error"]["code"], -32601)
+ 
+ def test_notification_no_response(self):
+ """Notifications (no id) should not get a response."""
+ resp = self._send({
+ "jsonrpc": "2.0",
+ "method": "tools/list"
+ })
+ # Notifications don't get responses
+ self.assertNotIn("id", resp)</code></pre>><h2>Layer 3: E2E Tests (Real Pipeline)</h2>><p>Spin up the server as a subprocess and communicate over stdio. This tests the full pipeline including JSON serialization, stdio buffering, and process lifecycle:</p>><pre><code>import unittest
 import subprocess
 import json
 
 class TestEndToEnd(unittest.TestCase):
-    """Test the server as a real subprocess."""
-    
-    def setUp(self):
-        self.proc = subprocess.Popen(
-            ["python3", "src/server.py"],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-    
-    def tearDown(self):
-        self.proc.terminate()
-        self.proc.wait()
-    
-    def _rpc(self, request: dict) -> dict:
-        """Send request, read response."""
-        self.proc.stdin.write(json.dumps(request) + "\n")
-        self.proc.stdin.flush()
-        line = self.proc.stdout.readline()
-        return json.loads(line)
-    
-    def test_list_tools_e2e(self):
-        resp = self._rpc({
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "tools/list"
-        })
-        self.assertEqual(resp["id"], 1)
-        self.assertIn("tools", resp["result"])
-        self.assertGreater(len(resp["result"]["tools"]), 0)
-    
-    def test_call_tool_e2e(self):
-        # First list tools to get a valid tool name
-        resp = self._rpc({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
-        tool_name = resp["result"]["tools"][0]["name"]
-        
-        # Call it
-        resp2 = self._rpc({
-            "jsonrpc": "2.0",
-            "id": 2,
-            "method": "tools/call",
-            "params": {"name": tool_name, "arguments": {}}
-        })
-        self.assertEqual(resp2["id"], 2)
-        self.assertIn("result", resp2)
-    
-    def test_concurrent_calls(self):
-        """Server should handle multiple sequential calls."""
-        for i in range(5):
-            resp = self._rpc({
-                "jsonrpc": "2.0",
-                "id": i + 1,
-                "method": "tools/list"
-            })
-            self.assertEqual(resp["id"], i + 1)</code></pre>
-
-    <div class="warning">E2E tests require the server to be runnable as <code>python3 src/server.py</code>. If your server uses environment variables or config files, make sure defaults work in a clean subprocess.</div>
-
-    <h2>Test Discovery and Organization</h2>
-
-    <p>Structure your tests so <code>pytest</code> discovers them automatically:</p>
-
-    <pre><code>mcp-my-server/
+ """Test the server as a real subprocess."""
+ 
+ def setUp(self):
+ self.proc = subprocess.Popen(
+ ["python3", "src/server.py"],
+ stdin=subprocess.PIPE,
+ stdout=subprocess.PIPE,
+ stderr=subprocess.PIPE,
+ text=True
+ )
+ 
+ def tearDown(self):
+ self.proc.terminate()
+ self.proc.wait()
+ 
+ def _rpc(self, request: dict) ->dict:
+ """Send request, read response."""
+ self.proc.stdin.write(json.dumps(request) + "\n")
+ self.proc.stdin.flush()
+ line = self.proc.stdout.readline()
+ return json.loads(line)
+ 
+ def test_list_tools_e2e(self):
+ resp = self._rpc({
+ "jsonrpc": "2.0",
+ "id": 1,
+ "method": "tools/list"
+ })
+ self.assertEqual(resp["id"], 1)
+ self.assertIn("tools", resp["result"])
+ self.assertGreater(len(resp["result"]["tools"]), 0)
+ 
+ def test_call_tool_e2e(self):
+ # First list tools to get a valid tool name
+ resp = self._rpc({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
+ tool_name = resp["result"]["tools"][0]["name"]
+ 
+ # Call it
+ resp2 = self._rpc({
+ "jsonrpc": "2.0",
+ "id": 2,
+ "method": "tools/call",
+ "params": {"name": tool_name, "arguments": {}}
+ })
+ self.assertEqual(resp2["id"], 2)
+ self.assertIn("result", resp2)
+ 
+ def test_concurrent_calls(self):
+ """Server should handle multiple sequential calls."""
+ for i in range(5):
+ resp = self._rpc({
+ "jsonrpc": "2.0",
+ "id": i + 1,
+ "method": "tools/list"
+ })
+ self.assertEqual(resp["id"], i + 1)</code></pre>><div class="warning">E2E tests require the server to be runnable as <code>python3 src/server.py</code>. If your server uses environment variables or config files, make sure defaults work in a clean subprocess.</div>><h2>Test Discovery and Organization</h2>><p>Structure your tests so <code>pytest</code>discovers them automatically:</p>><pre><code>mcp-my-server/
 ├── src/
-│   ├── __init__.py
-│   ├── server.py
-│   └── tools.py
+│ ├── __init__.py
+│ ├── server.py
+│ └── tools.py
 ├── tests/
-│   ├── __init__.py
-│   ├── test_tools.py        # Layer 1: unit tests
-│   ├── test_protocol.py     # Layer 2: integration
-│   └── test_e2e.py          # Layer 3: e2e
+│ ├── __init__.py
+│ ├── test_tools.py # Layer 1: unit tests
+│ ├── test_protocol.py # Layer 2: integration
+│ └── test_e2e.py # Layer 3: e2e
 ├── pyproject.toml
-└── Makefile</code></pre>
-
-    <p>Makefile for convenience:</p>
-
-    <pre><code>test:
+└── Makefile</code></pre>><p>Makefile for convenience:</p>><pre><code>test:
 \tpython -m pytest tests/ -v
 
 test-unit:
@@ -293,65 +237,23 @@ test-e2e:
 \tpython -m pytest tests/test_e2e.py -v
 
 coverage:
-\tpython -m pytest tests/ --cov=src --cov-report=html</code></pre>
-
-    <h2>Common Testing Pitfalls</h2>
-
-    <h3>1. Testing mocks instead of code</h3>
-    <p>If your test mocks <code>json.loads</code>, you are testing the mock, not your server. Only mock external dependencies (network, filesystem).</p>
-
-    <h3>2. Not testing error paths</h3>
-    <p>Test what happens when: required args are missing, values are wrong types, the tool handler raises, the client sends malformed JSON, the server receives unknown methods.</p>
-
-    <h3>3. Testing with real API keys</h3>
-    <p>Never put real API keys in test files. Use environment variables with safe defaults:</p>
-    <pre><code>def setUp(self):
-    self.api_key = os.environ.get("TEST_API_KEY", "test-key-not-real")</code></pre>
-
-    <h3>4. Not testing tool discovery</h3>
-    <p>If <code>tools/list</code> returns an empty array, the client sees zero tools. Always test that your tools are discoverable.</p>
-
-    <h2>CI Integration</h2>
-
-    <p>GitHub Actions workflow for automatic testing:</p>
-
-    <pre><code># .github/workflows/ci.yml
+\tpython -m pytest tests/ --cov=src --cov-report=html</code></pre>><h2>Common Testing Pitfalls</h2>><h3>1. Testing mocks instead of code</h3>><p>If your test mocks <code>json.loads</code>, you are testing the mock, not your server. Only mock external dependencies (network, filesystem).</p>><h3>2. Not testing error paths</h3>><p>Test what happens when: required args are missing, values are wrong types, the tool handler raises, the client sends malformed JSON, the server receives unknown methods.</p>><h3>3. Testing with real API keys</h3>><p>Never put real API keys in test files. Use environment variables with safe defaults:</p>><pre><code>def setUp(self):
+ self.api_key = os.environ.get("TEST_API_KEY", "test-key-not-real")</code></pre>><h3>4. Not testing tool discovery</h3>><p>If <code>tools/list</code>returns an empty array, the client sees zero tools. Always test that your tools are discoverable.</p>><h2>CI Integration</h2>><p>GitHub Actions workflow for automatic testing:</p>><pre><code># .github/workflows/ci.yml
 name: CI
 on: [push, pull_request]
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python: ['3.10', '3.11', '3.12']
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-      - run: pip install pytest pytest-cov
-      - run: python -m pytest tests/ -v --tb=short
-      - run: python -m pytest tests/ --cov=src --cov-fail-under=80</code></pre>
-
-    <h2>Results</h2>
-
-    <table>
-        <tr><th>Project</th><th>Tools</th><th>Tests</th><th>Coverage</th><th>Bugs caught</th></tr>
-        <tr><td>mcp-tools-bundle</td><td>30</td><td>105</td><td>92%</td><td>14</td></tr>
-        <tr><td>cdp-toolkit</td><td>15</td><td>38</td><td>87%</td><td>6</td></tr>
-        <tr><td>bounty-hunter-toolkit</td><td>42</td><td>67</td><td>85%</td><td>9</td></tr>
-        <tr><td><strong>Total</strong></td><td><strong>87</strong></td><td><strong>210</strong></td><td><strong>88%</strong></td><td><strong>29</strong></td></tr>
-    </table>
-
-    <p>29 bugs caught before deployment. Zero post-deployment bug reports.</p>
-
-    <h2>Install</h2>
-
-    <pre><code>pip install mcp-eval-harness</code></pre>
-
-    <p>Browse all test suites: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates on GitHub</a></p>
-
-    <hr>
-    <p><em>168 production-ready Python templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
+ test:
+ runs-on: ubuntu-latest
+ strategy:
+ matrix:
+ python: ['3.10', '3.11', '3.12']
+ steps:
+ - uses: actions/checkout@v4
+ - uses: actions/setup-python@v5
+ with:
+ python-version: ${{ matrix.python }}
+ - run: pip install pytest pytest-cov
+ - run: python -m pytest tests/ -v --tb=short
+ - run: python -m pytest tests/ --cov=src --cov-fail-under=80</code></pre>><h2>Results</h2>><table>><tr><th>Project</th><th>Tools</th><th>Tests</th><th>Coverage</th><th>Bugs caught</th></tr>><tr><td>mcp-tools-bundle</td><td>30</td><td>105</td><td>92%</td><td>14</td></tr>><tr><td>cdp-toolkit</td><td>15</td><td>38</td><td>87%</td><td>6</td></tr>><tr><td>bounty-hunter-toolkit</td><td>42</td><td>67</td><td>85%</td><td>9</td></tr>><tr><td><strong>Total</strong></td><td><strong>87</strong></td><td><strong>210</strong></td><td><strong>88%</strong></td><td><strong>29</strong></td></tr>></table>><p>29 bugs caught before deployment. Zero post-deployment bug reports.</p>><h2>Install</h2>><pre><code>pip install mcp-eval-harness</code></pre>><p>Browse all test suites: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates on GitHub</a></p>><hr>><p><em>168 production-ready Python templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
 </body>
 </html>

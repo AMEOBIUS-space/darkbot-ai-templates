@@ -30,24 +30,18 @@ a { color: #4a90d9; }
 <blockquote>How I used 15 vulnerability patterns to fix 100+ GitHub bounty issues and earn $417K+ in potential bounties</blockquote>
 <p><em>Published: 2026-07-05 | Tags: security, python, bug-bounty, github</em></p>
 <h2>Introduction</h2>
-<p>Bug bounties on GitHub are an underrated way to earn money as a developer. Platforms like ClankerNation, gofrantic.com, and Opire pay developers to fix issues in open-source repositories.</p>
-
-<h2>The Problem</h2>
-<p>Most bounty issues fall into common categories: SQL Injection, JWT, XXE, SSTI, CSRF, unsafe deserialization, path traversal, and more. Instead of writing fixes from scratch, I built a <strong>Bounty Hunter Toolkit</strong>.</p>
-
-<h2>Building the Toolkit</h2>
+<p>Bug bounties on GitHub are an underrated way to earn money as a developer. Platforms like ClankerNation, gofrantic.com, and Opire pay developers to fix issues in open-source repositories.</p>><h2>The Problem</h2>
+<p>Most bounty issues fall into common categories: SQL Injection, JWT, XXE, SSTI, CSRF, unsafe deserialization, path traversal, and more. Instead of writing fixes from scratch, I built a <strong>Bounty Hunter Toolkit</strong>.</p>><h2>Building the Toolkit</h2>
 <pre><code>PATTERNS = {
-    "sql_injection": {
-        "bad": 'cursor.execute(f"SELECT * FROM users WHERE id = {id}")',
-        "good": 'cursor.execute("SELECT * FROM users WHERE id = ?", (id,))',
-    },
-    "jwt_none": {
-        "bad": 'jwt.decode(token, key, algorithms=None)',
-        "good": 'jwt.decode(token, key, algorithms=["HS256", "HS384", "HS512"])',
-    },
-}</code></pre>
-
-<h2>Real Results</h2>
+ "sql_injection": {
+ "bad": 'cursor.execute(f"SELECT * FROM users WHERE id = {id}")',
+ "good": 'cursor.execute("SELECT * FROM users WHERE id = ?", (id,))',
+ },
+ "jwt_none": {
+ "bad": 'jwt.decode(token, key, algorithms=None)',
+ "good": 'jwt.decode(token, key, algorithms=["HS256", "HS384", "HS512"])',
+ },
+}</code></pre>><h2>Real Results</h2>
 <table>
 <tr><th>Platform</th><th>Issues Fixed</th><th>Bounty</th></tr>
 <tr><td>ClankerNation</td><td>201</td><td>$131K+</td></tr>
@@ -56,12 +50,8 @@ a { color: #4a90d9; }
 <tr><td>Nexussyn</td><td>4</td><td>$40 USDC</td></tr>
 <tr><td>frantic-board</td><td>18</td><td>$171</td></tr>
 </table>
-<p><strong>Total: $417K+ in bounty potential</strong></p>
-
-<h2>GitHub Contents API Trick</h2>
-<p>Instead of cloning repos, I used the GitHub Contents API to read, patch, and push files without cloning.</p>
-
-<h2>Conclusion</h2>
-<p>The full toolkit is available at <a href="https://github.com/AMEOBIUS/darkbot-ai-templates">github.com/AMEOBIUS/darkbot-ai-templates</a> along with 59 other production-ready templates.</p>
-<p><strong>BTC | USDT | ETH | XMR</strong> accepted. Order via <a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a>.</p>
+<p><strong>Total: $417K+ in bounty potential</strong></p>><h2>GitHub Contents API Trick</h2>
+<p>Instead of cloning repos, I used the GitHub Contents API to read, patch, and push files without cloning.</p>><h2>Conclusion</h2>
+<p>The full toolkit is available at <a href="https://github.com/AMEOBIUS/darkbot-ai-templates">github.com/AMEOBIUS/darkbot-ai-templates</a>along with 59 other production-ready templates.</p>
+<p><strong>BTC | USDT | ETH | XMR</strong>accepted. Order via <a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a>.</p>
 </body></html>

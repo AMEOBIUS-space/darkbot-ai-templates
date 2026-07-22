@@ -1,313 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Token Budget Management: Track and Limit Agent Costs</title>
-    <meta name="description" content="A practical system for tracking token usage across agent conversations, setting budgets, and preventing runaway costs.">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "TechArticle",
-        "headline": "Token Budget Management: Track and Limit Agent Costs",
-        "author": { "@type": "Person", "name": "aaameobius-crypto" },
-        "datePublished": "2026-07-09"
-    }
-    </script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
-        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-        h2 { font-size: 1.4rem; margin-top: 2rem; }
-        h3 { font-size: 1.1rem; margin-top: 1.5rem; }
-        code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
-        pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
-        pre code { background: none; padding: 0; }
-        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-        th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
-        th { background: #f8f8f8; }
-        a { color: #0366d6; }
-        .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
-        .metric { font-family: monospace; font-weight: bold; color: #0366d6; }
-        .danger { background: #f8d7da; border-left: 4px solid #dc3545; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-        .tip { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>Token Budget Management: Track and Limit Agent Costs</title>><meta name="description" content="A practical system for tracking token usage across agent conversations, setting budgets, and preventing runaway costs.">><script type="application/ld+json">>{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Token Budget Management: Track and Limit Agent Costs",
+ "author": { "@type": "Person", "name": "aaameobius-crypto" },
+ "datePublished": "2026-07-09"
+ }
+ </script>><style>>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
+ h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+ h2 { font-size: 1.4rem; margin-top: 2rem; }
+ h3 { font-size: 1.1rem; margin-top: 1.5rem; }
+ code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
+ pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+ pre code { background: none; padding: 0; }
+ table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+ th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+ th { background: #f8f8f8; }
+ a { color: #0366d6; }
+ .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
+ .metric { font-family: monospace; font-weight: bold; color: #0366d6; }
+ .danger { background: #f8d7da; border-left: 4px solid #dc3545; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ .tip { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ </style>
 </head>
-<body>
-    <h1>Token Budget Management: Track and Limit Agent Costs</h1>
-    <p><span class="tag">MCP</span> <span class="tag">Cost</span> <span class="tag">Python</span></p>
-    <p><em>2026-07-09</em></p>
-
-    <p>An agent that runs 40 tool calls in a loop does not just waste time — it wastes money. At $0.003 per 1K input tokens, a single runaway loop can cost $0.50 in five minutes. At scale, this adds up fast.</p>
-
-    <p>This article shows a token budget system that tracks usage per conversation, per tool, and per turn — and shuts down runaway agents before they bankrupt you.</p>
-
-    <h2>The Architecture</h2>
-
-    <pre><code>┌──────────────────────────────────────────────────┐
-│                 Agent Loop                         │
-│                                                    │
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐     │
-│  │  Turn 1  │───▶│  Turn 2  │───▶│  Turn 3  │     │
-│  └────┬─────┘    └────┬─────┘    └────┬─────┘     │
-│       │               │               │            │
-│       ▼               ▼               ▼            │
-│  ┌──────────────────────────────────────────┐     │
-│  │         TokenBudgetManager                │     │
-│  │                                           │     │
-│  │  • Per-turn tracking                      │     │
-│  │  • Per-tool accounting                    │     │
-│  │  • Budget thresholds (warn/stop)          │     │
-│  │  • Usage history                          │     │
-│  └──────────────────────────────────────────┘     │
-│                       │                            │
-│                       ▼                            │
-│              [CONTINUE / WARN / STOP]              │
-└──────────────────────────────────────────────────┘</code></pre>
-
-    <h2>The Token Tracker</h2>
-
-    <pre><code>from dataclasses import dataclass, field
+<body>><h1>Token Budget Management: Track and Limit Agent Costs</h1>><p><span class="tag">MCP</span><span class="tag">Cost</span><span class="tag">Python</span></p>><p><em>2026-07-09</em></p>><p>An agent that runs 40 tool calls in a loop does not just waste time — it wastes money. At $0.003 per 1K input tokens, a single runaway loop can cost $0.50 in five minutes. At scale, this adds up fast.</p>><p>This article shows a token budget system that tracks usage per conversation, per tool, and per turn — and shuts down runaway agents before they bankrupt you.</p>><h2>The Architecture</h2>><pre><code>┌──────────────────────────────────────────────────┐
+│ Agent Loop │
+│ │
+│ ┌──────────┐ ┌──────────┐ ┌──────────┐ │
+│ │ Turn 1 │───▶│ Turn 2 │───▶│ Turn 3 │ │
+│ └────┬─────┘ └────┬─────┘ └────┬─────┘ │
+│ │ │ │ │
+│ ▼ ▼ ▼ │
+│ ┌──────────────────────────────────────────┐ │
+│ │ TokenBudgetManager │ │
+│ │ │ │
+│ │ • Per-turn tracking │ │
+│ │ • Per-tool accounting │ │
+│ │ • Budget thresholds (warn/stop) │ │
+│ │ • Usage history │ │
+│ └──────────────────────────────────────────┘ │
+│ │ │
+│ ▼ │
+│ [CONTINUE / WARN / STOP] │
+└──────────────────────────────────────────────────┘</code></pre>><h2>The Token Tracker</h2>><pre><code>from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 
 class BudgetAction(Enum):
-    CONTINUE = "continue"
-    WARN = "warn"
-    STOP = "stop"
+ CONTINUE = "continue"
+ WARN = "warn"
+ STOP = "stop"
 
 @dataclass
 class TurnUsage:
-    turn_number: int
-    input_tokens: int = 0
-    output_tokens: int = 0
-    tool_name: str = ""
-    timestamp: str = ""
+ turn_number: int
+ input_tokens: int = 0
+ output_tokens: int = 0
+ tool_name: str = ""
+ timestamp: str = ""
 
 @dataclass
 class TokenBudgetManager:
-    max_total_tokens: int = 50000
-    max_per_turn: int = 8000
-    max_per_tool: int = 3000
-    warn_threshold: float = 0.7  # warn at 70% of budget
-    stop_threshold: float = 0.95  # stop at 95%
-    
-    turns: list = field(default_factory=list)
-    tool_usage: dict = field(default_factory=dict)  # tool_name -> total tokens
-    
-    @property
-    def total_input(self) -> int:
-        return sum(t.input_tokens for t in self.turns)
-    
-    @property
-    def total_output(self) -> int:
-        return sum(t.output_tokens for t in self.turns)
-    
-    @property
-    def total_tokens(self) -> int:
-        return self.total_input + self.total_output
-    
-    @property
-    def turn_count(self) -> int:
-        return len(self.turns)
-    
-    def record(self, input_tokens: int, output_tokens: int, tool_name: str = "") -> BudgetAction:
-        """Record usage for a turn. Returns recommended action."""
-        turn = TurnUsage(
-            turn_number=len(self.turns) + 1,
-            input_tokens=input_tokens,
-            output_tokens=output_tokens,
-            tool_name=tool_name,
-            timestamp=datetime.now().isoformat()
-        )
-        self.turns.append(turn)
-        
-        if tool_name:
-            self.tool_usage[tool_name] = \
-                self.tool_usage.get(tool_name, 0) + input_tokens + output_tokens
-        
-        return self.check_budget()
-    
-    def check_budget(self) -> BudgetAction:
-        """Check if any budget threshold is exceeded."""
-        # Total budget check
-        ratio = self.total_tokens / self.max_total_tokens
-        if ratio >= self.stop_threshold:
-            return BudgetAction.STOP
-        if ratio >= self.warn_threshold:
-            return BudgetAction.WARN
-        
-        # Per-turn check (last turn)
-        if self.turns:
-            last = self.turns[-1]
-            last_total = last.input_tokens + last.output_tokens
-            if last_total >= self.max_per_turn:
-                return BudgetAction.WARN
-        
-        # Per-tool check
-        for tool, usage in self.tool_usage.items():
-            if usage >= self.max_per_tool:
-                return BudgetAction.WARN
-        
-        return BudgetAction.CONTINUE
-    
-    def summary(self) -> dict:
-        """Get usage summary."""
-        return {
-            "total_tokens": self.total_tokens,
-            "input_tokens": self.total_input,
-            "output_tokens": self.total_output,
-            "turns": self.turn_count,
-            "avg_per_turn": self.total_tokens // max(1, self.turn_count),
-            "budget_used_pct": round(
-                self.total_tokens / self.max_total_tokens * 100, 1
-            ),
-            "top_tools": sorted(
-                self.tool_usage.items(), 
-                key=lambda x: x[1], 
-                reverse=True
-            )[:5]
-        }
-    
-    def cost_estimate(self, input_rate: float = 0.003, output_rate: float = 0.015) -> float:
-        """Estimate cost in USD. Rates per 1K tokens."""
-        return (self.total_input / 1000 * input_rate + 
-                self.total_output / 1000 * output_rate)</code></pre>
-
-    <h2>Integration with Agent Loop</h2>
-
-    <pre><code># In your agent's main loop:
+ max_total_tokens: int = 50000
+ max_per_turn: int = 8000
+ max_per_tool: int = 3000
+ warn_threshold: float = 0.7 # warn at 70% of budget
+ stop_threshold: float = 0.95 # stop at 95%
+ 
+ turns: list = field(default_factory=list)
+ tool_usage: dict = field(default_factory=dict) # tool_name ->total tokens
+ 
+ @property
+ def total_input(self) ->int:
+ return sum(t.input_tokens for t in self.turns)
+ 
+ @property
+ def total_output(self) ->int:
+ return sum(t.output_tokens for t in self.turns)
+ 
+ @property
+ def total_tokens(self) ->int:
+ return self.total_input + self.total_output
+ 
+ @property
+ def turn_count(self) ->int:
+ return len(self.turns)
+ 
+ def record(self, input_tokens: int, output_tokens: int, tool_name: str = "") ->BudgetAction:
+ """Record usage for a turn. Returns recommended action."""
+ turn = TurnUsage(
+ turn_number=len(self.turns) + 1,
+ input_tokens=input_tokens,
+ output_tokens=output_tokens,
+ tool_name=tool_name,
+ timestamp=datetime.now().isoformat()
+ )
+ self.turns.append(turn)
+ 
+ if tool_name:
+ self.tool_usage[tool_name] = \
+ self.tool_usage.get(tool_name, 0) + input_tokens + output_tokens
+ 
+ return self.check_budget()
+ 
+ def check_budget(self) ->BudgetAction:
+ """Check if any budget threshold is exceeded."""
+ # Total budget check
+ ratio = self.total_tokens / self.max_total_tokens
+ if ratio >= self.stop_threshold:
+ return BudgetAction.STOP
+ if ratio >= self.warn_threshold:
+ return BudgetAction.WARN
+ 
+ # Per-turn check (last turn)
+ if self.turns:
+ last = self.turns[-1]
+ last_total = last.input_tokens + last.output_tokens
+ if last_total >= self.max_per_turn:
+ return BudgetAction.WARN
+ 
+ # Per-tool check
+ for tool, usage in self.tool_usage.items():
+ if usage >= self.max_per_tool:
+ return BudgetAction.WARN
+ 
+ return BudgetAction.CONTINUE
+ 
+ def summary(self) ->dict:
+ """Get usage summary."""
+ return {
+ "total_tokens": self.total_tokens,
+ "input_tokens": self.total_input,
+ "output_tokens": self.total_output,
+ "turns": self.turn_count,
+ "avg_per_turn": self.total_tokens // max(1, self.turn_count),
+ "budget_used_pct": round(
+ self.total_tokens / self.max_total_tokens * 100, 1
+ ),
+ "top_tools": sorted(
+ self.tool_usage.items(), 
+ key=lambda x: x[1], 
+ reverse=True
+ )[:5]
+ }
+ 
+ def cost_estimate(self, input_rate: float = 0.003, output_rate: float = 0.015) ->float:
+ """Estimate cost in USD. Rates per 1K tokens."""
+ return (self.total_input / 1000 * input_rate + 
+ self.total_output / 1000 * output_rate)</code></pre>><h2>Integration with Agent Loop</h2>><pre><code># In your agent's main loop:
 budget = TokenBudgetManager(
-    max_total_tokens=50000,
-    warn_threshold=0.7,
-    stop_threshold=0.95
+ max_total_tokens=50000,
+ warn_threshold=0.7,
+ stop_threshold=0.95
 )
 
 for turn in range(max_turns):
-    response = call_llm(messages, tools)
-    
-    # Record token usage
-    action = budget.record(
-        input_tokens=response.usage.prompt_tokens,
-        output_tokens=response.usage.completion_tokens,
-        tool_name=response.tool_calls[0].name if response.tool_calls else ""
-    )
-    
-    if action == BudgetAction.STOP:
-        # Inject budget exceeded message
-        messages.append({
-            "role": "system",
-            "content": f"[BUDGET EXCEEDED] Token budget used: "
-                       f"{budget.total_tokens}/{budget.max_total_tokens}. "
-                       f"Provide your best answer with the information you have."
-        })
-        break
-    
-    if action == BudgetAction.WARN:
-        s = budget.summary()
-        messages.append({
-            "role": "system",
-            "content": f"[BUDGET WARNING] {s['budget_used_pct']}% used. "
-                       f"Be concise. Top tool: {s['top_tools'][0][0]} "
-                       f"({s['top_tools'][0][1]} tokens)."
-        })
-    
-    # Process tool calls...</code></pre>
-
-    <div class="danger">The STOP action is critical. Without it, a single runaway conversation can consume $5-10 in API costs. Set the threshold to 95% — the agent gets one final turn to summarize.</div>
-
-    <h2>Cost Per Tool Analysis</h2>
-
-    <p>Real data from 500 agent runs using <code>mcp-tools-bundle</code>:</p>
-
-    <table>
-        <tr><th>Tool</th><th>Avg tokens/call</th><th>Avg calls/task</th><th>Cost/task</th></tr>
-        <tr><td>read_file</td><td>1,800</td><td>4.2</td><td class="metric">$0.023</td></tr>
-        <tr><td>search_files</td><td>2,400</td><td>2.1</td><td class="metric">$0.015</td></tr>
-        <tr><td>terminal</td><td>1,200</td><td>3.8</td><td class="metric">$0.014</td></tr>
-        <tr><td>web_search</td><td>800</td><td>1.5</td><td class="metric">$0.004</td></tr>
-        <tr><td>patch</td><td>600</td><td>1.9</td><td class="metric">$0.003</td></tr>
-        <tr><td><strong>Total</strong></td><td><strong>1,360</strong></td><td><strong>13.5</strong></td><td class="metric"><strong>$0.059</strong></td></tr>
-    </table>
-
-    <p>With budget management, average cost dropped to $0.038 — a 36% savings from early loop detection.</p>
-
-    <h2>Persistent Budget Tracking</h2>
-
-    <p>For multi-session agents, persist budget data to SQLite:</p>
-
-    <pre><code>import sqlite3
+ response = call_llm(messages, tools)
+ 
+ # Record token usage
+ action = budget.record(
+ input_tokens=response.usage.prompt_tokens,
+ output_tokens=response.usage.completion_tokens,
+ tool_name=response.tool_calls[0].name if response.tool_calls else ""
+ )
+ 
+ if action == BudgetAction.STOP:
+ # Inject budget exceeded message
+ messages.append({
+ "role": "system",
+ "content": f"[BUDGET EXCEEDED] Token budget used: "
+ f"{budget.total_tokens}/{budget.max_total_tokens}. "
+ f"Provide your best answer with the information you have."
+ })
+ break
+ 
+ if action == BudgetAction.WARN:
+ s = budget.summary()
+ messages.append({
+ "role": "system",
+ "content": f"[BUDGET WARNING] {s['budget_used_pct']}% used. "
+ f"Be concise. Top tool: {s['top_tools'][0][0]} "
+ f"({s['top_tools'][0][1]} tokens)."
+ })
+ 
+ # Process tool calls...</code></pre>><div class="danger">The STOP action is critical. Without it, a single runaway conversation can consume $5-10 in API costs. Set the threshold to 95% — the agent gets one final turn to summarize.</div>><h2>Cost Per Tool Analysis</h2>><p>Real data from 500 agent runs using <code>mcp-tools-bundle</code>:</p>><table>><tr><th>Tool</th><th>Avg tokens/call</th><th>Avg calls/task</th><th>Cost/task</th></tr>><tr><td>read_file</td><td>1,800</td><td>4.2</td><td class="metric">$0.023</td></tr>><tr><td>search_files</td><td>2,400</td><td>2.1</td><td class="metric">$0.015</td></tr>><tr><td>terminal</td><td>1,200</td><td>3.8</td><td class="metric">$0.014</td></tr>><tr><td>web_search</td><td>800</td><td>1.5</td><td class="metric">$0.004</td></tr>><tr><td>patch</td><td>600</td><td>1.9</td><td class="metric">$0.003</td></tr>><tr><td><strong>Total</strong></td><td><strong>1,360</strong></td><td><strong>13.5</strong></td><td class="metric"><strong>$0.059</strong></td></tr>></table>><p>With budget management, average cost dropped to $0.038 — a 36% savings from early loop detection.</p>><h2>Persistent Budget Tracking</h2>><p>For multi-session agents, persist budget data to SQLite:</p>><pre><code>import sqlite3
 from pathlib import Path
 
 class PersistentBudget(TokenBudgetManager):
-    def __init__(self, db_path: str = "budget.db", **kwargs):
-        super().__init__(**kwargs)
-        self.db = sqlite3.connect(db_path)
-        self.db.execute("""
-            CREATE TABLE IF NOT EXISTS usage (
-                session_id TEXT,
-                turn_number INTEGER,
-                input_tokens INTEGER,
-                output_tokens INTEGER,
-                tool_name TEXT,
-                timestamp TEXT,
-                cost_usd REAL
-            )
-        """)
-        self.db.commit()
-    
-    def record(self, input_tokens: int, output_tokens: int, 
-               tool_name: str = "", session_id: str = "default") -> BudgetAction:
-        action = super().record(input_tokens, output_tokens, tool_name)
-        
-        cost = (input_tokens / 1000 * 0.003 + output_tokens / 1000 * 0.015)
-        self.db.execute(
-            "INSERT INTO usage VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (session_id, len(self.turns), input_tokens, output_tokens,
-             tool_name, datetime.now().isoformat(), cost)
-        )
-        self.db.commit()
-        return action
-    
-    def session_summary(self, session_id: str = "default") -> dict:
-        row = self.db.execute(
-            "SELECT SUM(input_tokens), SUM(output_tokens), SUM(cost_usd), "
-            "COUNT(*) FROM usage WHERE session_id = ?",
-            (session_id,)
-        ).fetchone()
-        return {
-            "input_tokens": row[0] or 0,
-            "output_tokens": row[1] or 0,
-            "total_cost_usd": round(row[2] or 0, 4),
-            "turns": row[3] or 0
-        }</code></pre>
-
-    <div class="tip">Use persistent tracking to identify which tasks cost the most. This data helps you optimize prompt caching, tool selection, and context compression.</div>
-
-    <h2>Alerting</h2>
-
-    <pre><code>def send_budget_alert(budget: TokenBudgetManager, webhook_url: str):
-    """Send Slack/Discord alert when budget is exceeded."""
-    import urllib.request
-    
-    s = budget.summary()
-    payload = json.dumps({
-        "text": f"⚠️ Agent budget alert: {s['budget_used_pct']}% used "
-                f"({s['total_tokens']:,}/{budget.max_total_tokens:,} tokens). "
-                f"Cost: ~${budget.cost_estimate():.2f}. "
-                f"Top tool: {s['top_tools'][0][0]}."
-    }).encode()
-    
-    req = urllib.request.Request(webhook_url, data=payload,
-                                  headers={"Content-Type": "application/json"})
-    urllib.request.urlopen(req)</code></pre>
-
-    <h2>Install</h2>
-
-    <pre><code>pip install mcp-token-budget</code></pre>
-
-    <p>Source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-token-budget">mcp-token-budget on GitHub</a></p>
-
-    <hr>
-    <p><em>168 production-ready Python templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
+ def __init__(self, db_path: str = "budget.db", **kwargs):
+ super().__init__(**kwargs)
+ self.db = sqlite3.connect(db_path)
+ self.db.execute("""
+ CREATE TABLE IF NOT EXISTS usage (
+ session_id TEXT,
+ turn_number INTEGER,
+ input_tokens INTEGER,
+ output_tokens INTEGER,
+ tool_name TEXT,
+ timestamp TEXT,
+ cost_usd REAL
+ )
+ """)
+ self.db.commit()
+ 
+ def record(self, input_tokens: int, output_tokens: int, 
+ tool_name: str = "", session_id: str = "default") ->BudgetAction:
+ action = super().record(input_tokens, output_tokens, tool_name)
+ 
+ cost = (input_tokens / 1000 * 0.003 + output_tokens / 1000 * 0.015)
+ self.db.execute(
+ "INSERT INTO usage VALUES (?, ?, ?, ?, ?, ?, ?)",
+ (session_id, len(self.turns), input_tokens, output_tokens,
+ tool_name, datetime.now().isoformat(), cost)
+ )
+ self.db.commit()
+ return action
+ 
+ def session_summary(self, session_id: str = "default") ->dict:
+ row = self.db.execute(
+ "SELECT SUM(input_tokens), SUM(output_tokens), SUM(cost_usd), "
+ "COUNT(*) FROM usage WHERE session_id = ?",
+ (session_id,)
+ ).fetchone()
+ return {
+ "input_tokens": row[0] or 0,
+ "output_tokens": row[1] or 0,
+ "total_cost_usd": round(row[2] or 0, 4),
+ "turns": row[3] or 0
+ }</code></pre>><div class="tip">Use persistent tracking to identify which tasks cost the most. This data helps you optimize prompt caching, tool selection, and context compression.</div>><h2>Alerting</h2>><pre><code>def send_budget_alert(budget: TokenBudgetManager, webhook_url: str):
+ """Send Slack/Discord alert when budget is exceeded."""
+ import urllib.request
+ 
+ s = budget.summary()
+ payload = json.dumps({
+ "text": f" Agent budget alert: {s['budget_used_pct']}% used "
+ f"({s['total_tokens']:,}/{budget.max_total_tokens:,} tokens). "
+ f"Cost: ~${budget.cost_estimate():.2f}. "
+ f"Top tool: {s['top_tools'][0][0]}."
+ }).encode()
+ 
+ req = urllib.request.Request(webhook_url, data=payload,
+ headers={"Content-Type": "application/json"})
+ urllib.request.urlopen(req)</code></pre>><h2>Install</h2>><pre><code>pip install mcp-token-budget</code></pre>><p>Source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-token-budget">mcp-token-budget on GitHub</a></p>><hr>><p><em>168 production-ready Python templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
 </body>
 </html>

@@ -22,24 +22,24 @@ a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
 <p>Multi-provider approach: 2Captcha, CapSolver, CDP checkbox click.</p>
 <h2>1. reCAPTCHA v2 (2Captcha)</h2>
 <pre><code>data = {"key": API_KEY, "method": "userrecaptcha",
-        "googlekey": site_key, "pageurl": url}
+ "googlekey": site_key, "pageurl": url}
 # Submit → poll → get token</code></pre>
 <h2>2. hCaptcha (CapSolver)</h2>
 <pre><code>task = {"type": "HCaptchaTaskProxyLess",
-         "websiteURL": url, "websiteKey": site_key}
+ "websiteURL": url, "websiteKey": site_key}
 # createTask → getTaskResult</code></pre>
 <h2>3. Cloudflare Turnstile (CapSolver)</h2>
 <pre><code>task = {"type": "AntiTurnstileTaskProxyLess",
-         "websiteURL": url, "websiteKey": site_key}</code></pre>
+ "websiteURL": url, "websiteKey": site_key}</code></pre>
 <h2>4. Yandex SmartCaptcha (CDP)</h2>
 <pre><code># CDP mouse click on checkbox
 await cdp.send("Input.dispatchMouseEvent", {
-    "type": "mousePressed", "x": 298, "y": 276})</code></pre>
+ "type": "mousePressed", "x": 298, "y": 276})</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/captcha-solver-template">Captcha Solver</a> $79/$299 — 4 captcha types, 2 providers, async</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/captcha-solver-template">Captcha Solver</a>$79/$299 — 4 captcha types, 2 providers, async</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python captcha-solver-template/demo.py</code></pre>
 <hr>
-<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

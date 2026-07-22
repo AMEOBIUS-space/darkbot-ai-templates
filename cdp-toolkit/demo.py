@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Demo: CDP Toolkit — browser automation helpers."""
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
-from cdp_client import CDPClient, CDPMouseEvents, CDPInput, CDPNavigation
+
+from cdp_client import CDPClient, CDPInput, CDPMouseEvents, CDPNavigation
 
 
 def main():
@@ -39,7 +41,7 @@ def main():
     print("\nCDPClient API:")
     client = CDPClient("127.0.0.1", 9222)
     print(f"  host={client.host} port={client.port}")
-    print(f"  Methods: list_targets, create_target, close_target, activate_target, get_version")
+    print("  Methods: list_targets, create_target, close_target, activate_target, get_version")
 
 
 if __name__ == "__main__":

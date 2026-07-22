@@ -12,20 +12,20 @@
 <p>Monitor Telegram channels for keywords, track views/reactions, export data.</p>
 <h2>1. Multi-channel Scraping</h2>
 <pre><code>async for msg in client.iter_messages(channel, limit=100):
-    if keyword in msg.text.lower():
-        results.append(ScrapedMessage(
-            id=msg.id, text=msg.text, views=msg.views
-        ))</code></pre>
+ if keyword in msg.text.lower():
+ results.append(ScrapedMessage(
+ id=msg.id, text=msg.text, views=msg.views
+ ))</code></pre>
 <h2>2. Analytics</h2>
 <pre><code>stats = {
-    "total": len(results),
-    "total_views": sum(m.views for m in results),
-    "keyword_counts": Counter(kw for m in results for kw in m.keywords)
+ "total": len(results),
+ "total_views": sum(m.views for m in results),
+ "keyword_counts": Counter(kw for m in results for kw in m.keywords)
 }</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/tg-channel-scraper">TG Channel Scraper</a> $49/$199</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/tg-channel-scraper">TG Channel Scraper</a>$49/$199</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python tg-channel-scraper/demo.py</code></pre>
-<hr><p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<hr><p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

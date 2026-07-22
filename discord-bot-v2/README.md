@@ -1,17 +1,18 @@
 # Discord Bot Template v2
 
-> Slash commands, buttons, modals, and embeds — pure Python, no discord.py dependency
-
-## Features
+Pure-Python Discord interaction builders — **no discord.py dependency**.
 
 - Embed builder (fields, footer, thumbnail, timestamp)
-- Button components (5 styles: Primary, Secondary, Success, Danger, Link)
-- Modal dialogs with text inputs (short + paragraph)
+- Button components (Primary / Secondary / Success / Danger / Link)
+- Modal dialogs (short + paragraph inputs)
 - Slash command builder (string, integer, user, channel, role options)
 - Interaction response builders (embed+buttons, modal)
-- Handler registration (button, modal)
+- Handler registration for buttons/modals
 
-## Quick Start
+Useful as a lightweight payload layer when you talk to Discord REST/gateway yourself
+or wrap a minimal client.
+
+## Quick start
 
 ```python
 from bot import DiscordBot, SlashCommand, Embed, Button
@@ -22,12 +23,32 @@ cmd.add_string_option("msg", "Message")
 bot.command(cmd)
 ```
 
-## Tests
-
 ```bash
-python -m pytest tests/ -v
+python demo.py
+python -m pytest tests/ -q
 ```
+
+## Layout
+
+```
+src/bot.py     # builders + DiscordBot shell
+demo.py
+tests/
+```
+
+## Hygiene
+
+- Never commit tokens (`.env` / secret store)
+- Pair with headless browser stacks only via Xvfb :99 / CloakBrowser headless — never DISPLAY=:0
 
 ## License
 
-MIT
+MIT · AMEOBIUS-team
+
+## Related
+
+- https://github.com/AMEOBIUS-team/discord-bot-template
+- https://github.com/AMEOBIUS-team/fastapi-template
+- Portfolio: https://ameobius-team.github.io/kwork-portfolio/
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

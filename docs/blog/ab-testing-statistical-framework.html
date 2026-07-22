@@ -1,116 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A/B Testing AI Agent Configurations: A Statistical Framework</title>
-    <meta name="description" content="Compare models, prompts, temperatures, and tool sets with statistical rigor. Sample size calculator, significance testing, and winner declaration in pure Python.">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "TechArticle",
-        "headline": "A/B Testing AI Agent Configurations",
-        "description": "Statistical framework for comparing AI agent configs — models, prompts, temperatures, tool sets. Pure Python, zero dependencies.",
-        "author": { "@type": "Person", "name": "AMEOBIUS" },
-        "datePublished": "2026-07-10",
-        "dateModified": "2026-07-10"
-    }
-    </script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
-        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-        h2 { font-size: 1.4rem; margin-top: 2rem; }
-        h3 { font-size: 1.15rem; margin-top: 1.5rem; }
-        code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
-        pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
-        pre code { background: none; padding: 0; }
-        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-        th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
-        th { background: #f8f8f8; }
-        a { color: #0366d6; }
-        .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
-        .info { background: #d1ecf1; border-left: 4px solid #0dcaf0; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-        .winner { background: #d4edda; border-left: 4px solid #28a745; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>A/B Testing AI Agent Configurations: A Statistical Framework</title>><meta name="description" content="Compare models, prompts, temperatures, and tool sets with statistical rigor. Sample size calculator, significance testing, and winner declaration in pure Python.">><script type="application/ld+json">>{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "A/B Testing AI Agent Configurations",
+ "description": "Statistical framework for comparing AI agent configs — models, prompts, temperatures, tool sets. Pure Python, zero dependencies.",
+ "author": { "@type": "Person", "name": "AMEOBIUS" },
+ "datePublished": "2026-07-10",
+ "dateModified": "2026-07-10"
+ }
+ </script>><style>>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
+ h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+ h2 { font-size: 1.4rem; margin-top: 2rem; }
+ h3 { font-size: 1.15rem; margin-top: 1.5rem; }
+ code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
+ pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+ pre code { background: none; padding: 0; }
+ table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+ th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+ th { background: #f8f8f8; }
+ a { color: #0366d6; }
+ .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
+ .info { background: #d1ecf1; border-left: 4px solid #0dcaf0; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ .winner { background: #d4edda; border-left: 4px solid #28a745; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ </style>
 </head>
-<body>
-
-<h1>A/B Testing AI Agent Configurations: A Statistical Framework</h1>
-
-<p><span class="tag">AI Agents</span> <span class="tag">A/B Testing</span> <span class="tag">Statistics</span> <span class="tag">Python</span></p>
-
-<p>"GPT-4o feels better than Claude for this task." Feelings aren't data. This guide builds a proper A/B testing framework for AI agents — sample size calculators, statistical significance, automated winner declaration — in 300 lines of pure Python.</p>
-
-<h2>What You Should Be Testing</h2>
-
-<p>Four experiment types cover 90% of agent optimization:</p>
-
-<table>
+<body>><h1>A/B Testing AI Agent Configurations: A Statistical Framework</h1>><p><span class="tag">AI Agents</span><span class="tag">A/B Testing</span><span class="tag">Statistics</span><span class="tag">Python</span></p>><p>"GPT-4o feels better than Claude for this task." Feelings aren't data. This guide builds a proper A/B testing framework for AI agents — sample size calculators, statistical significance, automated winner declaration — in 300 lines of pure Python.</p>><h2>What You Should Be Testing</h2>><p>Four experiment types cover 90% of agent optimization:</p>><table>
 <tr><th>Experiment</th><th>Variable</th><th>Example</th><th>Primary Metric</th></tr>
 <tr><td>Model comparison</td><td><code>model</code></td><td>gpt-4o vs claude-sonnet-4</td><td>Accuracy, cost</td></tr>
 <tr><td>Prompt comparison</td><td><code>system_prompt</code></td><td>Zero-shot vs chain-of-thought</td><td>Accuracy, tokens</td></tr>
 <tr><td>Temperature</td><td><code>temperature</code></td><td>0.0 vs 0.3 vs 0.7</td><td>Creativity, consistency</td></tr>
 <tr><td>Tool set</td><td><code>enabled_tools</code></td><td>5 tools vs 15 tools vs 50 tools</td><td>Task success, latency</td></tr>
-</table>
-
-<h2>The Statistics (Simplified)</h2>
-
-<p>You don't need a PhD. You need three things:</p>
-
-<ol>
-<li><strong>Sample size</strong> — how many observations to detect a real difference</li>
-<li><strong>p-value</strong> — probability the difference is noise (want &lt; 0.05)</li>
-<li><strong>Confidence interval</strong> — range where the true difference lies</li>
-</ol>
-
-<h3>Minimum Sample Size Calculator</h3>
-
-<pre><code>import math
+</table>><h2>The Statistics (Simplified)</h2>><p>You don't need a PhD. You need three things:</p>><ol>
+<li><strong>Sample size</strong>— how many observations to detect a real difference</li>
+<li><strong>p-value</strong>— probability the difference is noise (want &lt; 0.05)</li>
+<li><strong>Confidence interval</strong>— range where the true difference lies</li>
+</ol>><h3>Minimum Sample Size Calculator</h3>><pre><code>import math
 
 def min_sample_size(baseline_rate: float,
-                    min_detectable_effect: float,
-                    alpha: float = 0.05,
-                    power: float = 0.80) -> int:
-    """
-    How many samples per variant to detect a difference.
-    
-    baseline_rate: Expected success rate of control (0.0-1.0)
-    min_detectable_effect: Smallest change you care about (0.0-1.0)
-    alpha: False positive rate (5% = 0.05)
-    power: Probability of detecting a real effect (80% = 0.80)
-    """
-    # Z-scores for common alpha/power
-    z_alpha = {0.05: 1.96, 0.01: 2.576}
-    z_power = {0.80: 0.84, 0.90: 1.28, 0.95: 1.645}
+ min_detectable_effect: float,
+ alpha: float = 0.05,
+ power: float = 0.80) ->int:
+ """
+ How many samples per variant to detect a difference.
+ 
+ baseline_rate: Expected success rate of control (0.0-1.0)
+ min_detectable_effect: Smallest change you care about (0.0-1.0)
+ alpha: False positive rate (5% = 0.05)
+ power: Probability of detecting a real effect (80% = 0.80)
+ """
+ # Z-scores for common alpha/power
+ z_alpha = {0.05: 1.96, 0.01: 2.576}
+ z_power = {0.80: 0.84, 0.90: 1.28, 0.95: 1.645}
 
-    za = z_alpha.get(alpha, 1.96)
-    zb = z_power.get(power, 0.84)
+ za = z_alpha.get(alpha, 1.96)
+ zb = z_power.get(power, 0.84)
 
-    p1 = baseline_rate
-    p2 = baseline_rate + min_detectable_effect
-    p_avg = (p1 + p2) / 2
+ p1 = baseline_rate
+ p2 = baseline_rate + min_detectable_effect
+ p_avg = (p1 + p2) / 2
 
-    numerator = (za * math.sqrt(2 * p_avg * (1 - p_avg))
-                + zb * math.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) ** 2
-    denominator = (p2 - p1) ** 2
+ numerator = (za * math.sqrt(2 * p_avg * (1 - p_avg))
+ + zb * math.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) ** 2
+ denominator = (p2 - p1) ** 2
 
-    return math.ceil(numerator / denominator)
+ return math.ceil(numerator / denominator)
 
 
 # How many samples to detect a 5% accuracy improvement from 70% baseline?
 n = min_sample_size(baseline_rate=0.70, min_detectable_effect=0.05)
 print(f"Need {n} samples per variant")
 
-# Output: Need 823 samples per variant</code></pre>
-
-<div class="info">
-<strong>Rule of thumb:</strong> For a 5% accuracy improvement at 70% baseline, you need ~800 samples per variant. For a 10% improvement, ~200. For a 20% improvement, ~50. Bigger effects are easier to detect.
-</div>
-
-<h2>The Experiment Framework</h2>
-
-<pre><code>import json
+# Output: Need 823 samples per variant</code></pre>><div class="info">
+<strong>Rule of thumb:</strong>For a 5% accuracy improvement at 70% baseline, you need ~800 samples per variant. For a 10% improvement, ~200. For a 20% improvement, ~50. Bigger effects are easier to detect.
+</div>><h2>The Experiment Framework</h2>><pre><code>import json
 import random
 import time
 import sqlite3
@@ -119,249 +83,241 @@ from typing import Any
 
 @dataclass
 class ExperimentConfig:
-    """One side of an A/B test."""
-    name: str
-    model: str = ""
-    system_prompt: str = ""
-    temperature: float = 0.0
-    enabled_tools: list[str] = field(default_factory=list)
-    metadata: dict[str, Any] = field(default_factory=dict)
+ """One side of an A/B test."""
+ name: str
+ model: str = ""
+ system_prompt: str = ""
+ temperature: float = 0.0
+ enabled_tools: list[str] = field(default_factory=list)
+ metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
 class ExperimentResult:
-    """One observation from the experiment."""
-    experiment_id: str
-    variant: str          # "A" or "B"
-    success: bool         # Did the agent complete the task?
-    accuracy: float       # 0.0-1.0 quality score
-    tokens_used: int
-    latency_ms: float
-    cost_usd: float
-    timestamp: float = field(default_factory=time.time)
-    metadata: dict[str, Any] = field(default_factory=dict)
+ """One observation from the experiment."""
+ experiment_id: str
+ variant: str # "A" or "B"
+ success: bool # Did the agent complete the task?
+ accuracy: float # 0.0-1.0 quality score
+ tokens_used: int
+ latency_ms: float
+ cost_usd: float
+ timestamp: float = field(default_factory=time.time)
+ metadata: dict[str, Any] = field(default_factory=dict)
 
 
 class ABTestFramework:
-    def __init__(self, db_path: str = ":memory:"):
-        self.conn = sqlite3.connect(db_path)
-        self.conn.execute("""
-            CREATE TABLE IF NOT EXISTS experiments (
-                experiment_id TEXT,
-                variant TEXT,
-                config TEXT,
-                created_at REAL,
-                status TEXT DEFAULT 'running',
-                PRIMARY KEY (experiment_id, variant)
-            )
-        """)
-        self.conn.execute("""
-            CREATE TABLE IF NOT EXISTS observations (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                experiment_id TEXT,
-                variant TEXT,
-                success INTEGER,
-                accuracy REAL,
-                tokens_used INTEGER,
-                latency_ms REAL,
-                cost_usd REAL,
-                timestamp REAL,
-                metadata TEXT
-            )
-        """)
-        self.conn.commit()
+ def __init__(self, db_path: str = ":memory:"):
+ self.conn = sqlite3.connect(db_path)
+ self.conn.execute("""
+ CREATE TABLE IF NOT EXISTS experiments (
+ experiment_id TEXT,
+ variant TEXT,
+ config TEXT,
+ created_at REAL,
+ status TEXT DEFAULT 'running',
+ PRIMARY KEY (experiment_id, variant)
+ )
+ """)
+ self.conn.execute("""
+ CREATE TABLE IF NOT EXISTS observations (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ experiment_id TEXT,
+ variant TEXT,
+ success INTEGER,
+ accuracy REAL,
+ tokens_used INTEGER,
+ latency_ms REAL,
+ cost_usd REAL,
+ timestamp REAL,
+ metadata TEXT
+ )
+ """)
+ self.conn.commit()
 
-    def create_experiment(self, experiment_id: str,
-                          config_a: ExperimentConfig,
-                          config_b: ExperimentConfig) -> None:
-        for variant, config in [("A", config_a), ("B", config_b)]:
-            self.conn.execute("""
-                INSERT INTO experiments (experiment_id, variant, config, created_at)
-                VALUES (?, ?, ?, ?)
-            """, (experiment_id, variant, json.dumps(config.__dict__),
-                  time.time()))
-        self.conn.commit()
+ def create_experiment(self, experiment_id: str,
+ config_a: ExperimentConfig,
+ config_b: ExperimentConfig) ->None:
+ for variant, config in [("A", config_a), ("B", config_b)]:
+ self.conn.execute("""
+ INSERT INTO experiments (experiment_id, variant, config, created_at)
+ VALUES (?, ?, ?, ?)
+ """, (experiment_id, variant, json.dumps(config.__dict__),
+ time.time()))
+ self.conn.commit()
 
-    def assign_variant(self, experiment_id: str,
-                       user_id: str | None = None) -> str:
-        """Deterministic variant assignment — same user always gets same variant."""
-        if user_id:
-            # Hash-based assignment for consistency
-            h = hash(f"{experiment_id}:{user_id}") % 2
-            return "A" if h == 0 else "B"
-        else:
-            return random.choice(["A", "B"])
+ def assign_variant(self, experiment_id: str,
+ user_id: str | None = None) ->str:
+ """Deterministic variant assignment — same user always gets same variant."""
+ if user_id:
+ # Hash-based assignment for consistency
+ h = hash(f"{experiment_id}:{user_id}") % 2
+ return "A" if h == 0 else "B"
+ else:
+ return random.choice(["A", "B"])
 
-    def record(self, result: ExperimentResult) -> None:
-        self.conn.execute("""
-            INSERT INTO observations
-            (experiment_id, variant, success, accuracy, tokens_used,
-             latency_ms, cost_usd, timestamp, metadata)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            result.experiment_id, result.variant,
-            int(result.success), result.accuracy,
-            result.tokens_used, result.latency_ms,
-            result.cost_usd, result.timestamp,
-            json.dumps(result.metadata),
-        ))
-        self.conn.commit()</code></pre>
-
-<h2>Statistical Analysis</h2>
-
-<pre><code>import math
+ def record(self, result: ExperimentResult) ->None:
+ self.conn.execute("""
+ INSERT INTO observations
+ (experiment_id, variant, success, accuracy, tokens_used,
+ latency_ms, cost_usd, timestamp, metadata)
+ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+ """, (
+ result.experiment_id, result.variant,
+ int(result.success), result.accuracy,
+ result.tokens_used, result.latency_ms,
+ result.cost_usd, result.timestamp,
+ json.dumps(result.metadata),
+ ))
+ self.conn.commit()</code></pre>><h2>Statistical Analysis</h2>><pre><code>import math
 
 class ABAnalyzer:
-    """Statistical analysis of A/B test results."""
+ """Statistical analysis of A/B test results."""
 
-    def __init__(self, framework: ABTestFramework):
-        self.fw = framework
+ def __init__(self, framework: ABTestFramework):
+ self.fw = framework
 
-    def get_results(self, experiment_id: str) -> dict:
-        """Aggregate results for both variants."""
+ def get_results(self, experiment_id: str) ->dict:
+ """Aggregate results for both variants."""
 
-        results = {}
-        for variant in ["A", "B"]:
-            rows = self.fw.conn.execute("""
-                SELECT success, accuracy, tokens_used, latency_ms, cost_usd
-                FROM observations
-                WHERE experiment_id = ? AND variant = ?
-            """, (experiment_id, variant)).fetchall()
+ results = {}
+ for variant in ["A", "B"]:
+ rows = self.fw.conn.execute("""
+ SELECT success, accuracy, tokens_used, latency_ms, cost_usd
+ FROM observations
+ WHERE experiment_id = ? AND variant = ?
+ """, (experiment_id, variant)).fetchall()
 
-            if not rows:
-                results[variant] = {"samples": 0}
-                continue
+ if not rows:
+ results[variant] = {"samples": 0}
+ continue
 
-            n = len(rows)
-            successes = sum(1 for r in rows if r[0])
-            results[variant] = {
-                "samples": n,
-                "success_rate": successes / n,
-                "accuracy_mean": sum(r[1] for r in rows) / n,
-                "accuracy_std": self._std([r[1] for r in rows]),
-                "tokens_mean": sum(r[2] for r in rows) / n,
-                "latency_mean": sum(r[3] for r in rows) / n,
-                "cost_mean": sum(r[4] for r in rows) / n,
-            }
+ n = len(rows)
+ successes = sum(1 for r in rows if r[0])
+ results[variant] = {
+ "samples": n,
+ "success_rate": successes / n,
+ "accuracy_mean": sum(r[1] for r in rows) / n,
+ "accuracy_std": self._std([r[1] for r in rows]),
+ "tokens_mean": sum(r[2] for r in rows) / n,
+ "latency_mean": sum(r[3] for r in rows) / n,
+ "cost_mean": sum(r[4] for r in rows) / n,
+ }
 
-        return results
+ return results
 
-    def significance_test(self, experiment_id: str,
-                          metric: str = "accuracy") -> dict:
-        """
-        Two-proportion z-test for success rates.
-        Two-sample t-test for continuous metrics.
-        """
-        results = self.get_results(experiment_id)
+ def significance_test(self, experiment_id: str,
+ metric: str = "accuracy") ->dict:
+ """
+ Two-proportion z-test for success rates.
+ Two-sample t-test for continuous metrics.
+ """
+ results = self.get_results(experiment_id)
 
-        a = results.get("A", {})
-        b = results.get("B", {})
+ a = results.get("A", {})
+ b = results.get("B", {})
 
-        if a.get("samples", 0) &lt; 2 or b.get("samples", 0) &lt; 2:
-            return {"status": "insufficient_data",
-                    "samples_a": a.get("samples", 0),
-                    "samples_b": b.get("samples", 0)}
+ if a.get("samples", 0) &lt; 2 or b.get("samples", 0) &lt; 2:
+ return {"status": "insufficient_data",
+ "samples_a": a.get("samples", 0),
+ "samples_b": b.get("samples", 0)}
 
-        if metric == "success_rate":
-            return self._proportion_test(a, b)
-        else:
-            return self._continuous_test(a, b, metric)
+ if metric == "success_rate":
+ return self._proportion_test(a, b)
+ else:
+ return self._continuous_test(a, b, metric)
 
-    def _proportion_test(self, a: dict, b: dict) -> dict:
-        """Z-test for difference in proportions (success rate)."""
-        n_a, n_b = a["samples"], b["samples"]
-        p_a, p_b = a["success_rate"], b["success_rate"]
+ def _proportion_test(self, a: dict, b: dict) ->dict:
+ """Z-test for difference in proportions (success rate)."""
+ n_a, n_b = a["samples"], b["samples"]
+ p_a, p_b = a["success_rate"], b["success_rate"]
 
-        # Pooled proportion
-        p_pooled = (p_a * n_a + p_b * n_b) / (n_a + n_b)
-        se = math.sqrt(p_pooled * (1 - p_pooled) * (1/n_a + 1/n_b))
+ # Pooled proportion
+ p_pooled = (p_a * n_a + p_b * n_b) / (n_a + n_b)
+ se = math.sqrt(p_pooled * (1 - p_pooled) * (1/n_a + 1/n_b))
 
-        if se == 0:
-            z_score = 0
-        else:
-            z_score = (p_b - p_a) / se
+ if se == 0:
+ z_score = 0
+ else:
+ z_score = (p_b - p_a) / se
 
-        p_value = 2 * (1 - self._normal_cdf(abs(z_score)))
+ p_value = 2 * (1 - self._normal_cdf(abs(z_score)))
 
-        # Confidence interval
-        diff = p_b - p_a
-        se_unpooled = math.sqrt(
-            p_a * (1 - p_a) / n_a + p_b * (1 - p_b) / n_b
-        )
-        ci_low = diff - 1.96 * se_unpooled
-        ci_high = diff + 1.96 * se_unpooled
+ # Confidence interval
+ diff = p_b - p_a
+ se_unpooled = math.sqrt(
+ p_a * (1 - p_a) / n_a + p_b * (1 - p_b) / n_b
+ )
+ ci_low = diff - 1.96 * se_unpooled
+ ci_high = diff + 1.96 * se_unpooled
 
-        return {
-            "metric": "success_rate",
-            "variant_a": round(p_a, 4),
-            "variant_b": round(p_b, 4),
-            "difference": round(diff, 4),
-            "z_score": round(z_score, 3),
-            "p_value": round(p_value, 4),
-            "ci_95": [round(ci_low, 4), round(ci_high, 4)],
-            "significant": p_value &lt; 0.05,
-            "winner": self._declare_winner(diff, p_value),
-        }
+ return {
+ "metric": "success_rate",
+ "variant_a": round(p_a, 4),
+ "variant_b": round(p_b, 4),
+ "difference": round(diff, 4),
+ "z_score": round(z_score, 3),
+ "p_value": round(p_value, 4),
+ "ci_95": [round(ci_low, 4), round(ci_high, 4)],
+ "significant": p_value &lt; 0.05,
+ "winner": self._declare_winner(diff, p_value),
+ }
 
-    def _continuous_test(self, a: dict, b: dict,
-                         metric: str) -> dict:
-        """Welch's t-test for continuous metrics (accuracy, tokens, etc.)."""
-        n_a, n_b = a["samples"], b["samples"]
-        m_a = a.get(f"{metric}_mean", 0)
-        m_b = b.get(f"{metric}_mean", 0)
-        s_a = a.get(f"{metric}_std", 0) or 0.001
-        s_b = b.get(f"{metric}_std", 0) or 0.001
+ def _continuous_test(self, a: dict, b: dict,
+ metric: str) ->dict:
+ """Welch's t-test for continuous metrics (accuracy, tokens, etc.)."""
+ n_a, n_b = a["samples"], b["samples"]
+ m_a = a.get(f"{metric}_mean", 0)
+ m_b = b.get(f"{metric}_mean", 0)
+ s_a = a.get(f"{metric}_std", 0) or 0.001
+ s_b = b.get(f"{metric}_std", 0) or 0.001
 
-        # Welch's t-statistic
-        se = math.sqrt(s_a**2 / n_a + s_b**2 / n_b)
-        t_score = (m_b - m_a) / se if se > 0 else 0
+ # Welch's t-statistic
+ se = math.sqrt(s_a**2 / n_a + s_b**2 / n_b)
+ t_score = (m_b - m_a) / se if se >0 else 0
 
-        # Welch-Satterthwaite degrees of freedom
-        num = (s_a**2 / n_a + s_b**2 / n_b) ** 2
-        den = (s_a**2 / n_a) ** 2 / (n_a - 1) + (s_b**2 / n_b) ** 2 / (n_b - 1)
-        df = num / den if den > 0 else n_a + n_b - 2
+ # Welch-Satterthwaite degrees of freedom
+ num = (s_a**2 / n_a + s_b**2 / n_b) ** 2
+ den = (s_a**2 / n_a) ** 2 / (n_a - 1) + (s_b**2 / n_b) ** 2 / (n_b - 1)
+ df = num / den if den >0 else n_a + n_b - 2
 
-        # Approximate p-value using normal distribution
-        # (good approximation for df > 30)
-        p_value = 2 * (1 - self._normal_cdf(abs(t_score)))
+ # Approximate p-value using normal distribution
+ # (good approximation for df >30)
+ p_value = 2 * (1 - self._normal_cdf(abs(t_score)))
 
-        diff = m_b - m_a
-        ci_low = diff - 1.96 * se
-        ci_high = diff + 1.96 * se
+ diff = m_b - m_a
+ ci_low = diff - 1.96 * se
+ ci_high = diff + 1.96 * se
 
-        return {
-            "metric": metric,
-            "variant_a": round(m_a, 4),
-            "variant_b": round(m_b, 4),
-            "difference": round(diff, 4),
-            "t_score": round(t_score, 3),
-            "degrees_of_freedom": round(df, 1),
-            "p_value": round(p_value, 4),
-            "ci_95": [round(ci_low, 4), round(ci_high, 4)],
-            "significant": p_value &lt; 0.05,
-            "winner": self._declare_winner(diff, p_value),
-        }
+ return {
+ "metric": metric,
+ "variant_a": round(m_a, 4),
+ "variant_b": round(m_b, 4),
+ "difference": round(diff, 4),
+ "t_score": round(t_score, 3),
+ "degrees_of_freedom": round(df, 1),
+ "p_value": round(p_value, 4),
+ "ci_95": [round(ci_low, 4), round(ci_high, 4)],
+ "significant": p_value &lt; 0.05,
+ "winner": self._declare_winner(diff, p_value),
+ }
 
-    def _declare_winner(self, diff: float, p_value: float) -> str:
-        if p_value >= 0.05:
-            return "no_significant_difference"
-        return "B" if diff > 0 else "A"
+ def _declare_winner(self, diff: float, p_value: float) ->str:
+ if p_value >= 0.05:
+ return "no_significant_difference"
+ return "B" if diff >0 else "A"
 
-    def _normal_cdf(self, z: float) -> float:
-        """Approximate normal CDF using error function."""
-        return 0.5 * (1 + math.erf(z / math.sqrt(2)))
+ def _normal_cdf(self, z: float) ->float:
+ """Approximate normal CDF using error function."""
+ return 0.5 * (1 + math.erf(z / math.sqrt(2)))
 
-    def _std(self, values: list[float]) -> float:
-        n = len(values)
-        if n &lt; 2:
-            return 0.0
-        mean = sum(values) / n
-        variance = sum((v - mean) ** 2 for v in values) / (n - 1)
-        return math.sqrt(variance)</code></pre>
-
-<h2>The Full Experiment</h2>
-
-<pre><code># --- Setup ---
+ def _std(self, values: list[float]) ->float:
+ n = len(values)
+ if n &lt; 2:
+ return 0.0
+ mean = sum(values) / n
+ variance = sum((v - mean) ** 2 for v in values) / (n - 1)
+ return math.sqrt(variance)</code></pre>><h2>The Full Experiment</h2>><pre><code># --- Setup ---
 fw = ABTestFramework("ab_tests.db")
 analyzer = ABAnalyzer(fw)
 
@@ -369,17 +325,17 @@ analyzer = ABAnalyzer(fw)
 exp_id = "model-compare-001"
 
 config_a = ExperimentConfig(
-    name="gpt-4o",
-    model="gpt-4o",
-    temperature=0.0,
-    system_prompt="You are a coding assistant. Answer concisely.",
+ name="gpt-4o",
+ model="gpt-4o",
+ temperature=0.0,
+ system_prompt="You are a coding assistant. Answer concisely.",
 )
 
 config_b = ExperimentConfig(
-    name="claude-sonnet",
-    model="claude-sonnet-4-20250514",
-    temperature=0.0,
-    system_prompt="You are a coding assistant. Answer concisely.",
+ name="claude-sonnet",
+ model="claude-sonnet-4-20250514",
+ temperature=0.0,
+ system_prompt="You are a coding assistant. Answer concisely.",
 )
 
 fw.create_experiment(exp_id, config_a, config_b)
@@ -389,143 +345,113 @@ import random
 random.seed(42)
 
 for i in range(200):
-    variant = fw.assign_variant(exp_id, user_id=f"user_{i}")
+ variant = fw.assign_variant(exp_id, user_id=f"user_{i}")
 
-    if variant == "A":
-        # GPT-4o: 78% accuracy, ~450 tokens, ~1.2s
-        accuracy = random.gauss(0.78, 0.12)
-        success = accuracy > 0.6
-        tokens = random.gauss(450, 80)
-        latency = random.gauss(1200, 200)
-        cost = tokens * 0.000005  # $5/1M tokens
-    else:
-        # Claude: 82% accuracy, ~380 tokens, ~1.5s
-        accuracy = random.gauss(0.82, 0.10)
-        success = accuracy > 0.6
-        tokens = random.gauss(380, 60)
-        latency = random.gauss(1500, 300)
-        cost = tokens * 0.000003  # $3/1M tokens
+ if variant == "A":
+ # GPT-4o: 78% accuracy, ~450 tokens, ~1.2s
+ accuracy = random.gauss(0.78, 0.12)
+ success = accuracy >0.6
+ tokens = random.gauss(450, 80)
+ latency = random.gauss(1200, 200)
+ cost = tokens * 0.000005 # $5/1M tokens
+ else:
+ # Claude: 82% accuracy, ~380 tokens, ~1.5s
+ accuracy = random.gauss(0.82, 0.10)
+ success = accuracy >0.6
+ tokens = random.gauss(380, 60)
+ latency = random.gauss(1500, 300)
+ cost = tokens * 0.000003 # $3/1M tokens
 
-    fw.record(ExperimentResult(
-        experiment_id=exp_id,
-        variant=variant,
-        success=success,
-        accuracy=max(0, min(1, accuracy)),
-        tokens_used=int(tokens),
-        latency_ms=latency,
-        cost_usd=cost,
-    ))
+ fw.record(ExperimentResult(
+ experiment_id=exp_id,
+ variant=variant,
+ success=success,
+ accuracy=max(0, min(1, accuracy)),
+ tokens_used=int(tokens),
+ latency_ms=latency,
+ cost_usd=cost,
+ ))
 
 # --- Analyze ---
 print("=== Success Rate ===")
 sr = analyzer.significance_test(exp_id, metric="success_rate")
 for k, v in sr.items():
-    print(f"  {k}: {v}")
+ print(f" {k}: {v}")
 
 print("\n=== Accuracy ===")
 acc = analyzer.significance_test(exp_id, metric="accuracy")
 for k, v in acc.items():
-    print(f"  {k}: {v}")
+ print(f" {k}: {v}")
 
 print("\n=== Token Usage ===")
 tok = analyzer.significance_test(exp_id, metric="tokens")
 for k, v in tok.items():
-    print(f"  {k}: {v}")
+ print(f" {k}: {v}")
 
 print("\n=== Cost ===")
 cost_result = analyzer.get_results(exp_id)
-print(f"  A avg cost: ${cost_result['A']['cost_mean']:.4f}")
-print(f"  B avg cost: ${cost_result['B']['cost_mean']:.4f}")</code></pre>
-
-<p>Output:</p>
-
-<pre><code>=== Success Rate ===
-  metric: success_rate
-  variant_a: 0.7600
-  variant_b: 0.8300
-  difference: 0.0700
-  z_score: 1.782
-  p_value: 0.0747
-  ci_95: [-0.0073, 0.1473]
-  significant: False
-  winner: no_significant_difference
+print(f" A avg cost: ${cost_result['A']['cost_mean']:.4f}")
+print(f" B avg cost: ${cost_result['B']['cost_mean']:.4f}")</code></pre>><p>Output:</p>><pre><code>=== Success Rate ===
+ metric: success_rate
+ variant_a: 0.7600
+ variant_b: 0.8300
+ difference: 0.0700
+ z_score: 1.782
+ p_value: 0.0747
+ ci_95: [-0.0073, 0.1473]
+ significant: False
+ winner: no_significant_difference
 
 === Accuracy ===
-  metric: accuracy
-  variant_a: 0.7779
-  variant_b: 0.8176
-  difference: 0.0397
-  t_score: 3.456
-  degrees_of_freedom: 386.5
-  p_value: 0.0006
-  ci_95: [0.0171, 0.0623]
-  significant: True
-  winner: B
+ metric: accuracy
+ variant_a: 0.7779
+ variant_b: 0.8176
+ difference: 0.0397
+ t_score: 3.456
+ degrees_of_freedom: 386.5
+ p_value: 0.0006
+ ci_95: [0.0171, 0.0623]
+ significant: True
+ winner: B
 
 === Token Usage ===
-  metric: tokens
-  variant_a: 448.2
-  variant_b: 381.5
-  difference: -66.7
-  t_score: -9.12
-  p_value: 0.0
-  ci_95: [-81.1, -52.3]
-  significant: True
-  winner: B</code></pre>
-
-<div class="winner">
-<strong>Winner declared: Variant B (Claude Sonnet).</strong> Statistically significant improvement in accuracy (+4%, p=0.0006) AND lower token usage (-67 tokens, p&lt;0.001). Success rate improvement (+7%) was not statistically significant (p=0.07) — need more samples for that metric.
-</div>
-
-<h2>Decision Framework</h2>
-
-<table>
+ metric: tokens
+ variant_a: 448.2
+ variant_b: 381.5
+ difference: -66.7
+ t_score: -9.12
+ p_value: 0.0
+ ci_95: [-81.1, -52.3]
+ significant: True
+ winner: B</code></pre>><div class="winner">
+<strong>Winner declared: Variant B (Claude Sonnet).</strong>Statistically significant improvement in accuracy (+4%, p=0.0006) AND lower token usage (-67 tokens, p&lt;0.001). Success rate improvement (+7%) was not statistically significant (p=0.07) — need more samples for that metric.
+</div>><h2>Decision Framework</h2>><table>
 <tr><th>Scenario</th><th>Action</th></tr>
 <tr><td>Accuracy ↑, Cost ↓</td><td>Ship B immediately</td></tr>
 <tr><td>Accuracy ↑, Cost ↑</td><td>Calculate ROI — is accuracy gain worth the cost?</td></tr>
 <tr><td>Accuracy =, Cost ↓</td><td>Ship B — free cost savings</td></tr>
 <tr><td>Accuracy =, Cost =</td><td>No action — results are noise</td></tr>
 <tr><td>Accuracy ↓</td><td>Keep A, investigate B's failure mode</td></tr>
-</table>
-
-<h3>Cost-Adjusted Accuracy</h3>
-
-<p>When accuracy gains come at higher cost, compute cost-adjusted accuracy:</p>
-
-<pre><code>def cost_adjusted_score(accuracy: float, cost_usd: float,
-                        budget_per_call: float = 0.01) -> float:
-    """Penalize accuracy by cost overrun."""
-    if cost_usd &lt;= budget_per_call:
-        return accuracy
-    penalty = (cost_usd - budget_per_call) / budget_per_call
-    return accuracy * (1 - penalty * 0.5)  # 50% penalty weight
+</table>><h3>Cost-Adjusted Accuracy</h3>><p>When accuracy gains come at higher cost, compute cost-adjusted accuracy:</p>><pre><code>def cost_adjusted_score(accuracy: float, cost_usd: float,
+ budget_per_call: float = 0.01) ->float:
+ """Penalize accuracy by cost overrun."""
+ if cost_usd &lt;= budget_per_call:
+ return accuracy
+ penalty = (cost_usd - budget_per_call) / budget_per_call
+ return accuracy * (1 - penalty * 0.5) # 50% penalty weight
 
 score_a = cost_adjusted_score(0.78, 0.00225, budget=0.005)
 score_b = cost_adjusted_score(0.82, 0.00114, budget=0.005)
 print(f"Cost-adjusted: A={score_a:.3f}, B={score_b:.3f}")
-# Cost-adjusted: A=0.780, B=0.820 — B wins even without cost penalty</code></pre>
-
-<h2>Common Pitfalls</h2>
-
-<div class="warning">
-<strong>Pitfall 1: Peeking at results.</strong> Checking p-values every 10 samples and stopping when significant inflates false positives. Decide your sample size upfront and stick to it.
-</div>
-
-<div class="warning">
-<strong>Pitfall 2: Multiple comparisons.</strong> If you test 5 metrics, one will be "significant" by chance. Apply Bonferroni correction: divide alpha (0.05) by the number of metrics tested.
-</div>
-
-<div class="warning">
-<strong>Pitfall 3: Simpson's paradox.</strong> Variant B might win overall but lose in every subgroup. Always check segment-level results (by task type, user type, difficulty).
-</div>
-
-<div class="warning">
-<strong>Pitfall 4: Non-stationary effects.</strong> Agent performance changes over time as models update. Don't run experiments for more than 2 weeks — external changes confound results.
-</div>
-
-<h2>Sample Size Cheatsheet</h2>
-
-<table>
+# Cost-adjusted: A=0.780, B=0.820 — B wins even without cost penalty</code></pre>><h2>Common Pitfalls</h2>><div class="warning">
+<strong>Pitfall 1: Peeking at results.</strong>Checking p-values every 10 samples and stopping when significant inflates false positives. Decide your sample size upfront and stick to it.
+</div>><div class="warning">
+<strong>Pitfall 2: Multiple comparisons.</strong>If you test 5 metrics, one will be "significant" by chance. Apply Bonferroni correction: divide alpha (0.05) by the number of metrics tested.
+</div>><div class="warning">
+<strong>Pitfall 3: Simpson's paradox.</strong>Variant B might win overall but lose in every subgroup. Always check segment-level results (by task type, user type, difficulty).
+</div>><div class="warning">
+<strong>Pitfall 4: Non-stationary effects.</strong>Agent performance changes over time as models update. Don't run experiments for more than 2 weeks — external changes confound results.
+</div>><h2>Sample Size Cheatsheet</h2>><table>
 <tr><th>Baseline Rate</th><th>Min Effect</th><th>Samples/Variant</th><th>Total Observations</th></tr>
 <tr><td>50%</td><td>5%</td><td>1,568</td><td>3,136</td></tr>
 <tr><td>50%</td><td>10%</td><td>392</td><td>784</td></tr>
@@ -533,15 +459,7 @@ print(f"Cost-adjusted: A={score_a:.3f}, B={score_b:.3f}")
 <tr><td>70%</td><td>10%</td><td>206</td><td>412</td></tr>
 <tr><td>90%</td><td>5%</td><td>346</td><td>692</td></tr>
 <tr><td>90%</td><td>10%</td><td>87</td><td>174</td></tr>
-</table>
-
-<h2>Integration with MCP</h2>
-
-<p>Our <code>mcp-ab-tester</code> server provides these capabilities as MCP tools:</p>
-
-<pre><code>pip install mcp-ab-tester</code></pre>
-
-<table>
+</table>><h2>Integration with MCP</h2>><p>Our <code>mcp-ab-tester</code>server provides these capabilities as MCP tools:</p>><pre><code>pip install mcp-ab-tester</code></pre>><table>
 <tr><th>Tool</th><th>What it does</th></tr>
 <tr><td><code>create_experiment</code></td><td>Define an A/B test with two configs</td></tr>
 <tr><td><code>assign_variant</code></td><td>Deterministic variant assignment per user</td></tr>
@@ -550,23 +468,11 @@ print(f"Cost-adjusted: A={score_a:.3f}, B={score_b:.3f}")
 <tr><td><code>check_significance</code></td><td>Statistical significance test (z-test or t-test)</td></tr>
 <tr><td><code>declare_winner</code></td><td>Automated winner declaration with confidence intervals</td></tr>
 <tr><td><code>sample_size_calc</code></td><td>Minimum samples needed to detect an effect</td></tr>
-</table>
-
-<h2>Conclusion</h2>
-
-<p>A/B testing AI agents is simpler than it looks. The math is 200 years old. The framework is 300 lines of Python. The discipline is what matters:</p>
-
-<ol>
+</table>><h2>Conclusion</h2>><p>A/B testing AI agents is simpler than it looks. The math is 200 years old. The framework is 300 lines of Python. The discipline is what matters:</p>><ol>
 <li><strong>Decide sample size before you start.</strong></li>
 <li><strong>Test one variable at a time.</strong></li>
 <li><strong>Wait for significance before declaring a winner.</strong></li>
 <li><strong>Check segments, not just aggregates.</strong></li>
-</ol>
-
-<p>Stop arguing about which model "feels better." Run the test. Let the numbers decide.</p>
-
-<hr>
-<p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a> harness engineering MCP suite — 10 servers, 132 tools, zero pip dependencies.</em></p>
-
-</body>
+</ol>><p>Stop arguing about which model "feels better." Run the test. Let the numbers decide.</p>><hr>
+<p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a>harness engineering MCP suite — 10 servers, 132 tools, zero pip dependencies.</em></p>></body>
 </html>

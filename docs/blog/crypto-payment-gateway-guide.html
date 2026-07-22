@@ -22,40 +22,40 @@ a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
 <p>Accept BTC, USDT, ETH, XMR with invoices, verification, and webhooks.</p>
 <h2>1. Create Invoice</h2>
 <pre><code>invoice = gateway.create_invoice(
-    amount=49, currency="BTC", product="TG Bot Template"
+ amount=49, currency="BTC", product="TG Bot Template"
 )
 # Returns: id, address, expires_at</code></pre>
 <h2>2. Verify BTC Payment</h2>
 <pre><code>async def verify_btc(invoice):
-    async with aiohttp.ClientSession() as s:
-        async with s.get(f"https://blockchain.info/rawaddr/{addr}") as r:
-            data = await r.json()
-            for tx in data["txs"]:
-                if tx_amount >= invoice.amount:
-                    invoice.status = "confirmed"</code></pre>
+ async with aiohttp.ClientSession() as s:
+ async with s.get(f"https://blockchain.info/rawaddr/{addr}") as r:
+ data = await r.json()
+ for tx in data["txs"]:
+ if tx_amount >= invoice.amount:
+ invoice.status = "confirmed"</code></pre>
 <h2>3. Verify XMR Payment</h2>
 <pre><code># Monero RPC
 payload = {"method": "get_transfers", "params": {"in": True}}
 async with s.post(f"{rpc}/json_rpc", json=payload) as r:
-    transfers = (await r.json())["result"]["in"]</code></pre>
+ transfers = (await r.json())["result"]["in"]</code></pre>
 <h2>4. Webhook Notification</h2>
 <pre><code>async def _notify_paid(invoice):
-    await s.post(webhook_url, json={
-        "invoice_id": invoice.id,
-        "amount": invoice.amount,
-        "status": "confirmed"
-    })</code></pre>
+ await s.post(webhook_url, json={
+ "invoice_id": invoice.id,
+ "amount": invoice.amount,
+ "status": "confirmed"
+ })</code></pre>
 <h2>5. FastAPI Integration</h2>
 <pre><code>@app.post("/invoice")
 def create_inv(amount, currency, product):
-    return gateway.check_invoice(
-        gateway.create_invoice(amount, currency, product).id
-    )</code></pre>
+ return gateway.check_invoice(
+ gateway.create_invoice(amount, currency, product).id
+ )</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/crypto-payment-template">Crypto Payment Gateway</a> $69/$279</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/crypto-payment-template">Crypto Payment Gateway</a>$69/$279</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python crypto-payment-template/demo.py</code></pre>
 <hr>
-<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

@@ -1,31 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Token Budget Management for AI Agents: Track, Predict, and Cut Costs</title>
-    <meta name="description" content="Per-turn token tracking, tool accounting, budget thresholds, and cost prediction for AI agents. Pure Python SQLite-based system, zero dependencies.">
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"TechArticle","headline":"Token Budget Management for AI Agents","description":"Track, predict, and cut AI agent costs with per-turn token accounting and budget thresholds.","author":{"@type":"Person","name":"AMEOBIUS"},"datePublished":"2026-07-10","dateModified":"2026-07-10"}
-    </script>
-    <style>
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
-        h1{font-size:2rem;margin-bottom:.5rem}h2{font-size:1.4rem;margin-top:2rem}h3{font-size:1.15rem;margin-top:1.5rem}
-        code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
-        pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}pre code{background:none;padding:0}
-        table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd}th{background:#f8f8f8}
-        a{color:#0366d6}.tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
-        .info{background:#d1ecf1;border-left:4px solid #0dcaf0;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
-        .warning{background:#fff3cd;border-left:4px solid #ffc107;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>Token Budget Management for AI Agents: Track, Predict, and Cut Costs</title>><meta name="description" content="Per-turn token tracking, tool accounting, budget thresholds, and cost prediction for AI agents. Pure Python SQLite-based system, zero dependencies.">><script type="application/ld+json">>{"@context":"https://schema.org","@type":"TechArticle","headline":"Token Budget Management for AI Agents","description":"Track, predict, and cut AI agent costs with per-turn token accounting and budget thresholds.","author":{"@type":"Person","name":"AMEOBIUS"},"datePublished":"2026-07-10","dateModified":"2026-07-10"}
+ </script>><style>>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
+ h1{font-size:2rem;margin-bottom:.5rem}h2{font-size:1.4rem;margin-top:2rem}h3{font-size:1.15rem;margin-top:1.5rem}
+ code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+ pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}pre code{background:none;padding:0}
+ table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd}th{background:#f8f8f8}
+ a{color:#0366d6}.tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+ .info{background:#d1ecf1;border-left:4px solid #0dcaf0;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+ .warning{background:#fff3cd;border-left:4px solid #ffc107;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+ </style>
 </head>
 <body>
 <h1>Token Budget Management for AI Agents: Track, Predict, and Cut Costs</h1>
-<p><span class="tag">AI Agents</span> <span class="tag">Cost Control</span> <span class="tag">Python</span> <span class="tag">MCP</span></p>
-
-<p>Your agent ran 90 iterations instead of 10. Each turn consumed 3,000 tokens. At $5/1M tokens, that one session cost $1.35. Do that 100 times a day, and you're burning $4,000/month on a single agent. Token budget management catches this before the bill arrives.</p>
-
-<h2>The Problem: Uncontrolled Agent Spending</h2>
+<p><span class="tag">AI Agents</span><span class="tag">Cost Control</span><span class="tag">Python</span><span class="tag">MCP</span></p>><p>Your agent ran 90 iterations instead of 10. Each turn consumed 3,000 tokens. At $5/1M tokens, that one session cost $1.35. Do that 100 times a day, and you're burning $4,000/month on a single agent. Token budget management catches this before the bill arrives.</p>><h2>The Problem: Uncontrolled Agent Spending</h2>
 <table>
 <tr><th>Scenario</th><th>Tokens Wasted</th><th>Cost (GPT-4o)</th></tr>
 <tr><td>Agent loops 5 extra turns on a failed tool</td><td>~15,000</td><td>$0.075</td></tr>
@@ -33,281 +21,273 @@
 <tr><td>Conversation history grows without compression</td><td>+2,000/turn</td><td>$0.01/turn compounding</td></tr>
 <tr><td>Agent retries the same failing API call 10 times</td><td>~30,000</td><td>$0.15</td></tr>
 <tr><td>Long-running session without budget limit (90 turns)</td><td>~270,000</td><td>$1.35</td></tr>
-</table>
-
-<h2>Step 1: Per-Turn Token Tracker</h2>
+</table>><h2>Step 1: Per-Turn Token Tracker</h2>
 <pre><code>import sqlite3
 import time
 from dataclasses import dataclass, field
 
 @dataclass
 class TurnRecord:
-    session_id: str
-    turn_number: int
-    model: str
-    input_tokens: int
-    output_tokens: int
-    cache_read_tokens: int = 0
-    cache_write_tokens: int = 0
-    tool_calls: int = 0
-    tool_tokens: int = 0  # Tokens in tool results
-    cost_usd: float = 0.0
-    timestamp: float = field(default_factory=time.time)
+ session_id: str
+ turn_number: int
+ model: str
+ input_tokens: int
+ output_tokens: int
+ cache_read_tokens: int = 0
+ cache_write_tokens: int = 0
+ tool_calls: int = 0
+ tool_tokens: int = 0 # Tokens in tool results
+ cost_usd: float = 0.0
+ timestamp: float = field(default_factory=time.time)
 
 
 # Per-model pricing (USD per 1M tokens)
 PRICING = {
-    "gpt-4o": {"input": 2.50, "output": 10.00, "cache_read": 1.25},
-    "gpt-4o-mini": {"input": 0.15, "output": 0.60, "cache_read": 0.075},
-    "claude-sonnet-4": {"input": 3.00, "output": 15.00, "cache_read": 0.30},
-    "claude-haiku-3.5": {"input": 0.25, "output": 1.25, "cache_read": 0.03},
-    "gemini-2.5-flash": {"input": 0.075, "output": 0.30, "cache_read": 0.01},
+ "gpt-4o": {"input": 2.50, "output": 10.00, "cache_read": 1.25},
+ "gpt-4o-mini": {"input": 0.15, "output": 0.60, "cache_read": 0.075},
+ "claude-sonnet-4": {"input": 3.00, "output": 15.00, "cache_read": 0.30},
+ "claude-haiku-3.5": {"input": 0.25, "output": 1.25, "cache_read": 0.03},
+ "gemini-2.5-flash": {"input": 0.075, "output": 0.30, "cache_read": 0.01},
 }
 
 
 def compute_cost(model: str, input_tokens: int, output_tokens: int,
-                 cache_read: int = 0) -> float:
-    rates = PRICING.get(model, PRICING["gpt-4o"])
-    return (
-        input_tokens / 1_000_000 * rates["input"]
-        + output_tokens / 1_000_000 * rates["output"]
-        - cache_read / 1_000_000 * (rates["input"] - rates["cache_read"])
-    )
+ cache_read: int = 0) ->float:
+ rates = PRICING.get(model, PRICING["gpt-4o"])
+ return (
+ input_tokens / 1_000_000 * rates["input"]
+ + output_tokens / 1_000_000 * rates["output"]
+ - cache_read / 1_000_000 * (rates["input"] - rates["cache_read"])
+ )
 
 
 class TokenTracker:
-    def __init__(self, db_path: str = ":memory:"):
-        self.conn = sqlite3.connect(db_path)
-        self.conn.execute("""
-            CREATE TABLE IF NOT EXISTS turns (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                session_id TEXT, turn_number INTEGER,
-                model TEXT, input_tokens INTEGER, output_tokens INTEGER,
-                cache_read_tokens INTEGER, cache_write_tokens INTEGER,
-                tool_calls INTEGER, tool_tokens INTEGER,
-                cost_usd REAL, timestamp REAL
-            )
-        """)
-        self.conn.execute("""
-            CREATE TABLE IF NOT EXISTS budgets (
-                session_id TEXT PRIMARY KEY,
-                max_tokens INTEGER, max_cost REAL,
-                max_turns INTEGER, created_at REAL
-            )
-        """)
-        self.conn.commit()
-        self._current_turn: dict[str, int] = {}
+ def __init__(self, db_path: str = ":memory:"):
+ self.conn = sqlite3.connect(db_path)
+ self.conn.execute("""
+ CREATE TABLE IF NOT EXISTS turns (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ session_id TEXT, turn_number INTEGER,
+ model TEXT, input_tokens INTEGER, output_tokens INTEGER,
+ cache_read_tokens INTEGER, cache_write_tokens INTEGER,
+ tool_calls INTEGER, tool_tokens INTEGER,
+ cost_usd REAL, timestamp REAL
+ )
+ """)
+ self.conn.execute("""
+ CREATE TABLE IF NOT EXISTS budgets (
+ session_id TEXT PRIMARY KEY,
+ max_tokens INTEGER, max_cost REAL,
+ max_turns INTEGER, created_at REAL
+ )
+ """)
+ self.conn.commit()
+ self._current_turn: dict[str, int] = {}
 
-    def record_turn(self, record: TurnRecord) -> dict:
-        cost = compute_cost(record.model, record.input_tokens,
-                           record.output_tokens, record.cache_read_tokens)
-        record.cost_usd = cost
+ def record_turn(self, record: TurnRecord) ->dict:
+ cost = compute_cost(record.model, record.input_tokens,
+ record.output_tokens, record.cache_read_tokens)
+ record.cost_usd = cost
 
-        self.conn.execute("""
-            INSERT INTO turns (session_id, turn_number, model,
-                input_tokens, output_tokens, cache_read_tokens,
-                cache_write_tokens, tool_calls, tool_tokens,
-                cost_usd, timestamp)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?)
-        """, (record.session_id, record.turn_number, record.model,
-              record.input_tokens, record.output_tokens,
-              record.cache_read_tokens, record.cache_write_tokens,
-              record.tool_calls, record.tool_tokens,
-              cost, record.timestamp))
-        self.conn.commit()
+ self.conn.execute("""
+ INSERT INTO turns (session_id, turn_number, model,
+ input_tokens, output_tokens, cache_read_tokens,
+ cache_write_tokens, tool_calls, tool_tokens,
+ cost_usd, timestamp)
+ VALUES (?,?,?,?,?,?,?,?,?,?,?)
+ """, (record.session_id, record.turn_number, record.model,
+ record.input_tokens, record.output_tokens,
+ record.cache_read_tokens, record.cache_write_tokens,
+ record.tool_calls, record.tool_tokens,
+ cost, record.timestamp))
+ self.conn.commit()
 
-        return self.check_budget(record.session_id)
+ return self.check_budget(record.session_id)
 
-    def check_budget(self, session_id: str) -> dict:
-        budget = self.conn.execute(
-            "SELECT max_tokens, max_cost, max_turns FROM budgets WHERE session_id = ?",
-            (session_id,)).fetchone()
+ def check_budget(self, session_id: str) ->dict:
+ budget = self.conn.execute(
+ "SELECT max_tokens, max_cost, max_turns FROM budgets WHERE session_id = ?",
+ (session_id,)).fetchone()
 
-        if not budget:
-            return {"status": "ok", "budget_set": False}
+ if not budget:
+ return {"status": "ok", "budget_set": False}
 
-        max_tokens, max_cost, max_turns = budget
+ max_tokens, max_cost, max_turns = budget
 
-        totals = self.conn.execute("""
-            SELECT COALESCE(SUM(input_tokens + output_tokens), 0),
-                   COALESCE(SUM(cost_usd), 0),
-                   COALESCE(MAX(turn_number), 0)
-            FROM turns WHERE session_id = ?
-        """, (session_id,)).fetchone()
+ totals = self.conn.execute("""
+ SELECT COALESCE(SUM(input_tokens + output_tokens), 0),
+ COALESCE(SUM(cost_usd), 0),
+ COALESCE(MAX(turn_number), 0)
+ FROM turns WHERE session_id = ?
+ """, (session_id,)).fetchone()
 
-        total_tokens, total_cost, total_turns = totals
+ total_tokens, total_cost, total_turns = totals
 
-        alerts = []
-        if max_tokens and total_tokens >= max_tokens:
-            alerts.append(f"TOKEN_BUDGET_EXCEEDED: {total_tokens}/{max_tokens}")
-        if max_cost and total_cost >= max_cost:
-            alerts.append(f"COST_BUDGET_EXCEEDED: ${total_cost:.4f}/${max_cost:.4f}")
-        if max_turns and total_turns >= max_turns:
-            alerts.append(f"TURN_BUDGET_EXCEEDED: {total_turns}/{max_turns}")
+ alerts = []
+ if max_tokens and total_tokens >= max_tokens:
+ alerts.append(f"TOKEN_BUDGET_EXCEEDED: {total_tokens}/{max_tokens}")
+ if max_cost and total_cost >= max_cost:
+ alerts.append(f"COST_BUDGET_EXCEEDED: ${total_cost:.4f}/${max_cost:.4f}")
+ if max_turns and total_turns >= max_turns:
+ alerts.append(f"TURN_BUDGET_EXCEEDED: {total_turns}/{max_turns}")
 
-        return {
-            "status": "exceeded" if alerts else "ok",
-            "total_tokens": total_tokens,
-            "total_cost": round(total_cost, 6),
-            "total_turns": total_turns,
-            "alerts": alerts,
-        }
+ return {
+ "status": "exceeded" if alerts else "ok",
+ "total_tokens": total_tokens,
+ "total_cost": round(total_cost, 6),
+ "total_turns": total_turns,
+ "alerts": alerts,
+ }
 
-    def set_budget(self, session_id: str,
-                   max_tokens: int | None = None,
-                   max_cost: float | None = None,
-                   max_turns: int | None = None) -> None:
-        self.conn.execute("""
-            INSERT OR REPLACE INTO budgets
-            (session_id, max_tokens, max_cost, max_turns, created_at)
-            VALUES (?,?,?,?,?)
-        """, (session_id, max_tokens, max_cost, max_turns, time.time()))
-        self.conn.commit()
+ def set_budget(self, session_id: str,
+ max_tokens: int | None = None,
+ max_cost: float | None = None,
+ max_turns: int | None = None) ->None:
+ self.conn.execute("""
+ INSERT OR REPLACE INTO budgets
+ (session_id, max_tokens, max_cost, max_turns, created_at)
+ VALUES (?,?,?,?,?)
+ """, (session_id, max_tokens, max_cost, max_turns, time.time()))
+ self.conn.commit()
 
-    def session_summary(self, session_id: str) -> dict:
-        row = self.conn.execute("""
-            SELECT COUNT(*), COALESCE(SUM(input_tokens),0),
-                   COALESCE(SUM(output_tokens),0),
-                   COALESCE(SUM(cost_usd),0),
-                   COALESCE(SUM(tool_tokens),0)
-            FROM turns WHERE session_id = ?
-        """, (session_id,)).fetchone()
+ def session_summary(self, session_id: str) ->dict:
+ row = self.conn.execute("""
+ SELECT COUNT(*), COALESCE(SUM(input_tokens),0),
+ COALESCE(SUM(output_tokens),0),
+ COALESCE(SUM(cost_usd),0),
+ COALESCE(SUM(tool_tokens),0)
+ FROM turns WHERE session_id = ?
+ """, (session_id,)).fetchone()
 
-        turns, inp, out, cost, tool_tok = row
-        total = inp + out + tool_tok
+ turns, inp, out, cost, tool_tok = row
+ total = inp + out + tool_tok
 
-        return {
-            "turns": turns,
-            "input_tokens": inp,
-            "output_tokens": out,
-            "tool_tokens": tool_tok,
-            "total_tokens": total,
-            "total_cost": round(cost, 6),
-            "avg_tokens_per_turn": round(total / max(turns, 1)),
-            "avg_cost_per_turn": round(cost / max(turns, 1), 6),
-        }</code></pre>
-
-<h2>Step 2: Predictive Cost Projection</h2>
+ return {
+ "turns": turns,
+ "input_tokens": inp,
+ "output_tokens": out,
+ "tool_tokens": tool_tok,
+ "total_tokens": total,
+ "total_cost": round(cost, 6),
+ "avg_tokens_per_turn": round(total / max(turns, 1)),
+ "avg_cost_per_turn": round(cost / max(turns, 1), 6),
+ }</code></pre>><h2>Step 2: Predictive Cost Projection</h2>
 <pre><code>class CostProjector:
-    """Predict future costs based on historical patterns."""
+ """Predict future costs based on historical patterns."""
 
-    def __init__(self, tracker: TokenTracker):
-        self.tracker = tracker
+ def __init__(self, tracker: TokenTracker):
+ self.tracker = tracker
 
-    def project_session_cost(self, session_id: str,
-                             remaining_turns: int) -> dict:
-        """Project total session cost based on avg so far."""
-        summary = self.tracker.session_summary(session_id)
+ def project_session_cost(self, session_id: str,
+ remaining_turns: int) ->dict:
+ """Project total session cost based on avg so far."""
+ summary = self.tracker.session_summary(session_id)
 
-        if summary["turns"] == 0:
-            return {"projected_cost": 0, "confidence": "none"}
+ if summary["turns"] == 0:
+ return {"projected_cost": 0, "confidence": "none"}
 
-        avg_cost = summary["total_cost"] / summary["turns"]
-        avg_tokens = summary["avg_tokens_per_turn"]
+ avg_cost = summary["total_cost"] / summary["turns"]
+ avg_tokens = summary["avg_tokens_per_turn"]
 
-        projected_additional = avg_cost * remaining_turns
-        projected_total = summary["total_cost"] + projected_additional
+ projected_additional = avg_cost * remaining_turns
+ projected_total = summary["total_cost"] + projected_additional
 
-        # Confidence based on sample size
-        if summary["turns"] >= 20:
-            confidence = "high"
-        elif summary["turns"] >= 10:
-            confidence = "medium"
-        else:
-            confidence = "low"
+ # Confidence based on sample size
+ if summary["turns"] >= 20:
+ confidence = "high"
+ elif summary["turns"] >= 10:
+ confidence = "medium"
+ else:
+ confidence = "low"
 
-        return {
-            "spent_so_far": round(summary["total_cost"], 4),
-            "projected_additional": round(projected_additional, 4),
-            "projected_total": round(projected_total, 4),
-            "avg_cost_per_turn": round(avg_cost, 6),
-            "avg_tokens_per_turn": avg_tokens,
-            "remaining_turns": remaining_turns,
-            "confidence": confidence,
-        }
+ return {
+ "spent_so_far": round(summary["total_cost"], 4),
+ "projected_additional": round(projected_additional, 4),
+ "projected_total": round(projected_total, 4),
+ "avg_cost_per_turn": round(avg_cost, 6),
+ "avg_tokens_per_turn": avg_tokens,
+ "remaining_turns": remaining_turns,
+ "confidence": confidence,
+ }
 
-    def project_daily_cost(self, session_id: str,
-                           sessions_per_day: int = 10) -> dict:
-        """Project daily spend based on per-session averages."""
-        summary = self.tracker.session_summary(session_id)
+ def project_daily_cost(self, session_id: str,
+ sessions_per_day: int = 10) ->dict:
+ """Project daily spend based on per-session averages."""
+ summary = self.tracker.session_summary(session_id)
 
-        if summary["turns"] == 0:
-            return {"daily_projected": 0}
+ if summary["turns"] == 0:
+ return {"daily_projected": 0}
 
-        avg_session_cost = summary["total_cost"]
-        daily = avg_session_cost * sessions_per_day
-        monthly = daily * 30
+ avg_session_cost = summary["total_cost"]
+ daily = avg_session_cost * sessions_per_day
+ monthly = daily * 30
 
-        return {
-            "avg_session_cost": round(avg_session_cost, 4),
-            "sessions_per_day": sessions_per_day,
-            "daily_projected": round(daily, 2),
-            "monthly_projected": round(monthly, 2),
-        }</code></pre>
-
-<h2>Step 3: Tool-Level Token Accounting</h2>
+ return {
+ "avg_session_cost": round(avg_session_cost, 4),
+ "sessions_per_day": sessions_per_day,
+ "daily_projected": round(daily, 2),
+ "monthly_projected": round(monthly, 2),
+ }</code></pre>><h2>Step 3: Tool-Level Token Accounting</h2>
 <pre><code>class ToolTokenAccountant:
-    """Track which tools consume the most context."""
+ """Track which tools consume the most context."""
 
-    def __init__(self, tracker: TokenTracker):
-        self.tracker = tracker
+ def __init__(self, tracker: TokenTracker):
+ self.tracker = tracker
 
-    def record_tool_usage(self, session_id: str, turn: int,
-                          tool_name: str, result_tokens: int,
-                          args_tokens: int) -> None:
-        """Record per-tool token consumption."""
-        self.tracker.conn.execute("""
-            INSERT INTO tool_usage
-            (session_id, turn, tool_name, result_tokens, args_tokens, timestamp)
-            VALUES (?,?,?,?,?,?)
-        """, (session_id, turn, tool_name, result_tokens,
-              args_tokens, time.time()))
-        self.tracker.conn.commit()
+ def record_tool_usage(self, session_id: str, turn: int,
+ tool_name: str, result_tokens: int,
+ args_tokens: int) ->None:
+ """Record per-tool token consumption."""
+ self.tracker.conn.execute("""
+ INSERT INTO tool_usage
+ (session_id, turn, tool_name, result_tokens, args_tokens, timestamp)
+ VALUES (?,?,?,?,?,?)
+ """, (session_id, turn, tool_name, result_tokens,
+ args_tokens, time.time()))
+ self.tracker.conn.commit()
 
-    def tool_rankings(self, session_id: str | None = None) -> list[dict]:
-        """Rank tools by total token consumption."""
-        if session_id:
-            rows = self.tracker.conn.execute("""
-                SELECT tool_name,
-                       COUNT(*) as calls,
-                       SUM(result_tokens + args_tokens) as total_tokens,
-                       AVG(result_tokens) as avg_result,
-                       MAX(result_tokens) as max_result
-                FROM tool_usage WHERE session_id = ?
-                GROUP BY tool_name ORDER BY total_tokens DESC
-            """, (session_id,)).fetchall()
-        else:
-            rows = self.tracker.conn.execute("""
-                SELECT tool_name,
-                       COUNT(*) as calls,
-                       SUM(result_tokens + args_tokens) as total_tokens,
-                       AVG(result_tokens) as avg_result,
-                       MAX(result_tokens) as max_result
-                FROM tool_usage GROUP BY tool_name
-                ORDER BY total_tokens DESC
-            """).fetchall()
+ def tool_rankings(self, session_id: str | None = None) ->list[dict]:
+ """Rank tools by total token consumption."""
+ if session_id:
+ rows = self.tracker.conn.execute("""
+ SELECT tool_name,
+ COUNT(*) as calls,
+ SUM(result_tokens + args_tokens) as total_tokens,
+ AVG(result_tokens) as avg_result,
+ MAX(result_tokens) as max_result
+ FROM tool_usage WHERE session_id = ?
+ GROUP BY tool_name ORDER BY total_tokens DESC
+ """, (session_id,)).fetchall()
+ else:
+ rows = self.tracker.conn.execute("""
+ SELECT tool_name,
+ COUNT(*) as calls,
+ SUM(result_tokens + args_tokens) as total_tokens,
+ AVG(result_tokens) as avg_result,
+ MAX(result_tokens) as max_result
+ FROM tool_usage GROUP BY tool_name
+ ORDER BY total_tokens DESC
+ """).fetchall()
 
-        return [{"tool": r[0], "calls": r[1], "total_tokens": r[2],
-                 "avg_result": round(r[3], 1), "max_result": r[4]}
-                for r in rows]
+ return [{"tool": r[0], "calls": r[1], "total_tokens": r[2],
+ "avg_result": round(r[3], 1), "max_result": r[4]}
+ for r in rows]
 
-    def optimize_toolset(self, session_id: str,
-                         token_budget: int) -> list[str]:
-        """Suggest which tools to keep based on usage vs token cost."""
-        rankings = self.tool_rankings(session_id)
+ def optimize_toolset(self, session_id: str,
+ token_budget: int) ->list[str]:
+ """Suggest which tools to keep based on usage vs token cost."""
+ rankings = self.tool_rankings(session_id)
 
-        # Knapsack: maximize calls within budget
-        kept = []
-        used = 0
-        for tool in sorted(rankings, key=lambda x: x["calls"], reverse=True):
-            avg_cost = tool["avg_result"]
-            if used + avg_cost <= token_budget / 10:  # 10% of budget per tool
-                kept.append(tool["tool"])
-                used += avg_cost
+ # Knapsack: maximize calls within budget
+ kept = []
+ used = 0
+ for tool in sorted(rankings, key=lambda x: x["calls"], reverse=True):
+ avg_cost = tool["avg_result"]
+ if used + avg_cost <= token_budget / 10: # 10% of budget per tool
+ kept.append(tool["tool"])
+ used += avg_cost
 
-        return kept</code></pre>
-
-<h2>The Complete Workflow</h2>
+ return kept</code></pre>><h2>The Complete Workflow</h2>
 <pre><code>tracker = TokenTracker("tokens.db")
 projector = CostProjector(tracker)
 accountant = ToolTokenAccountant(tracker)
@@ -318,20 +298,20 @@ tracker.set_budget("session-1", max_tokens=50000, max_cost=0.50, max_turns=20)
 # Simulate 15 turns
 import random; random.seed(42)
 for turn in range(1, 16):
-    inp = random.randint(800, 2500)
-    out = random.randint(100, 500)
-    cache = random.randint(200, 800)
+ inp = random.randint(800, 2500)
+ out = random.randint(100, 500)
+ cache = random.randint(200, 800)
 
-    status = tracker.record_turn(TurnRecord(
-        session_id="session-1", turn_number=turn, model="gpt-4o",
-        input_tokens=inp, output_tokens=out,
-        cache_read_tokens=cache, tool_calls=random.randint(0, 3),
-        tool_tokens=random.randint(50, 500),
-    ))
+ status = tracker.record_turn(TurnRecord(
+ session_id="session-1", turn_number=turn, model="gpt-4o",
+ input_tokens=inp, output_tokens=out,
+ cache_read_tokens=cache, tool_calls=random.randint(0, 3),
+ tool_tokens=random.randint(50, 500),
+ ))
 
-    if status["status"] == "exceeded":
-        print(f"Turn {turn}: BUDGET EXCEEDED - {status['alerts']}")
-        break
+ if status["status"] == "exceeded":
+ print(f"Turn {turn}: BUDGET EXCEEDED - {status['alerts']}")
+ break
 
 summary = tracker.session_summary("session-1")
 print(f"Session: {summary['turns']} turns, {summary['total_tokens']:,} tokens, ${summary['total_cost']:.4f}")
@@ -340,14 +320,10 @@ proj = projector.project_session_cost("session-1", remaining_turns=5)
 print(f"Projected total: ${proj['projected_total']:.4f} (confidence: {proj['confidence']})")
 
 daily = projector.project_daily_cost("session-1", sessions_per_day=20)
-print(f"Daily projection: ${daily['daily_projected']:.2f} (monthly: ${daily['monthly_projected']:.2f})")</code></pre>
-
-<p>Output:</p>
+print(f"Daily projection: ${daily['daily_projected']:.2f} (monthly: ${daily['monthly_projected']:.2f})")</code></pre>><p>Output:</p>
 <pre><code>Session: 15 turns, 52,830 tokens, $0.0942
 Projected total: $0.1256 (confidence: medium)
-Daily projection: $1.88 (monthly: $56.52)</code></pre>
-
-<h2>Optimization Strategies</h2>
+Daily projection: $1.88 (monthly: $56.52)</code></pre>><h2>Optimization Strategies</h2>
 <table>
 <tr><th>Strategy</th><th>Tokens Saved</th><th>Implementation</th></tr>
 <tr><td>Compress conversation history</td><td>40-60%</td><td>Summarize turns 1-N after turn N+5</td></tr>
@@ -355,24 +331,18 @@ Daily projection: $1.88 (monthly: $56.52)</code></pre>
 <tr><td>Cache system prompt</td><td>50% input reduction</td><td>Keep system prompt byte-stable</td></tr>
 <tr><td>Cap tool result length</td><td>10-20%</td><td>Truncate results to 2000 tokens</td></tr>
 <tr><td>Switch to cheaper model for easy tasks</td><td>60-80% cost</td><td>Route based on task complexity</td></tr>
-</table>
-
-<div class="info">
-<strong>Cache savings are real:</strong> With prompt caching, a 5,000-token system prompt cached across 20 turns saves 100,000 input tokens. At GPT-4o rates, that's <strong>$0.25 saved per session</strong> — just from keeping the prompt stable.
-</div>
-
-<h2>Common Pitfalls</h2>
+</table>><div class="info">
+<strong>Cache savings are real:</strong>With prompt caching, a 5,000-token system prompt cached across 20 turns saves 100,000 input tokens. At GPT-4o rates, that's <strong>$0.25 saved per session</strong>— just from keeping the prompt stable.
+</div>><h2>Common Pitfalls</h2>
 <div class="warning">
-<strong>Pitfall 1: Counting tokens after the API call.</strong> By then, you've already paid. Set budgets <em>before</em> the call and check them between turns.
+<strong>Pitfall 1: Counting tokens after the API call.</strong>By then, you've already paid. Set budgets <em>before</em>the call and check them between turns.
 </div>
 <div class="warning">
-<strong>Pitfall 2: Ignoring tool result tokens.</strong> Tool results go into the conversation history and get re-sent every turn. A 3,000-token file read is paid for on every subsequent turn.
+<strong>Pitfall 2: Ignoring tool result tokens.</strong>Tool results go into the conversation history and get re-sent every turn. A 3,000-token file read is paid for on every subsequent turn.
 </div>
 <div class="warning">
-<strong>Pitfall 3: Not tracking per-model costs.</strong> GPT-4o is 16x more expensive than GPT-4o-mini per output token. If a task works on mini, don't use 4o.
-</div>
-
-<h2>Integration with MCP</h2>
+<strong>Pitfall 3: Not tracking per-model costs.</strong>GPT-4o is 16x more expensive than GPT-4o-mini per output token. If a task works on mini, don't use 4o.
+</div>><h2>Integration with MCP</h2>
 <pre><code>pip install mcp-token-budget</code></pre>
 <table>
 <tr><th>Tool</th><th>What it does</th></tr>
@@ -382,12 +352,10 @@ Daily projection: $1.88 (monthly: $56.52)</code></pre>
 <tr><td><code>session_summary</code></td><td>Aggregate stats for a session</td></tr>
 <tr><td><code>project_cost</code></td><td>Predict total session and daily costs</td></tr>
 <tr><td><code>optimize_toolset</code></td><td>Suggest tools to drop based on cost/value</td></tr>
-</table>
-
-<h2>Conclusion</h2>
+</table>><h2>Conclusion</h2>
 <p>Token budget management is the difference between an agent that costs $50/month and one that costs $5,000/month for the same output quality. The system above is 250 lines of Python, uses SQLite for persistence, and catches runaway spending before it happens.</p>
 <p>Three numbers to watch: <strong>avg cost per turn</strong>, <strong>avg tokens per turn</strong>, and <strong>tool result token contribution</strong>. If any of these trend upward across sessions, investigate before the bill spikes.</p>
 <hr>
-<p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a> harness engineering MCP suite.</em></p>
+<p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a>harness engineering MCP suite.</em></p>
 </body>
 </html>

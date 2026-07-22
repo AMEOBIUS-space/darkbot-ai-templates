@@ -19,9 +19,7 @@
 <a class="back" href="../index.html">← Back to Blog</a>
 <h1>30 Zero-Dependency MCP Servers — 438 Tools, 1188 Tests</h1>
 <p class="meta">July 6, 2026 · 20 min read · AMEOBIUS</p>
-<div><span class="tag">MCP</span><span class="tag">Python</span><span class="tag">Zero Deps</span><span class="tag">30 Repos</span><span class="tag">438 Tools</span><span class="tag">1188 Tests</span></div>
-
-<h2>The Full Collection — 30 Repos Milestone</h2>
+<div><span class="tag">MCP</span><span class="tag">Python</span><span class="tag">Zero Deps</span><span class="tag">30 Repos</span><span class="tag">438 Tools</span><span class="tag">1188 Tests</span></div>><h2>The Full Collection — 30 Repos Milestone</h2>
 <table>
 <tr><th>Server</th><th>Tools</th><th>Tests</th><th>Category</th></tr>
 <tr><td><a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">mcp-cdp-scraper</a></td><td>12</td><td>38</td><td>Web scraping</td></tr>
@@ -54,25 +52,17 @@
 <tr><td><a href="https://github.com/AMEOBIUS/mcp-secrets-tools">mcp-secrets-tools</a></td><td>12</td><td>42</td><td>Security</td></tr>
 <tr><td><a href="https://github.com/AMEOBIUS/mcp-charts-tools">mcp-charts-tools</a></td><td>11</td><td>37</td><td>Charts</td></tr>
 <tr><td><strong>Total</strong></td><td><strong>438</strong></td><td><strong>1188</strong></td><td></td></tr>
-</table>
-
-<h2>Install All 29 Servers</h2>
+</table>><h2>Install All 29 Servers</h2>
 <pre><code>git clone https://github.com/AMEOBIUS/mcp-tools-bundle.git
 cd mcp-tools-bundle
-bash install.sh</code></pre>
-
-<a class="btn" href="https://github.com/AMEOBIUS/mcp-tools-bundle">Get the Bundle →</a>
-
-<h2>All 1188 Tests Pass</h2>
+bash install.sh</code></pre>><a class="btn" href="https://github.com/AMEOBIUS/mcp-tools-bundle">Get the Bundle →</a>><h2>All 1188 Tests Pass</h2>
 <pre><code># Each server's tests pass independently
-cd mcp-cdp-scraper && python -m pytest tests/ -q    # 38
-cd mcp-text-tools && python -m pytest tests/ -q      # 53
-cd mcp-math-tools && python -m pytest tests/ -q      # 50
-cd mcp-stats-tools && python -m pytest tests/ -q     # 48
+cd mcp-cdp-scraper && python -m pytest tests/ -q # 38
+cd mcp-text-tools && python -m pytest tests/ -q # 53
+cd mcp-math-tools && python -m pytest tests/ -q # 50
+cd mcp-stats-tools && python -m pytest tests/ -q # 48
 # ... see bundle README for full list
-# Total: 1188 tests, all passing</code></pre>
-
-<h2>Why Zero Dependencies?</h2>
+# Total: 1188 tests, all passing</code></pre>><h2>Why Zero Dependencies?</h2>
 <p>Every MCP server in this collection uses <strong>only the Python standard library</strong>. No pip installs, no Playwright, no Selenium, no requests, no npm. This means:</p>
 <ul>
 <li>Install in seconds, not minutes</li>
@@ -80,25 +70,21 @@ cd mcp-stats-tools && python -m pytest tests/ -q     # 48
 <li>Works on any system with Python 3.8+</li>
 <li>Minimal attack surface</li>
 <li>Easy to audit — all code is pure stdlib</li>
-</ul>
-
-<h2>Claude Desktop Configuration</h2>
+</ul>><h2>Claude Desktop Configuration</h2>
 <pre><code>{
-  "mcpServers": {
-    "text-tools": {
-      "command": "python",
-      "args": ["-m", "src.server", "--stdio"],
-      "cwd": "/path/to/mcp-text-tools"
-    },
-    "stats-tools": {
-      "command": "python",
-      "args": ["-m", "src.server", "--stdio"],
-      "cwd": "/path/to/mcp-stats-tools"
-    }
-  }
-}</code></pre>
-
-<hr>
-<p>💬 <a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a> | BTC/USDT/ETH/XMR</p>
+ "mcpServers": {
+ "text-tools": {
+ "command": "python",
+ "args": ["-m", "src.server", "--stdio"],
+ "cwd": "/path/to/mcp-text-tools"
+ },
+ "stats-tools": {
+ "command": "python",
+ "args": ["-m", "src.server", "--stdio"],
+ "cwd": "/path/to/mcp-stats-tools"
+ }
+ }
+}</code></pre>><hr>
+<p><a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a>| BTC/USDT/ETH/XMR</p>
 </body>
 </html>

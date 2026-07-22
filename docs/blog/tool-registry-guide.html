@@ -1,287 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tool Registry: Discover, Validate, and Catalog MCP Tools</title>
-    <meta name="description" content="A registry system that discovers MCP tools across servers, validates their schemas, and catalogs them for search and filtering.">
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"TechArticle","headline":"Tool Registry: Discover and Catalog MCP Tools","author":{"@type":"Person","name":"aaameobius-crypto"},"datePublished":"2026-07-09"}
-    </script>
-    <style>
-        body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
-        h1{font-size:2rem;margin-bottom:.5rem} h2{font-size:1.4rem;margin-top:2rem} h3{font-size:1.1rem;margin-top:1.5rem}
-        code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
-        pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}
-        pre code{background:none;padding:0}
-        table{width:100%;border-collapse:collapse;margin:1rem 0}
-        th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd} th{background:#f8f8f8}
-        a{color:#0366d6}
-        .tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
-        .metric{font-family:monospace;font-weight:700;color:#0366d6}
-        .tip{background:#d1ecf1;border-left:4px solid #17a2b8;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>Tool Registry: Discover, Validate, and Catalog MCP Tools</title>><meta name="description" content="A registry system that discovers MCP tools across servers, validates their schemas, and catalogs them for search and filtering.">><script type="application/ld+json">>{"@context":"https://schema.org","@type":"TechArticle","headline":"Tool Registry: Discover and Catalog MCP Tools","author":{"@type":"Person","name":"aaameobius-crypto"},"datePublished":"2026-07-09"}
+ </script>><style>>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
+ h1{font-size:2rem;margin-bottom:.5rem} h2{font-size:1.4rem;margin-top:2rem} h3{font-size:1.1rem;margin-top:1.5rem}
+ code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+ pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}
+ pre code{background:none;padding:0}
+ table{width:100%;border-collapse:collapse;margin:1rem 0}
+ th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd} th{background:#f8f8f8}
+ a{color:#0366d6}
+ .tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+ .metric{font-family:monospace;font-weight:700;color:#0366d6}
+ .tip{background:#d1ecf1;border-left:4px solid #17a2b8;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+ </style>
 </head>
-<body>
-    <h1>Tool Registry: Discover, Validate, and Catalog MCP Tools</h1>
-    <p><span class="tag">MCP</span> <span class="tag">Tools</span> <span class="tag">Python</span></p>
-    <p><em>2026-07-09</em></p>
-
-    <p>When you run 5 MCP servers with 30 tools each, you have 150 tools. Which one converts markdown to HTML? Which one hashes a file? Which ones require arguments you do not have?</p>
-
-    <p>A tool registry solves this: it discovers tools across all servers, validates their schemas, and catalogs them for instant search.</p>
-
-    <h2>The Discovery Problem</h2>
-    <table>
-        <tr><th>Without registry</th><th>With registry</th></tr>
-        <tr><td>Remember which server has which tool</td><td>Search once, find everywhere</td></tr>
-        <tr><td>Guess argument names</td><td>Schema-validated calls</td></tr>
-        <tr><td>Broken tools discovered at runtime</td><td>Pre-flight validation</td></tr>
-        <tr><td>No way to compare similar tools</td><td>Side-by-side schema diff</td></tr>
-    </table>
-
-    <h2>The Registry</h2>
-
-    <pre><code>from dataclasses import dataclass, field
+<body>><h1>Tool Registry: Discover, Validate, and Catalog MCP Tools</h1>><p><span class="tag">MCP</span><span class="tag">Tools</span><span class="tag">Python</span></p>><p><em>2026-07-09</em></p>><p>When you run 5 MCP servers with 30 tools each, you have 150 tools. Which one converts markdown to HTML? Which one hashes a file? Which ones require arguments you do not have?</p>><p>A tool registry solves this: it discovers tools across all servers, validates their schemas, and catalogs them for instant search.</p>><h2>The Discovery Problem</h2>><table>><tr><th>Without registry</th><th>With registry</th></tr>><tr><td>Remember which server has which tool</td><td>Search once, find everywhere</td></tr>><tr><td>Guess argument names</td><td>Schema-validated calls</td></tr>><tr><td>Broken tools discovered at runtime</td><td>Pre-flight validation</td></tr>><tr><td>No way to compare similar tools</td><td>Side-by-side schema diff</td></tr>></table>><h2>The Registry</h2>><pre><code>from dataclasses import dataclass, field
 from datetime import datetime
 import json, hashlib
 
 @dataclass
 class ToolEntry:
-    name: str
-    server: str           # which MCP server provides this
-    description: str
-    schema: dict          # JSON Schema for arguments
-    category: str = "general"
-    tags: list = field(default_factory=list)
-    version: str = "1.0.0"
-    requires_auth: bool = False
-    avg_latency_ms: int = 0
-    registered_at: str = ""
-    
-    def __post_init__(self):
-        if not self.registered_at:
-            self.registered_at = datetime.now().isoformat()
+ name: str
+ server: str # which MCP server provides this
+ description: str
+ schema: dict # JSON Schema for arguments
+ category: str = "general"
+ tags: list = field(default_factory=list)
+ version: str = "1.0.0"
+ requires_auth: bool = False
+ avg_latency_ms: int = 0
+ registered_at: str = ""
+ 
+ def __post_init__(self):
+ if not self.registered_at:
+ self.registered_at = datetime.now().isoformat()
 
 @dataclass
 class ToolRegistry:
-    tools: dict = field(default_factory=dict)  # name -> ToolEntry
-    
-    def register(self, entry: ToolEntry) -> bool:
-        """Register a tool. Returns True if new, False if duplicate."""
-        tool_id = f"{entry.server}.{entry.name}"
-        if tool_id in self.tools:
-            return False
-        self.tools[tool_id] = entry
-        return True
-    
-    def search(self, query: str, category: str = None) -> list:
-        """Search tools by keyword, description, or tags."""
-        query_lower = query.lower()
-        results = []
-        
-        for tool_id, tool in self.tools.items():
-            # Category filter
-            if category and tool.category != category:
-                continue
-            
-            score = 0
-            # Name match (highest weight)
-            if query_lower in tool.name.lower():
-                score += 10
-            # Description match
-            if query_lower in tool.description.lower():
-                score += 5
-            # Tag match
-            for tag in tool.tags:
-                if query_lower in tag.lower():
-                    score += 3
-            
-            if score > 0:
-                results.append((tool, score))
-        
-        results.sort(key=lambda x: x[1], reverse=True)
-        return [r[0] for r in results]
-    
-    def get_by_name(self, name: str, server: str = None) -> ToolEntry:
-        """Get a specific tool by name."""
-        if server:
-            return self.tools.get(f"{server}.{name}")
-        # Search all servers
-        for tool_id, tool in self.tools.items():
-            if tool.name == name:
-                return tool
-        return None
-    
-    def list_categories(self) -> dict:
-        """Group tools by category."""
-        cats = {}
-        for tool in self.tools.values():
-            cats.setdefault(tool.category, []).append(tool.name)
-        return cats
-    
-    def validate_args(self, tool_name: str, args: dict) -> dict:
-        """Validate arguments against tool schema."""
-        tool = self.get_by_name(tool_name)
-        if not tool:
-            return {"valid": False, "error": f"Unknown tool: {tool_name}"}
-        
-        schema = tool.schema
-        properties = schema.get("properties", {})
-        required = schema.get("required", [])
-        errors = []
-        
-        # Check required fields
-        for req in required:
-            if req not in args:
-                errors.append(f"Missing required argument: {req}")
-        
-        # Check types
-        for key, value in args.items():
-            if key in properties:
-                expected_type = properties[key].get("type")
-                if expected_type == "string" and not isinstance(value, str):
-                    errors.append(f"{key} must be a string")
-                elif expected_type == "number" and not isinstance(value, (int, float)):
-                    errors.append(f"{key} must be a number")
-                elif expected_type == "boolean" and not isinstance(value, bool):
-                    errors.append(f"{key} must be a boolean")
-                elif expected_type == "array" and not isinstance(value, list):
-                    errors.append(f"{key} must be an array")
-        
-        return {"valid": len(errors) == 0, "errors": errors}
-    
-    def export_catalog(self) -> str:
-        """Export full catalog as JSON."""
-        catalog = []
-        for tool in self.tools.values():
-            catalog.append({
-                "name": tool.name,
-                "server": tool.server,
-                "description": tool.description,
-                "category": tool.category,
-                "tags": tool.tags,
-                "requires_auth": tool.requires_auth,
-                "schema": tool.schema
-            })
-        return json.dumps(catalog, indent=2)</code></pre>
+ tools: dict = field(default_factory=dict) # name ->ToolEntry
+ 
+ def register(self, entry: ToolEntry) ->bool:
+ """Register a tool. Returns True if new, False if duplicate."""
+ tool_id = f"{entry.server}.{entry.name}"
+ if tool_id in self.tools:
+ return False
+ self.tools[tool_id] = entry
+ return True
+ 
+ def search(self, query: str, category: str = None) ->list:
+ """Search tools by keyword, description, or tags."""
+ query_lower = query.lower()
+ results = []
+ 
+ for tool_id, tool in self.tools.items():
+ # Category filter
+ if category and tool.category != category:
+ continue
+ 
+ score = 0
+ # Name match (highest weight)
+ if query_lower in tool.name.lower():
+ score += 10
+ # Description match
+ if query_lower in tool.description.lower():
+ score += 5
+ # Tag match
+ for tag in tool.tags:
+ if query_lower in tag.lower():
+ score += 3
+ 
+ if score >0:
+ results.append((tool, score))
+ 
+ results.sort(key=lambda x: x[1], reverse=True)
+ return [r[0] for r in results]
+ 
+ def get_by_name(self, name: str, server: str = None) ->ToolEntry:
+ """Get a specific tool by name."""
+ if server:
+ return self.tools.get(f"{server}.{name}")
+ # Search all servers
+ for tool_id, tool in self.tools.items():
+ if tool.name == name:
+ return tool
+ return None
+ 
+ def list_categories(self) ->dict:
+ """Group tools by category."""
+ cats = {}
+ for tool in self.tools.values():
+ cats.setdefault(tool.category, []).append(tool.name)
+ return cats
+ 
+ def validate_args(self, tool_name: str, args: dict) ->dict:
+ """Validate arguments against tool schema."""
+ tool = self.get_by_name(tool_name)
+ if not tool:
+ return {"valid": False, "error": f"Unknown tool: {tool_name}"}
+ 
+ schema = tool.schema
+ properties = schema.get("properties", {})
+ required = schema.get("required", [])
+ errors = []
+ 
+ # Check required fields
+ for req in required:
+ if req not in args:
+ errors.append(f"Missing required argument: {req}")
+ 
+ # Check types
+ for key, value in args.items():
+ if key in properties:
+ expected_type = properties[key].get("type")
+ if expected_type == "string" and not isinstance(value, str):
+ errors.append(f"{key} must be a string")
+ elif expected_type == "number" and not isinstance(value, (int, float)):
+ errors.append(f"{key} must be a number")
+ elif expected_type == "boolean" and not isinstance(value, bool):
+ errors.append(f"{key} must be a boolean")
+ elif expected_type == "array" and not isinstance(value, list):
+ errors.append(f"{key} must be an array")
+ 
+ return {"valid": len(errors) == 0, "errors": errors}
+ 
+ def export_catalog(self) ->str:
+ """Export full catalog as JSON."""
+ catalog = []
+ for tool in self.tools.values():
+ catalog.append({
+ "name": tool.name,
+ "server": tool.server,
+ "description": tool.description,
+ "category": tool.category,
+ "tags": tool.tags,
+ "requires_auth": tool.requires_auth,
+ "schema": tool.schema
+ })
+ return json.dumps(catalog, indent=2)</code></pre>><h2>Auto-Discovery from MCP Servers</h2>><pre><code>import subprocess, json
 
-    <h2>Auto-Discovery from MCP Servers</h2>
+def discover_tools(server_command: list, server_name: str) ->list:
+ """Start an MCP server, list its tools, register them."""
+ proc = subprocess.Popen(
+ server_command,
+ stdin=subprocess.PIPE,
+ stdout=subprocess.PIPE,
+ stderr=subprocess.PIPE,
+ text=True
+ )
+ 
+ # Send initialize
+ proc.stdin.write(json.dumps({
+ "jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}
+ }) + "\n")
+ proc.stdin.flush()
+ proc.stdout.readline()
+ 
+ # Send tools/list
+ proc.stdin.write(json.dumps({
+ "jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}
+ }) + "\n")
+ proc.stdin.flush()
+ 
+ response = json.loads(proc.stdout.readline())
+ tools = response.get("result", {}).get("tools", [])
+ 
+ proc.terminate()
+ 
+ # Categorize tools automatically
+ entries = []
+ for tool in tools:
+ category = _guess_category(tool["name"], tool.get("description", ""))
+ entry = ToolEntry(
+ name=tool["name"],
+ server=server_name,
+ description=tool.get("description", ""),
+ schema=tool.get("inputSchema", {}),
+ category=category,
+ tags=_extract_tags(tool)
+ )
+ entries.append(entry)
+ 
+ return entries
 
-    <pre><code>import subprocess, json
+def _guess_category(name: str, desc: str) ->str:
+ text = f"{name} {desc}".lower()
+ if any(w in text for w in ["read", "list", "search", "get", "show"]):
+ return "read"
+ if any(w in text for w in ["write", "create", "update", "patch", "delete"]):
+ return "write"
+ if any(w in text for w in ["bash", "shell", "exec", "run", "terminal"]):
+ return "execute"
+ if any(w in text for w in ["git", "commit", "branch", "merge"]):
+ return "version_control"
+ if any(w in text for w in ["http", "url", "fetch", "request", "curl"]):
+ return "network"
+ return "general"
 
-def discover_tools(server_command: list, server_name: str) -> list:
-    """Start an MCP server, list its tools, register them."""
-    proc = subprocess.Popen(
-        server_command,
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
-    
-    # Send initialize
-    proc.stdin.write(json.dumps({
-        "jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}
-    }) + "\n")
-    proc.stdin.flush()
-    proc.stdout.readline()
-    
-    # Send tools/list
-    proc.stdin.write(json.dumps({
-        "jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}
-    }) + "\n")
-    proc.stdin.flush()
-    
-    response = json.loads(proc.stdout.readline())
-    tools = response.get("result", {}).get("tools", [])
-    
-    proc.terminate()
-    
-    # Categorize tools automatically
-    entries = []
-    for tool in tools:
-        category = _guess_category(tool["name"], tool.get("description", ""))
-        entry = ToolEntry(
-            name=tool["name"],
-            server=server_name,
-            description=tool.get("description", ""),
-            schema=tool.get("inputSchema", {}),
-            category=category,
-            tags=_extract_tags(tool)
-        )
-        entries.append(entry)
-    
-    return entries
-
-def _guess_category(name: str, desc: str) -> str:
-    text = f"{name} {desc}".lower()
-    if any(w in text for w in ["read", "list", "search", "get", "show"]):
-        return "read"
-    if any(w in text for w in ["write", "create", "update", "patch", "delete"]):
-        return "write"
-    if any(w in text for w in ["bash", "shell", "exec", "run", "terminal"]):
-        return "execute"
-    if any(w in text for w in ["git", "commit", "branch", "merge"]):
-        return "version_control"
-    if any(w in text for w in ["http", "url", "fetch", "request", "curl"]):
-        return "network"
-    return "general"
-
-def _extract_tags(tool: dict) -> list:
-    tags = []
-    desc = tool.get("description", "").lower()
-    for tag in ["file", "directory", "json", "yaml", "csv", "sql",
-                "git", "browser", "search", "hash", "encode", "decode"]:
-        if tag in desc or tag in tool["name"].lower():
-            tags.append(tag)
-    return tags</code></pre>
-
-    <h2>Usage Example</h2>
-
-    <pre><code># Build registry from multiple servers
+def _extract_tags(tool: dict) ->list:
+ tags = []
+ desc = tool.get("description", "").lower()
+ for tag in ["file", "directory", "json", "yaml", "csv", "sql",
+ "git", "browser", "search", "hash", "encode", "decode"]:
+ if tag in desc or tag in tool["name"].lower():
+ tags.append(tag)
+ return tags</code></pre>><h2>Usage Example</h2>><pre><code># Build registry from multiple servers
 registry = ToolRegistry()
 
 # Discover from different MCP servers
 for cmd, name in [
-    (["python3", "-m", "mcp_tools_bundle"], "bundle"),
-    (["python3", "-m", "src.server"], "context-guard"),
-    (["python3", "-m", "permission_guard.server"], "permission"),
+ (["python3", "-m", "mcp_tools_bundle"], "bundle"),
+ (["python3", "-m", "src.server"], "context-guard"),
+ (["python3", "-m", "permission_guard.server"], "permission"),
 ]:
-    tools = discover_tools(cmd, name)
-    for tool in tools:
-        registry.register(tool)
+ tools = discover_tools(cmd, name)
+ for tool in tools:
+ registry.register(tool)
 
 print(f"Registered {len(registry.tools)} tools")
 
 # Search for hashing tools
 hash_tools = registry.search("hash")
 for t in hash_tools:
-    print(f"  {t.server}.{t.name}: {t.description[:50]}")
+ print(f" {t.server}.{t.name}: {t.description[:50]}")
 
 # Validate before calling
 result = registry.validate_args("hash_text", {"text": "hello"})
-print(result)  # {"valid": True, "errors": []}
+print(result) # {"valid": True, "errors": []}
 
 result = registry.validate_args("hash_text", {})
-print(result)  # {"valid": False, "errors": ["Missing required argument: text"]}
+print(result) # {"valid": False, "errors": ["Missing required argument: text"]}
 
 # Export catalog
 catalog = registry.export_catalog()
-print(f"{len(json.loads(catalog))} tools in catalog")</code></pre>
-
-    <h2>Results</h2>
-    <table>
-        <tr><th>Metric</th><th>Manual lookup</th><th>With registry</th></tr>
-        <tr><td>Find tool for task</td><td>30-60s (scan docs)</td><td class="metric"><0.1s (search)</td></tr>
-        <tr><td>Invalid argument calls</td><td>12% of calls</td><td class="metric">0% (pre-validated)</td></tr>
-        <tr><td>Tool discovery (new server)</td><td>Manual reading</td><td class="metric">Auto-categorized</td></tr>
-    </table>
-
-    <h2>Install</h2>
-    <pre><code>pip install mcp-tool-registry</code></pre>
-    <p>Source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-tool-registry">mcp-tool-registry on GitHub</a></p>
-    <hr>
-    <p><em>168 templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
+print(f"{len(json.loads(catalog))} tools in catalog")</code></pre>><h2>Results</h2>><table>><tr><th>Metric</th><th>Manual lookup</th><th>With registry</th></tr>><tr><td>Find tool for task</td><td>30-60s (scan docs)</td><td class="metric"><0.1s (search)</td></tr>><tr><td>Invalid argument calls</td><td>12% of calls</td><td class="metric">0% (pre-validated)</td></tr>><tr><td>Tool discovery (new server)</td><td>Manual reading</td><td class="metric">Auto-categorized</td></tr>></table>><h2>Install</h2>><pre><code>pip install mcp-tool-registry</code></pre>><p>Source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-tool-registry">mcp-tool-registry on GitHub</a></p>><hr>><p><em>168 templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
 </body>
 </html>

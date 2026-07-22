@@ -22,22 +22,22 @@ a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
 <p>Multi-exchange monitoring, RSI signals, arbitrage.</p>
 <h2>1. Binance Price</h2>
 <pre><code>async def get_price(symbol="BTCUSDT"):
-    async with aiohttp.ClientSession() as s:
-        async with s.get(f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}") as r:
-            return float((await r.json())["price"])</code></pre>
+ async with aiohttp.ClientSession() as s:
+ async with s.get(f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}") as r:
+ return float((await r.json())["price"])</code></pre>
 <h2>2. RSI</h2>
 <pre><code>def rsi(prices, period=14):
-    gains = [max(prices[i]-prices[i-1],0) for i in range(1,len(prices))]
-    losses = [max(-prices[i]+prices[i-1],0) for i in range(1,len(prices))]
-    return 100 - (100 / (1 + sum(gains[-period:])/max(sum(losses[-period:]),0.01)))</code></pre>
+ gains = [max(prices[i]-prices[i-1],0) for i in range(1,len(prices))]
+ losses = [max(-prices[i]+prices[i-1],0) for i in range(1,len(prices))]
+ return 100 - (100 / (1 + sum(gains[-period:])/max(sum(losses[-period:]),0.01)))</code></pre>
 <h2>3. Arbitrage</h2>
 <pre><code>spread = (okx_price - binance_price) / binance_price
-if spread > 0.003: print("ARBITRAGE!")</code></pre>
+if spread >0.003: print("ARBITRAGE!")</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/crypto-trading-bot">Crypto Trading Bot</a> $79/$299</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/crypto-trading-bot">Crypto Trading Bot</a>$79/$299</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
-<pre><code>python crypto-trading-bot/demo.py  # Live BTC!</code></pre>
+<pre><code>python crypto-trading-bot/demo.py # Live BTC!</code></pre>
 <hr>
-<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

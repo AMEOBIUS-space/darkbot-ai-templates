@@ -11,13 +11,13 @@
 <meta name="keywords" content="MCP, Model Context Protocol, web scraping, Chrome DevTools Protocol, CDP, Python, AI agent, zero dependency, scraping server, browser automation">
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "TechArticle",
-  "headline": "Building a Zero-Dependency MCP Scraping Server in Pure Python",
-  "description": "MCP server wrapping Chrome DevTools Protocol for AI-agent web scraping. 12 tools, zero deps, pure Python stdlib.",
-  "author": {"@type": "Person", "name": "AMEOBIUS"},
-  "datePublished": "2026-07-06",
-  "url": "https://ameobius.github.io/darkbot-ai-templates/blog/mcp-cdp-scraper-guide.html"
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Building a Zero-Dependency MCP Scraping Server in Pure Python",
+ "description": "MCP server wrapping Chrome DevTools Protocol for AI-agent web scraping. 12 tools, zero deps, pure Python stdlib.",
+ "author": {"@type": "Person", "name": "AMEOBIUS"},
+ "datePublished": "2026-07-06",
+ "url": "https://ameobius.github.io/darkbot-ai-templates/blog/mcp-cdp-scraper-guide.html"
 }
 </script>
 <style>
@@ -44,185 +44,141 @@ a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
 <span class="tag">Python</span>
 <span class="tag">Zero Dependencies</span>
 <span class="tag">AI Agents</span>
-</div>
-
-<h2>Why Zero Dependencies?</h2>
+</div>><h2>Why Zero Dependencies?</h2>
 <p>Most MCP scraping servers wrap Playwright or Puppeteer — heavy dependencies that add 200MB+ to your Docker image, require npm, and break in headless environments. What if you could give your AI agent 12 scraping tools with nothing but Python's standard library?</p>
-<p>That's what <a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">mcp-cdp-scraper</a> does. It connects to any Chrome/Chromium instance via raw WebSocket CDP commands — no Playwright, no Selenium, no Puppeteer, no pip installs beyond Python itself.</p>
-
-<h2>Architecture</h2>
+<p>That's what <a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">mcp-cdp-scraper</a>does. It connects to any Chrome/Chromium instance via raw WebSocket CDP commands — no Playwright, no Selenium, no Puppeteer, no pip installs beyond Python itself.</p>><h2>Architecture</h2>
 <pre><code>MCP Client (Claude / Hermes / any)
-    │  JSON-RPC over STDIO
-    ▼
-MCPCDPScraperServer  (src/server.py)
-    │  Tool dispatch + schema
-    ▼
-CDPScraper  (src/cdp_scrape.py)
-    │  Raw WebSocket CDP commands
-    ▼
+ │ JSON-RPC over STDIO
+ ▼
+MCPCDPScraperServer (src/server.py)
+ │ Tool dispatch + schema
+ ▼
+CDPScraper (src/cdp_scrape.py)
+ │ Raw WebSocket CDP commands
+ ▼
 Chrome/Chromium (--remote-debugging-port=9222)
-    │
-    ▼
+ │
+ ▼
 Web Page → Structured Data</code></pre>
-<p>The server exposes 12 MCP tools. Each tool call is dispatched to the <code>CDPScraper</code> engine, which sends raw CDP commands over a WebSocket connection to a running Chrome instance.</p>
-
-<h2>1. Launch Chrome with Remote Debugging</h2>
+<p>The server exposes 12 MCP tools. Each tool call is dispatched to the <code>CDPScraper</code>engine, which sends raw CDP commands over a WebSocket connection to a running Chrome instance.</p>><h2>1. Launch Chrome with Remote Debugging</h2>
 <pre><code># Linux
 google-chrome --remote-debugging-port=9222 --headless=new --no-sandbox &
 
 # macOS
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
-    --remote-debugging-port=9222 &
+ --remote-debugging-port=9222 &
 
 # Docker
 docker run -d -p 9222:9222 chromedp/chrome \
-    --remote-debugging-port=9222 --headless</code></pre>
-
-<h2>2. Start the MCP Server</h2>
+ --remote-debugging-port=9222 --headless</code></pre>><h2>2. Start the MCP Server</h2>
 <pre><code># STDIO mode (for MCP clients like Claude Desktop)
 python -m src.server --stdio
 
 # Or print the manifest
-python -m src.server --manifest</code></pre>
-
-<h2>3. The 12 MCP Tools</h2>
-
-<h3>scrape_page — Full Page Extraction</h3>
+python -m src.server --manifest</code></pre>><h2>3. The 12 MCP Tools</h2>><h3>scrape_page — Full Page Extraction</h3>
 <p>Navigate to a URL and extract everything in one call: title, meta tags, headings (h1-h3), paragraphs, lists, links, and images.</p>
 <pre><code>from src.server import MCPCDPScraperServer
 import json
 
 server = MCPCDPScraperServer()
 result = server.handle_tool_call("scrape_page", {
-    "url": "https://news.ycombinator.com",
-    "wait": 2.0
+ "url": "https://news.ycombinator.com",
+ "wait": 2.0
 })
 data = json.loads(result)
-print(data["structured"]["title"])      # "Hacker News"
+print(data["structured"]["title"]) # "Hacker News"
 print(f"Found {data['link_count']} links")
-print(f"Found {data['image_count']} images")</code></pre>
-
-<h3>extract_text — Targeted Text Extraction</h3>
+print(f"Found {data['image_count']} images")</code></pre>><h3>extract_text — Targeted Text Extraction</h3>
 <pre><code>result = server.handle_tool_call("extract_text", {
-    "selector": "article body"
-})</code></pre>
-
-<h3>extract_links — All Hyperlinks</h3>
-<p>Returns a list of <code>{text, href, target}</code> objects. Optionally resolves relative URLs against a base URL.</p>
+ "selector": "article body"
+})</code></pre>><h3>extract_links — All Hyperlinks</h3>
+<p>Returns a list of <code>{text, href, target}</code>objects. Optionally resolves relative URLs against a base URL.</p>
 <pre><code>result = server.handle_tool_call("extract_links", {
-    "base_url": "https://example.com"
-})</code></pre>
-
-<h3>extract_images — All Images</h3>
-<p>Returns <code>{src, alt, width, height}</code> for every <code>&lt;img&gt;</code> on the page.</p>
-
-<h3>extract_table — Table to 2D Array</h3>
+ "base_url": "https://example.com"
+})</code></pre>><h3>extract_images — All Images</h3>
+<p>Returns <code>{src, alt, width, height}</code>for every <code>&lt;img&gt;</code>on the page.</p>><h3>extract_table — Table to 2D Array</h3>
 <pre><code>result = server.handle_tool_call("extract_table", {
-    "selector": "table.data-table"
+ "selector": "table.data-table"
 })
-# Returns: [["Name", "Price"], ["Widget", "$9.99"], ...]</code></pre>
-
-<h3>fill_form — React/Vue Compatible</h3>
-<p>This is the killer feature. Most scraping tools set <code>element.value = "x"</code> directly, which React and Vue ignore because they track state through synthetic events. Our <code>fill_form</code> uses native setters and dispatches <code>input</code> + <code>change</code> events:</p>
+# Returns: [["Name", "Price"], ["Widget", "$9.99"], ...]</code></pre>><h3>fill_form — React/Vue Compatible</h3>
+<p>This is the killer feature. Most scraping tools set <code>element.value = "x"</code>directly, which React and Vue ignore because they track state through synthetic events. Our <code>fill_form</code>uses native setters and dispatches <code>input</code>+ <code>change</code>events:</p>
 <pre><code>result = server.handle_tool_call("fill_form", {
-    "fields": {
-        "#email": "user@example.com",
-        "#password": "secret123"
-    },
-    "submit": "#login-button"
+ "fields": {
+ "#email": "user@example.com",
+ "#password": "secret123"
+ },
+ "submit": "#login-button"
 })</code></pre>
 <p>The JavaScript under the hood:</p>
 <pre><code>const setter = Object.getOwnPropertyDescriptor(
-    HTMLInputElement.prototype, "value"
+ HTMLInputElement.prototype, "value"
 ).set
 setter.call(el, "value")
 el.dispatchEvent(new Event("input", {bubbles: true}))
-el.dispatchEvent(new Event("change", {bubbles: true}))</code></pre>
-
-<h3>click_element — Click by Selector</h3>
+el.dispatchEvent(new Event("change", {bubbles: true}))</code></pre>><h3>click_element — Click by Selector</h3>
 <pre><code>result = server.handle_tool_call("click_element", {
-    "selector": "#submit-btn"
-})</code></pre>
-
-<h3>screenshot — Capture or Save</h3>
+ "selector": "#submit-btn"
+})</code></pre>><h3>screenshot — Capture or Save</h3>
 <pre><code>result = server.handle_tool_call("screenshot", {
-    "save_path": "/tmp/page.png"
-})</code></pre>
-
-<h3>get_html — Element Outer HTML</h3>
+ "save_path": "/tmp/page.png"
+})</code></pre>><h3>get_html — Element Outer HTML</h3>
 <pre><code>result = server.handle_tool_call("get_html", {
-    "selector": "main"
-})</code></pre>
-
-<h3>wait_for — Poll for Element</h3>
+ "selector": "main"
+})</code></pre>><h3>wait_for — Poll for Element</h3>
 <p>Waits for a CSS selector to appear. Polls every 500ms up to a configurable timeout. Essential for SPAs with dynamic content.</p>
 <pre><code>result = server.handle_tool_call("wait_for", {
-    "selector": ".results-loaded",
-    "timeout": 15
-})</code></pre>
-
-<h3>scroll_to — Element or Coordinates</h3>
+ "selector": ".results-loaded",
+ "timeout": 15
+})</code></pre>><h3>scroll_to — Element or Coordinates</h3>
 <pre><code># Scroll to element
 server.handle_tool_call("scroll_to", {"selector": "#footer"})
 
 # Scroll to coordinates
-server.handle_tool_call("scroll_to", {"x": 0, "y": 2000})</code></pre>
-
-<h3>list_tabs — Browser Tab Management</h3>
+server.handle_tool_call("scroll_to", {"x": 0, "y": 2000})</code></pre>><h3>list_tabs — Browser Tab Management</h3>
 <pre><code>result = server.handle_tool_call("list_tabs", {})
-# Returns: {"tabs": [{"title": "...", "url": "...", "id": "..."}]}</code></pre>
-
-<h2>4. Integration with Claude Desktop</h2>
+# Returns: {"tabs": [{"title": "...", "url": "...", "id": "..."}]}</code></pre>><h2>4. Integration with Claude Desktop</h2>
 <p>Add this to your <code>claude_desktop_config.json</code>:</p>
 <pre><code>{
-  "mcpServers": {
-    "cdp-scraper": {
-      "command": "python",
-      "args": ["-m", "src.server", "--stdio"],
-      "cwd": "/path/to/mcp-cdp-scraper"
-    }
-  }
+ "mcpServers": {
+ "cdp-scraper": {
+ "command": "python",
+ "args": ["-m", "src.server", "--stdio"],
+ "cwd": "/path/to/mcp-cdp-scraper"
+ }
+ }
 }</code></pre>
-<p>Claude will automatically discover all 12 tools and can call them to scrape pages, fill forms, take screenshots, and extract structured data — all through natural language.</p>
-
-<h2>5. Integration with Hermes Agent</h2>
+<p>Claude will automatically discover all 12 tools and can call them to scrape pages, fill forms, take screenshots, and extract structured data — all through natural language.</p>><h2>5. Integration with Hermes Agent</h2>
 <p>In your <code>config.yaml</code>:</p>
 <pre><code>mcp:
-  servers:
-    cdp-scraper:
-      command: python
-      args: ["-m", "src.server", "--stdio"]
-      cwd: /path/to/mcp-cdp-scraper</code></pre>
-
-<h2>6. Docker Deployment</h2>
+ servers:
+ cdp-scraper:
+ command: python
+ args: ["-m", "src.server", "--stdio"]
+ cwd: /path/to/mcp-cdp-scraper</code></pre>><h2>6. Docker Deployment</h2>
 <pre><code>docker build -t mcp-cdp-scraper .
 docker run -p 9222:9222 mcp-cdp-scraper</code></pre>
-<p>The Dockerfile bundles Chromium and starts both Chrome (debug port 9222) and the MCP server in STDIO mode.</p>
-
-<h2>7. Raw WebSocket CDP — No Libraries</h2>
-<p>The <code>CDPConnection</code> class implements the WebSocket protocol from scratch using only <code>socket</code>, <code>struct</code>, and <code>base64</code>:</p>
+<p>The Dockerfile bundles Chromium and starts both Chrome (debug port 9222) and the MCP server in STDIO mode.</p>><h2>7. Raw WebSocket CDP — No Libraries</h2>
+<p>The <code>CDPConnection</code>class implements the WebSocket protocol from scratch using only <code>socket</code>, <code>struct</code>, and <code>base64</code>:</p>
 <pre><code>class CDPConnection:
-    def connect(self):
-        host, port, path = self._parse_ws_url()
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((host, port))
-        # WebSocket handshake (RFC 6455)
-        key = base64.b64encode(os.urandom(16)).decode()
-        handshake = f"GET {path} HTTP/1.1\r\n..."
-        self.sock.sendall(handshake.encode())
+ def connect(self):
+ host, port, path = self._parse_ws_url()
+ self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ self.sock.connect((host, port))
+ # WebSocket handshake (RFC 6455)
+ key = base64.b64encode(os.urandom(16)).decode()
+ handshake = f"GET {path} HTTP/1.1\r\n..."
+ self.sock.sendall(handshake.encode())
 
-    def send_command(self, method: str, params: dict) -> dict:
-        self.msg_id += 1
-        payload = json.dumps({
-            "id": self.msg_id,
-            "method": method,
-            "params": params
-        })
-        self._send_ws_frame(payload)
-        return self._recv_response()</code></pre>
-<p>No <code>websockets</code> pip package. No <code>websocket-client</code>. Just raw bytes over a TCP socket with RFC 6455 framing.</p>
-
-<h2>8. Testing</h2>
+ def send_command(self, method: str, params: dict) ->dict:
+ self.msg_id += 1
+ payload = json.dumps({
+ "id": self.msg_id,
+ "method": method,
+ "params": params
+ })
+ self._send_ws_frame(payload)
+ return self._recv_response()</code></pre>
+<p>No <code>websockets</code>pip package. No <code>websocket-client</code>. Just raw bytes over a TCP socket with RFC 6455 framing.</p>><h2>8. Testing</h2>
 <pre><code>python -m pytest tests/ -v
 
 # 38 tests covering:
@@ -232,24 +188,18 @@ docker run -p 9222:9222 mcp-cdp-scraper</code></pre>
 # - CDPScraper operations with mocks (17 tests)
 # - Server tool dispatch + error handling (7 tests)
 # - STDIO JSON-RPC mode (2 tests)</code></pre>
-<p>All tests pass without a running Chrome instance — they use <code>unittest.mock</code> to test the CDP logic in isolation.</p>
-
-<h2>Why This Matters for AI Agents</h2>
+<p>All tests pass without a running Chrome instance — they use <code>unittest.mock</code>to test the CDP logic in isolation.</p>><h2>Why This Matters for AI Agents</h2>
 <p>The Model Context Protocol is becoming the standard interface for AI agents to interact with external tools. But most MCP servers for web scraping are heavy — they pull in Playwright (190MB), require npm, and add complexity to your deployment.</p>
 <p>With mcp-cdp-scraper, your agent gets production-grade scraping capabilities with:</p>
 <ul>
-<li><strong>Zero pip dependencies</strong> — just Python 3.10+ and a Chrome binary</li>
-<li><strong>12 well-defined tools</strong> — structured I/O that LLMs can reason about</li>
-<li><strong>React/Vue form filling</strong> — the hardest part of browser automation, solved</li>
-<li><strong>STDIO JSON-RPC</strong> — works with any MCP-compatible client</li>
-<li><strong>38 tests</strong> — production-ready, not a toy</li>
-</ul>
-
-<h2>Repository</h2>
+<li><strong>Zero pip dependencies</strong>— just Python 3.10+ and a Chrome binary</li>
+<li><strong>12 well-defined tools</strong>— structured I/O that LLMs can reason about</li>
+<li><strong>React/Vue form filling</strong>— the hardest part of browser automation, solved</li>
+<li><strong>STDIO JSON-RPC</strong>— works with any MCP-compatible client</li>
+<li><strong>38 tests</strong>— production-ready, not a toy</li>
+</ul>><h2>Repository</h2>
 <p><a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">github.com/AMEOBIUS/mcp-cdp-scraper</a></p>
-<a class="btn" href="https://github.com/AMEOBIUS/mcp-cdp-scraper">View on GitHub →</a>
-
-<hr>
-<p>💬 <a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a> | BTC/USDT/ETH/XMR</p>
+<a class="btn" href="https://github.com/AMEOBIUS/mcp-cdp-scraper">View on GitHub →</a>><hr>
+<p><a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a>| BTC/USDT/ETH/XMR</p>
 </body>
 </html>

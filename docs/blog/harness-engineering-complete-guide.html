@@ -1,172 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Complete Guide to AI Agent Harness Engineering</title>
-    <meta name="description" content="10 MCP servers that make AI agents safer, cheaper, and more effective. Context compression, permission guards, loop detection, token budgets — all in pure Python.">
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"TechArticle","headline":"The Complete Guide to AI Agent Harness Engineering","author":{"@type":"Person","name":"aaameobius-crypto"},"datePublished":"2026-07-09"}
-    </script>
-    <style>
-        body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
-        h1{font-size:2rem;margin-bottom:.5rem} h2{font-size:1.4rem;margin-top:2rem} h3{font-size:1.1rem;margin-top:1.5rem}
-        code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
-        pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}
-        pre code{background:none;padding:0}
-        table{width:100%;border-collapse:collapse;margin:1rem 0}
-        th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd} th{background:#f8f8f8}
-        a{color:#0366d6}
-        .tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
-        .metric{font-family:monospace;font-weight:700;color:#0366d6}
-        .tip{background:#d1ecf1;border-left:4px solid #17a2b8;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>The Complete Guide to AI Agent Harness Engineering</title>><meta name="description" content="10 MCP servers that make AI agents safer, cheaper, and more effective. Context compression, permission guards, loop detection, token budgets — all in pure Python.">><script type="application/ld+json">>{"@context":"https://schema.org","@type":"TechArticle","headline":"The Complete Guide to AI Agent Harness Engineering","author":{"@type":"Person","name":"aaameobius-crypto"},"datePublished":"2026-07-09"}
+ </script>><style>>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
+ h1{font-size:2rem;margin-bottom:.5rem} h2{font-size:1.4rem;margin-top:2rem} h3{font-size:1.1rem;margin-top:1.5rem}
+ code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+ pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}
+ pre code{background:none;padding:0}
+ table{width:100%;border-collapse:collapse;margin:1rem 0}
+ th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd} th{background:#f8f8f8}
+ a{color:#0366d6}
+ .tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+ .metric{font-family:monospace;font-weight:700;color:#0366d6}
+ .tip{background:#d1ecf1;border-left:4px solid #17a2b8;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+ </style>
 </head>
-<body>
-    <h1>The Complete Guide to AI Agent Harness Engineering</h1>
-    <p><span class="tag">MCP</span> <span class="tag">Architecture</span> <span class="tag">Python</span></p>
-    <p><em>2026-07-09</em></p>
-
-    <p>An AI agent without a harness is a sports car without brakes — powerful but dangerous. The harness is the infrastructure that makes agents safe, observable, and cost-effective.</p>
-
-    <p>This guide covers 10 MCP servers that form a complete harness engineering stack. Each is installable via pip, uses zero external dependencies, and works with any MCP-compatible client.</p>
-
-    <h2>The 10-Server Stack</h2>
-    <table>
-        <tr><th>Server</th><th>Tools</th><th>Role</th><th>Install</th></tr>
-        <tr><td><a href="https://pypi.org/project/mcp-context-guard/">mcp-context-guard</a></td><td>14</td><td>Compress tool outputs, manage token budgets</td><td><code>pip install mcp-context-guard</code></td></tr>
-        <tr><td><a href="https://pypi.org/project/mcp-permission-guard/">mcp-permission-guard</a></td><td>11</td><td>Allow/deny rules for dangerous tools</td><td><code>pip install mcp-permission-guard</code></td></tr>
-        <tr><td><a href="https://pypi.org/project/mcp-agent-trace/">mcp-agent-trace</a></td><td>12</td><td>Record every decision for debugging</td><td><code>pip install mcp-agent-trace</code></td></tr>
-        <tr><td>mcp-eval-harness</td><td>12</td><td>Test agent outputs against criteria</td><td><em>pending PyPI</em></td></tr>
-        <tr><td>mcp-skill-router</td><td>12</td><td>Load only relevant tools per task</td><td><em>pending PyPI</em></td></tr>
-        <tr><td>mcp-prompt-versioning</td><td>15</td><td>Track, diff, roll back prompt changes</td><td><em>pending PyPI</em></td></tr>
-        <tr><td>mcp-token-budget</td><td>12</td><td>Track and limit token costs</td><td><em>pending PyPI</em></td></tr>
-        <tr><td>mcp-loop-detector</td><td>10</td><td>Detect and break reasoning loops</td><td><em>pending PyPI</em></td></tr>
-        <tr><td>mcp-ab-tester</td><td>11</td><td>Compare configurations side by side</td><td><em>pending PyPI</em></td></tr>
-        <tr><td>mcp-tool-registry</td><td>20</td><td>Discover, validate, catalog tools</td><td><em>pending PyPI</em></td></tr>
-        <tr><td><strong>Total</strong></td><td><strong>129</strong></td><td>Full harness coverage</td><td></td></tr>
-    </table>
-
-    <h2>The Harness Architecture</h2>
-    <pre><code>┌─────────────────────────────────────────────────────┐
-│                    Agent Loop                         │
-│                                                      │
-│  ┌───────────┐  ┌───────────┐  ┌───────────┐        │
-│  │ Skill     │  │ Token     │  │ Loop      │        │
-│  │ Router    │→│ Budget    │→ │ Detector  │        │
-│  │ (load     │  │ (track   │  │ (detect   │        │
-│  │  relevant │  │  costs)  │  │  repeats) │        │
-│  │  tools)   │  │          │  │           │        │
-│  └─────┬─────┘  └─────┬─────┘  └─────┬─────┘        │
-│        │              │              │               │
-│        ▼              ▼              ▼               │
-│  ┌───────────┐  ┌───────────┐  ┌───────────┐        │
-│  │ Permission│  │ Context   │  │ Agent     │        │
-│  │ Guard     │  │ Guard     │  │ Trace     │        │
-│  │ (allow/  │  │ (compress │  │ (record   │        │
-│  │  deny)   │  │  outputs) │  │  events)  │        │
-│  └─────┬─────┘  └─────┬─────┘  └─────┬─────┘        │
-│        │              │              │               │
-│        ▼              ▼              ▼               │
-│  ┌───────────┐  ┌───────────┐  ┌───────────┐        │
-│  │ Tool      │  │ A/B       │  │ Eval      │        │
-│  │ Registry  │  │ Tester    │  │ Harness   │        │
-│  │ (discover │  │ (compare  │  │ (score    │        │
-│  │  validate)│  │  configs) │  │  outputs) │        │
-│  └───────────┘  └───────────┘  └───────────┘        │
-│                                                      │
-│  ┌──────────────────────────────────────────┐        │
-│  │ Prompt Versioning (track all changes)    │        │
-│  └──────────────────────────────────────────┘        │
-└─────────────────────────────────────────────────────┘</code></pre>
-
-    <h2>How They Work Together</h2>
-
-    <h3>1. Request arrives</h3>
-    <p>The <strong>Skill Router</strong> analyzes the task and loads only relevant tools (84% fewer tools in the prompt).</p>
-
-    <h3>2. Before each tool call</h3>
-    <p>The <strong>Permission Guard</strong> checks if the call is safe. <code>rm -rf</code> is denied. <code>ls</code> is allowed. Unknown calls prompt the user.</p>
-
-    <h3>3. After each tool call</h3>
-    <p>The <strong>Context Guard</strong> compresses the result. 3,200 tokens → 480 tokens. The <strong>Token Budget</strong> deducts the cost.</p>
-
-    <h3>4. Each step is recorded</h3>
-    <p>The <strong>Agent Trace</strong> logs the tool name, arguments, result, latency, and tokens. If something goes wrong, you replay the trace.</p>
-
-    <h3>5. Loop detection runs continuously</h3>
-    <p>The <strong>Loop Detector</strong> watches for repeated tool calls. If the agent calls <code>read_file</code> three times with the same args, it injects a nudge.</p>
-
-    <h3>6. Everything is validated</h3>
-    <p>The <strong>Tool Registry</strong> validates argument schemas before calls. The <strong>Eval Harness</strong> scores outputs against criteria.</p>
-
-    <h3>7. Experiments are tracked</h3>
-    <p>The <strong>A/B Tester</strong> compares model configs. The <strong>Prompt Versioning</strong> system tracks every system prompt change with rollback capability.</p>
-
-    <h2>Quick Start: Full Stack</h2>
-
-    <pre><code># Install all available packages
+<body>><h1>The Complete Guide to AI Agent Harness Engineering</h1>><p><span class="tag">MCP</span><span class="tag">Architecture</span><span class="tag">Python</span></p>><p><em>2026-07-09</em></p>><p>An AI agent without a harness is a sports car without brakes — powerful but dangerous. The harness is the infrastructure that makes agents safe, observable, and cost-effective.</p>><p>This guide covers 10 MCP servers that form a complete harness engineering stack. Each is installable via pip, uses zero external dependencies, and works with any MCP-compatible client.</p>><h2>The 10-Server Stack</h2>><table>><tr><th>Server</th><th>Tools</th><th>Role</th><th>Install</th></tr>><tr><td><a href="https://pypi.org/project/mcp-context-guard/">mcp-context-guard</a></td><td>14</td><td>Compress tool outputs, manage token budgets</td><td><code>pip install mcp-context-guard</code></td></tr>><tr><td><a href="https://pypi.org/project/mcp-permission-guard/">mcp-permission-guard</a></td><td>11</td><td>Allow/deny rules for dangerous tools</td><td><code>pip install mcp-permission-guard</code></td></tr>><tr><td><a href="https://pypi.org/project/mcp-agent-trace/">mcp-agent-trace</a></td><td>12</td><td>Record every decision for debugging</td><td><code>pip install mcp-agent-trace</code></td></tr>><tr><td>mcp-eval-harness</td><td>12</td><td>Test agent outputs against criteria</td><td><em>pending PyPI</em></td></tr>><tr><td>mcp-skill-router</td><td>12</td><td>Load only relevant tools per task</td><td><em>pending PyPI</em></td></tr>><tr><td>mcp-prompt-versioning</td><td>15</td><td>Track, diff, roll back prompt changes</td><td><em>pending PyPI</em></td></tr>><tr><td>mcp-token-budget</td><td>12</td><td>Track and limit token costs</td><td><em>pending PyPI</em></td></tr>><tr><td>mcp-loop-detector</td><td>10</td><td>Detect and break reasoning loops</td><td><em>pending PyPI</em></td></tr>><tr><td>mcp-ab-tester</td><td>11</td><td>Compare configurations side by side</td><td><em>pending PyPI</em></td></tr>><tr><td>mcp-tool-registry</td><td>20</td><td>Discover, validate, catalog tools</td><td><em>pending PyPI</em></td></tr>><tr><td><strong>Total</strong></td><td><strong>129</strong></td><td>Full harness coverage</td><td></td></tr>></table>><h2>The Harness Architecture</h2>><pre><code>┌─────────────────────────────────────────────────────┐
+│ Agent Loop │
+│ │
+│ ┌───────────┐ ┌───────────┐ ┌───────────┐ │
+│ │ Skill │ │ Token │ │ Loop │ │
+│ │ Router │→│ Budget │→ │ Detector │ │
+│ │ (load │ │ (track │ │ (detect │ │
+│ │ relevant │ │ costs) │ │ repeats) │ │
+│ │ tools) │ │ │ │ │ │
+│ └─────┬─────┘ └─────┬─────┘ └─────┬─────┘ │
+│ │ │ │ │
+│ ▼ ▼ ▼ │
+│ ┌───────────┐ ┌───────────┐ ┌───────────┐ │
+│ │ Permission│ │ Context │ │ Agent │ │
+│ │ Guard │ │ Guard │ │ Trace │ │
+│ │ (allow/ │ │ (compress │ │ (record │ │
+│ │ deny) │ │ outputs) │ │ events) │ │
+│ └─────┬─────┘ └─────┬─────┘ └─────┬─────┘ │
+│ │ │ │ │
+│ ▼ ▼ ▼ │
+│ ┌───────────┐ ┌───────────┐ ┌───────────┐ │
+│ │ Tool │ │ A/B │ │ Eval │ │
+│ │ Registry │ │ Tester │ │ Harness │ │
+│ │ (discover │ │ (compare │ │ (score │ │
+│ │ validate)│ │ configs) │ │ outputs) │ │
+│ └───────────┘ └───────────┘ └───────────┘ │
+│ │
+│ ┌──────────────────────────────────────────┐ │
+│ │ Prompt Versioning (track all changes) │ │
+│ └──────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────┘</code></pre>><h2>How They Work Together</h2>><h3>1. Request arrives</h3>><p>The <strong>Skill Router</strong>analyzes the task and loads only relevant tools (84% fewer tools in the prompt).</p>><h3>2. Before each tool call</h3>><p>The <strong>Permission Guard</strong>checks if the call is safe. <code>rm -rf</code>is denied. <code>ls</code>is allowed. Unknown calls prompt the user.</p>><h3>3. After each tool call</h3>><p>The <strong>Context Guard</strong>compresses the result. 3,200 tokens → 480 tokens. The <strong>Token Budget</strong>deducts the cost.</p>><h3>4. Each step is recorded</h3>><p>The <strong>Agent Trace</strong>logs the tool name, arguments, result, latency, and tokens. If something goes wrong, you replay the trace.</p>><h3>5. Loop detection runs continuously</h3>><p>The <strong>Loop Detector</strong>watches for repeated tool calls. If the agent calls <code>read_file</code>three times with the same args, it injects a nudge.</p>><h3>6. Everything is validated</h3>><p>The <strong>Tool Registry</strong>validates argument schemas before calls. The <strong>Eval Harness</strong>scores outputs against criteria.</p>><h3>7. Experiments are tracked</h3>><p>The <strong>A/B Tester</strong>compares model configs. The <strong>Prompt Versioning</strong>system tracks every system prompt change with rollback capability.</p>><h2>Quick Start: Full Stack</h2>><pre><code># Install all available packages
 pip install mcp-context-guard mcp-permission-guard mcp-agent-trace
 
 # Configure in Claude Desktop or any MCP client:
 {
-  "mcpServers": {
-    "context-guard": {
-      "command": "python3",
-      "args": ["-m", "src.server"],
-      "cwd": "/path/to/mcp-context-guard"
-    },
-    "permission-guard": {
-      "command": "python3", 
-      "args": ["-m", "src.server"],
-      "cwd": "/path/to/mcp-permission-guard"
-    },
-    "agent-trace": {
-      "command": "python3",
-      "args": ["-m", "src.server"],
-      "cwd": "/path/to/mcp-agent-trace"
-    }
-  }
-}</code></pre>
-
-    <h2>Impact Metrics</h2>
-    <table>
-        <tr><th>Metric</th><th>Without harness</th><th>With harness</th><th>Improvement</th></tr>
-        <tr><td>Avg tool calls per task</td><td>23</td><td class="metric">11</td><td>52% fewer</td></tr>
-        <tr><td>Avg tokens per tool call</td><td>4,200</td><td class="metric">680</td><td>84% reduction</td></tr>
-        <tr><td>Repeat calls</td><td>23%</td><td class="metric">4%</td><td>83% reduction</td></tr>
-        <tr><td>Cost per task</td><td>$0.08</td><td class="metric">$0.03</td><td>63% savings</td></tr>
-        <tr><td>Error recovery rate</td><td>31%</td><td class="metric">78%</td><td>2.5x better</td></tr>
-        <tr><td>Debug time per failure</td><td>15 min</td><td class="metric">2 min</td><td>87% faster</td></tr>
-        <tr><td>Task completion rate</td><td>71%</td><td class="metric">89%</td><td>25% improvement</td></tr>
-    </table>
-
-    <h2>Deep Dives</h2>
-    <p>Each server has a dedicated tutorial:</p>
-    <ul>
-        <li><a href="agent-context-compression.html">Context Compression →</a> 5 strategies, 84% token reduction</li>
-        <li><a href="permission-systems-for-agents.html">Permission Systems →</a> 5 rule patterns, audit logging</li>
-        <li><a href="agent-tracing-guide.html">Agent Tracing →</a> Event recording, pattern analysis</li>
-        <li><a href="mcp-server-testing.html">Server Testing →</a> Unit, integration, E2E framework</li>
-        <li><a href="skill-routing-for-agents.html">Skill Routing →</a> 84% fewer tools loaded</li>
-        <li><a href="prompt-versioning-guide.html">Prompt Versioning →</a> Hash-based, diffable, rollback</li>
-        <li><a href="token-budget-management.html">Token Budget →</a> Per-turn tracking, cost analysis</li>
-        <li><a href="agent-loop-detection.html">Loop Detection →</a> 4 loop types, 5 break strategies</li>
-        <li><a href="ab-testing-agent-configs.html">A/B Testing →</a> Statistical significance calculator</li>
-        <li><a href="tool-registry-guide.html">Tool Registry →</a> Auto-discovery, schema validation</li>
-    </ul>
-
-    <h2>Source Code</h2>
-    <p>All 10 servers live in one repository: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a></p>
-    <pre><code>git clone https://github.com/aaameobius-crypto/darkbot-ai-templates
+ "mcpServers": {
+ "context-guard": {
+ "command": "python3",
+ "args": ["-m", "src.server"],
+ "cwd": "/path/to/mcp-context-guard"
+ },
+ "permission-guard": {
+ "command": "python3", 
+ "args": ["-m", "src.server"],
+ "cwd": "/path/to/mcp-permission-guard"
+ },
+ "agent-trace": {
+ "command": "python3",
+ "args": ["-m", "src.server"],
+ "cwd": "/path/to/mcp-agent-trace"
+ }
+ }
+}</code></pre>><h2>Impact Metrics</h2>><table>><tr><th>Metric</th><th>Without harness</th><th>With harness</th><th>Improvement</th></tr>><tr><td>Avg tool calls per task</td><td>23</td><td class="metric">11</td><td>52% fewer</td></tr>><tr><td>Avg tokens per tool call</td><td>4,200</td><td class="metric">680</td><td>84% reduction</td></tr>><tr><td>Repeat calls</td><td>23%</td><td class="metric">4%</td><td>83% reduction</td></tr>><tr><td>Cost per task</td><td>$0.08</td><td class="metric">$0.03</td><td>63% savings</td></tr>><tr><td>Error recovery rate</td><td>31%</td><td class="metric">78%</td><td>2.5x better</td></tr>><tr><td>Debug time per failure</td><td>15 min</td><td class="metric">2 min</td><td>87% faster</td></tr>><tr><td>Task completion rate</td><td>71%</td><td class="metric">89%</td><td>25% improvement</td></tr>></table>><h2>Deep Dives</h2>><p>Each server has a dedicated tutorial:</p>><ul>><li><a href="agent-context-compression.html">Context Compression →</a>5 strategies, 84% token reduction</li>><li><a href="permission-systems-for-agents.html">Permission Systems →</a>5 rule patterns, audit logging</li>><li><a href="agent-tracing-guide.html">Agent Tracing →</a>Event recording, pattern analysis</li>><li><a href="mcp-server-testing.html">Server Testing →</a>Unit, integration, E2E framework</li>><li><a href="skill-routing-for-agents.html">Skill Routing →</a>84% fewer tools loaded</li>><li><a href="prompt-versioning-guide.html">Prompt Versioning →</a>Hash-based, diffable, rollback</li>><li><a href="token-budget-management.html">Token Budget →</a>Per-turn tracking, cost analysis</li>><li><a href="agent-loop-detection.html">Loop Detection →</a>4 loop types, 5 break strategies</li>><li><a href="ab-testing-agent-configs.html">A/B Testing →</a>Statistical significance calculator</li>><li><a href="tool-registry-guide.html">Tool Registry →</a>Auto-discovery, schema validation</li>></ul>><h2>Source Code</h2>><p>All 10 servers live in one repository: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a></p>><pre><code>git clone https://github.com/aaameobius-crypto/darkbot-ai-templates
 cd darkbot-ai-templates
 # Each server is in its own directory:
-# mcp-context-guard/  mcp-permission-guard/  mcp-agent-trace/
-# mcp-eval-harness/   mcp-skill-router/     mcp-prompt-versioning/
-# mcp-token-budget/   mcp-loop-detector/    mcp-ab-tester/
-# mcp-tool-registry/</code></pre>
-
-    <hr>
-    <p><em>168 templates. 10 harness servers. 129 tools. 289 tests. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
+# mcp-context-guard/ mcp-permission-guard/ mcp-agent-trace/
+# mcp-eval-harness/ mcp-skill-router/ mcp-prompt-versioning/
+# mcp-token-budget/ mcp-loop-detector/ mcp-ab-tester/
+# mcp-tool-registry/</code></pre>><hr>><p><em>168 templates. 10 harness servers. 129 tools. 289 tests. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
 </body>
 </html>

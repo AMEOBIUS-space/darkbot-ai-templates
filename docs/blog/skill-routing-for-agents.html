@@ -1,241 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill Routing: How AI Agents Choose the Right Tool for the Job</title>
-    <meta name="description" content="A practical skill router that matches task descriptions to relevant tool sets, cutting token waste by 40%. Pure Python.">
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"TechArticle","headline":"Skill Routing for AI Agents","author":{"@type":"Person","name":"aaameobius-crypto"},"datePublished":"2026-07-09"}
-    </script>
-    <style>
-        body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
-        h1{font-size:2rem;margin-bottom:.5rem} h2{font-size:1.4rem;margin-top:2rem} h3{font-size:1.1rem;margin-top:1.5rem}
-        code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
-        pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}
-        pre code{background:none;padding:0}
-        table{width:100%;border-collapse:collapse;margin:1rem 0}
-        th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd} th{background:#f8f8f8}
-        a{color:#0366d6}
-        .tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
-        .metric{font-family:monospace;font-weight:700;color:#0366d6}
-        .tip{background:#d1ecf1;border-left:4px solid #17a2b8;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>Skill Routing: How AI Agents Choose the Right Tool for the Job</title>><meta name="description" content="A practical skill router that matches task descriptions to relevant tool sets, cutting token waste by 40%. Pure Python.">><script type="application/ld+json">>{"@context":"https://schema.org","@type":"TechArticle","headline":"Skill Routing for AI Agents","author":{"@type":"Person","name":"aaameobius-crypto"},"datePublished":"2026-07-09"}
+ </script>><style>>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
+ h1{font-size:2rem;margin-bottom:.5rem} h2{font-size:1.4rem;margin-top:2rem} h3{font-size:1.1rem;margin-top:1.5rem}
+ code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+ pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}
+ pre code{background:none;padding:0}
+ table{width:100%;border-collapse:collapse;margin:1rem 0}
+ th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd} th{background:#f8f8f8}
+ a{color:#0366d6}
+ .tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+ .metric{font-family:monospace;font-weight:700;color:#0366d6}
+ .tip{background:#d1ecf1;border-left:4px solid #17a2b8;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+ </style>
 </head>
-<body>
-    <h1>Skill Routing: How AI Agents Choose the Right Tool</h1>
-    <p><span class="tag">MCP</span> <span class="tag">Architecture</span> <span class="tag">Python</span></p>
-    <p><em>2026-07-09</em></p>
-
-    <p>When an agent has 50 tools available, every API call ships 50 tool schemas in the system prompt. That is 4,000 tokens of overhead before the agent even reads the user's message. Multiply by 30 turns in a conversation and you have burned 120,000 tokens on schema alone.</p>
-
-    <p>Skill routing fixes this by loading only the tools relevant to the current task. A web scraping question loads browser tools. A git question loads version control tools. Everything else stays unloaded.</p>
-
-    <h2>The Problem</h2>
-    <table>
-        <tr><th>Setup</th><th>Tools in prompt</th><th>Schema tokens</th><th>Per-turn cost</th></tr>
-        <tr><td>All tools loaded</td><td>50</td><td class="metric">4,200</td><td>$0.013</td></tr>
-        <tr><td>Routed (avg 8)</td><td>8</td><td class="metric">670</td><td>$0.002</td></tr>
-        <tr><td>Savings</td><td>84% fewer</td><td class="metric">84%</td><td class="metric">$0.011/turn</td></tr>
-    </table>
-    <p>Over a 30-turn conversation: $0.39 → $0.06. That is $0.33 saved per conversation.</p>
-
-    <h2>How Routing Works</h2>
-    <pre><code>from dataclasses import dataclass, field
+<body>><h1>Skill Routing: How AI Agents Choose the Right Tool</h1>><p><span class="tag">MCP</span><span class="tag">Architecture</span><span class="tag">Python</span></p>><p><em>2026-07-09</em></p>><p>When an agent has 50 tools available, every API call ships 50 tool schemas in the system prompt. That is 4,000 tokens of overhead before the agent even reads the user's message. Multiply by 30 turns in a conversation and you have burned 120,000 tokens on schema alone.</p>><p>Skill routing fixes this by loading only the tools relevant to the current task. A web scraping question loads browser tools. A git question loads version control tools. Everything else stays unloaded.</p>><h2>The Problem</h2>><table>><tr><th>Setup</th><th>Tools in prompt</th><th>Schema tokens</th><th>Per-turn cost</th></tr>><tr><td>All tools loaded</td><td>50</td><td class="metric">4,200</td><td>$0.013</td></tr>><tr><td>Routed (avg 8)</td><td>8</td><td class="metric">670</td><td>$0.002</td></tr>><tr><td>Savings</td><td>84% fewer</td><td class="metric">84%</td><td class="metric">$0.011/turn</td></tr>></table>><p>Over a 30-turn conversation: $0.39 → $0.06. That is $0.33 saved per conversation.</p>><h2>How Routing Works</h2>><pre><code>from dataclasses import dataclass, field
 import re
 
 @dataclass
 class Skill:
-    name: str
-    tools: list          # tool names to load
-    keywords: list       # trigger keywords
-    patterns: list       # regex patterns for task matching
-    priority: int = 0    # higher = preferred on conflict
+ name: str
+ tools: list # tool names to load
+ keywords: list # trigger keywords
+ patterns: list # regex patterns for task matching
+ priority: int = 0 # higher = preferred on conflict
 
 @dataclass
 class SkillRouter:
-    skills: list = field(default_factory=list)
-    
-    def register(self, skill: Skill):
-        self.skills.append(skill)
-        self.skills.sort(key=lambda s: s.priority, reverse=True)
-    
-    def route(self, task: str) -> dict:
-        """Match a task description to the best skill set."""
-        task_lower = task.lower()
-        scores = []
-        
-        for skill in self.skills:
-            score = 0
-            # Keyword matching
-            for kw in skill.keywords:
-                if kw.lower() in task_lower:
-                    score += 2
-            # Pattern matching  
-            for pat in skill.patterns:
-                if re.search(pat, task, re.IGNORECASE):
-                    score += 5
-            # Priority bonus
-            score += skill.priority
-            if score > 0:
-                scores.append((skill, score))
-        
-        if not scores:
-            return {"skill": "default", "tools": [], "reason": "no match"}
-        
-        scores.sort(key=lambda x: x[1], reverse=True)
-        best = scores[0][0]
-        
-        return {
-            "skill": best.name,
-            "tools": best.tools,
-            "score": scores[0][1],
-            "alternatives": [(s.name, sc) for s, sc in scores[1:3]]
-        }</code></pre>
-
-    <h2>Defining Skill Sets</h2>
-    <pre><code>router = SkillRouter()
+ skills: list = field(default_factory=list)
+ 
+ def register(self, skill: Skill):
+ self.skills.append(skill)
+ self.skills.sort(key=lambda s: s.priority, reverse=True)
+ 
+ def route(self, task: str) ->dict:
+ """Match a task description to the best skill set."""
+ task_lower = task.lower()
+ scores = []
+ 
+ for skill in self.skills:
+ score = 0
+ # Keyword matching
+ for kw in skill.keywords:
+ if kw.lower() in task_lower:
+ score += 2
+ # Pattern matching 
+ for pat in skill.patterns:
+ if re.search(pat, task, re.IGNORECASE):
+ score += 5
+ # Priority bonus
+ score += skill.priority
+ if score >0:
+ scores.append((skill, score))
+ 
+ if not scores:
+ return {"skill": "default", "tools": [], "reason": "no match"}
+ 
+ scores.sort(key=lambda x: x[1], reverse=True)
+ best = scores[0][0]
+ 
+ return {
+ "skill": best.name,
+ "tools": best.tools,
+ "score": scores[0][1],
+ "alternatives": [(s.name, sc) for s, sc in scores[1:3]]
+ }</code></pre>><h2>Defining Skill Sets</h2>><pre><code>router = SkillRouter()
 
 # Web scraping skill
 router.register(Skill(
-    name="web_scraping",
-    tools=["browser_navigate", "browser_click", "browser_snapshot",
-           "browser_type", "web_extract", "terminal"],
-    keywords=["scrape", "crawl", "extract", "parse", "website",
-              "html", "page", "url", "browser"],
-    patterns=[r"https?://\S+", r"scrap[ei]\b\w*", r"crawl\w*"],
-    priority=10
+ name="web_scraping",
+ tools=["browser_navigate", "browser_click", "browser_snapshot",
+ "browser_type", "web_extract", "terminal"],
+ keywords=["scrape", "crawl", "extract", "parse", "website",
+ "html", "page", "url", "browser"],
+ patterns=[r"https?://\S+", r"scrap[ei]\b\w*", r"crawl\w*"],
+ priority=10
 ))
 
 # Git operations skill
 router.register(Skill(
-    name="git_ops",
-    tools=["terminal", "read_file", "patch"],
-    keywords=["git", "commit", "branch", "merge", "rebase",
-              "pull request", "pr", "diff"],
-    patterns=[r"git\s+\w+", r"pull\s+request", r"rebase"],
-    priority=8
+ name="git_ops",
+ tools=["terminal", "read_file", "patch"],
+ keywords=["git", "commit", "branch", "merge", "rebase",
+ "pull request", "pr", "diff"],
+ patterns=[r"git\s+\w+", r"pull\s+request", r"rebase"],
+ priority=8
 ))
 
 # File editing skill
 router.register(Skill(
-    name="file_edit",
-    tools=["read_file", "patch", "write_file", "search_files"],
-    keywords=["edit", "fix", "modify", "change", "update",
-              "file", "code", "function", "bug"],
-    patterns=[r"\.(py|js|ts|go|rs|java)\b", r"function\s+\w+"],
-    priority=5
+ name="file_edit",
+ tools=["read_file", "patch", "write_file", "search_files"],
+ keywords=["edit", "fix", "modify", "change", "update",
+ "file", "code", "function", "bug"],
+ patterns=[r"\.(py|js|ts|go|rs|java)\b", r"function\s+\w+"],
+ priority=5
 ))
 
 # Testing skill
 router.register(Skill(
-    name="testing",
-    tools=["terminal", "read_file", "search_files", "patch"],
-    keywords=["test", "pytest", "unittest", "coverage",
-              "fixture", "mock", "assert"],
-    patterns=[r"test_\w+", r"pytest\b", r"assert\s+"],
-    priority=7
+ name="testing",
+ tools=["terminal", "read_file", "search_files", "patch"],
+ keywords=["test", "pytest", "unittest", "coverage",
+ "fixture", "mock", "assert"],
+ patterns=[r"test_\w+", r"pytest\b", r"assert\s+"],
+ priority=7
 ))
 
 # Database skill
 router.register(Skill(
-    name="database",
-    tools=["terminal", "read_file"],
-    keywords=["sql", "database", "query", "table", "schema",
-              "migration", "sqlite", "postgres", "mysql"],
-    patterns=[r"SELECT\s+.+\s+FROM", r"CREATE\s+TABLE"],
-    priority=9
-))</code></pre>
-
-    <h2>Routing Examples</h2>
-    <pre><code>>>> router.route("Scrape product data from https://example.com/shop")
+ name="database",
+ tools=["terminal", "read_file"],
+ keywords=["sql", "database", "query", "table", "schema",
+ "migration", "sqlite", "postgres", "mysql"],
+ patterns=[r"SELECT\s+.+\s+FROM", r"CREATE\s+TABLE"],
+ priority=9
+))</code></pre>><h2>Routing Examples</h2>><pre><code>>>>router.route("Scrape product data from https://example.com/shop")
 {'skill': 'web_scraping',
  'tools': ['browser_navigate', 'browser_click', ...],
  'score': 22,
  'alternatives': [('file_edit', 2)]}
 
->>> router.route("Fix the bug in auth.py line 42")
+>>>router.route("Fix the bug in auth.py line 42")
 {'skill': 'file_edit',
  'tools': ['read_file', 'patch', 'write_file', 'search_files'],
  'score': 9,
  'alternatives': []}
 
->>> router.route("Run pytest and fix any failures")
+>>>router.route("Run pytest and fix any failures")
 {'skill': 'testing',
  'tools': ['terminal', 'read_file', 'search_files', 'patch'],
  'score': 12,
- 'alternatives': [('file_edit', 5)]}</code></pre>
-
-    <div class="tip">The router returns alternatives so the agent can request a skill switch mid-task. If a testing task reveals a code bug, the agent can load <code>file_edit</code> tools without a full re-route.</div>
-
-    <h2>Multi-Skill Routing</h2>
-    <p>Some tasks span multiple skills. A task like "scrape data from a website and save to SQLite" needs both web scraping and database tools:</p>
-
-    <pre><code>def route_multi(self, task: str, max_skills: int = 3) -> dict:
-    """Route to multiple skills, merge tool sets."""
-    results = []
-    for skill in self.skills:
-        score = self._score(skill, task)
-        if score > 0:
-            results.append((skill, score))
-    
-    results.sort(key=lambda x: x[1], reverse=True)
-    
-    # Merge tools from top N skills
-    merged_tools = set()
-    selected = []
-    for skill, score in results[:max_skills]:
-        merged_tools.update(skill.tools)
-        selected.append({"name": skill.name, "score": score})
-    
-    return {
-        "skills": selected,
-        "tools": list(merged_tools),
-        "total_tools": len(merged_tools)
-    }</code></pre>
-
-    <h2>Fallback Strategy</h2>
-    <p>When no skill matches, load a minimal safe set:</p>
-    <pre><code>DEFAULT_TOOLS = ["terminal", "read_file", "search_files", "web_search"]
+ 'alternatives': [('file_edit', 5)]}</code></pre>><div class="tip">The router returns alternatives so the agent can request a skill switch mid-task. If a testing task reveals a code bug, the agent can load <code>file_edit</code>tools without a full re-route.</div>><h2>Multi-Skill Routing</h2>><p>Some tasks span multiple skills. A task like "scrape data from a website and save to SQLite" needs both web scraping and database tools:</p>><pre><code>def route_multi(self, task: str, max_skills: int = 3) ->dict:
+ """Route to multiple skills, merge tool sets."""
+ results = []
+ for skill in self.skills:
+ score = self._score(skill, task)
+ if score >0:
+ results.append((skill, score))
+ 
+ results.sort(key=lambda x: x[1], reverse=True)
+ 
+ # Merge tools from top N skills
+ merged_tools = set()
+ selected = []
+ for skill, score in results[:max_skills]:
+ merged_tools.update(skill.tools)
+ selected.append({"name": skill.name, "score": score})
+ 
+ return {
+ "skills": selected,
+ "tools": list(merged_tools),
+ "total_tools": len(merged_tools)
+ }</code></pre>><h2>Fallback Strategy</h2>><p>When no skill matches, load a minimal safe set:</p>><pre><code>DEFAULT_TOOLS = ["terminal", "read_file", "search_files", "web_search"]
 
 # On no match:
 result = {"skill": "default", "tools": DEFAULT_TOOLS}
-# The agent can still operate — just with basic tools</code></pre>
-
-    <h2>Real-World Results</h2>
-    <table>
-        <tr><th>Metric</th><th>Before routing</th><th>After routing</th></tr>
-        <tr><td>Avg tools per turn</td><td>50</td><td class="metric">7.3</td></tr>
-        <tr><td>Schema tokens per turn</td><td>4,200</td><td class="metric">612</td></tr>
-        <tr><td>Tool call accuracy</td><td>91%</td><td class="metric">96%</td></tr>
-        <tr><td>Wrong tool calls</td><td>9%</td><td class="metric">4%</td></tr>
-        <tr><td>Cost per 30-turn session</td><td>$0.39</td><td class="metric">$0.06</td></tr>
-    </table>
-
-    <p>Tool call accuracy improved because the agent had fewer options to confuse. A smaller tool set means fewer hallucinated tool names.</p>
-
-    <h2>Dynamic Skill Discovery</h2>
-    <p>For plugin systems, discover skills at runtime from a directory:</p>
-    <pre><code>import importlib
+# The agent can still operate — just with basic tools</code></pre>><h2>Real-World Results</h2>><table>><tr><th>Metric</th><th>Before routing</th><th>After routing</th></tr>><tr><td>Avg tools per turn</td><td>50</td><td class="metric">7.3</td></tr>><tr><td>Schema tokens per turn</td><td>4,200</td><td class="metric">612</td></tr>><tr><td>Tool call accuracy</td><td>91%</td><td class="metric">96%</td></tr>><tr><td>Wrong tool calls</td><td>9%</td><td class="metric">4%</td></tr>><tr><td>Cost per 30-turn session</td><td>$0.39</td><td class="metric">$0.06</td></tr>></table>><p>Tool call accuracy improved because the agent had fewer options to confuse. A smaller tool set means fewer hallucinated tool names.</p>><h2>Dynamic Skill Discovery</h2>><p>For plugin systems, discover skills at runtime from a directory:</p>><pre><code>import importlib
 from pathlib import Path
 
-def discover_skills(plugin_dir: str) -> list:
-    """Load skill definitions from Python files."""
-    skills = []
-    for pyfile in Path(plugin_dir).glob("skill_*.py"):
-        module = importlib.import_module(pyfile.stem)
-        if hasattr(module, "SKILL"):
-            skills.append(module.SKILL)
-    return skills
+def discover_skills(plugin_dir: str) ->list:
+ """Load skill definitions from Python files."""
+ skills = []
+ for pyfile in Path(plugin_dir).glob("skill_*.py"):
+ module = importlib.import_module(pyfile.stem)
+ if hasattr(module, "SKILL"):
+ skills.append(module.SKILL)
+ return skills
 
 # Each skill_*.py file defines:
-# SKILL = Skill(name="...", tools=[...], keywords=[...], patterns=[...])</code></pre>
-
-    <h2>Install</h2>
-    <pre><code>pip install mcp-skill-router</code></pre>
-    <p>Source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-skill-router">mcp-skill-router on GitHub</a></p>
-
-    <hr>
-    <p><em>168 production-ready Python templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
+# SKILL = Skill(name="...", tools=[...], keywords=[...], patterns=[...])</code></pre>><h2>Install</h2>><pre><code>pip install mcp-skill-router</code></pre>><p>Source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-skill-router">mcp-skill-router on GitHub</a></p>><hr>><p><em>168 production-ready Python templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
 </body>
 </html>

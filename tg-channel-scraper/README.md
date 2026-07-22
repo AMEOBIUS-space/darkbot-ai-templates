@@ -19,3 +19,5 @@ python scraper.py
 ## Price: $49 (license) / $199 (with customization)
 Contact: @darkbot_ai_bot or @ameobius
 Payment: BTC / USDT / ETH / XMR
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

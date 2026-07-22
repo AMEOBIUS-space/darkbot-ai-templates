@@ -4,17 +4,46 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bounty-hunter-toolkit"
-version = "1.0.0"
-description = "Bug bounty automation: recon, BOLA, reporting"
+version = "1.4.0"
+description = "Bug bounty automation: vulnerability fix patterns for Python and Solidity with SARIF export"
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.8"
-authors = [{name = "AMEOBIUS"}]
-keywords = ["bugbounty", "security", "bola", "recon"]
+requires-python = ">=3.10"
+authors = [{name = "AMEOBIUS-team"}]
+keywords = ["bugbounty", "security", "bola", "recon", "sarif", "sast", "solidity", "fix-patterns", "zero-dependency"]
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.4"]
+
+[project.scripts]
+bounty-hunter-toolkit = "bounty_hunter_toolkit:main"
+
 [project.urls]
-Homepage = "https://github.com/AMEOBIUS/bounty-hunter-toolkit"
+Homepage = "https://github.com/AMEOBIUS-team/bounty-hunter-toolkit"
+Repository = "https://github.com/AMEOBIUS-team/bounty-hunter-toolkit"
+Issues = "https://github.com/AMEOBIUS-team/bounty-hunter-toolkit/issues"
+
+[tool.setuptools]
+py-modules = ["apply_fix", "bounty_hunter_toolkit", "sarif_export"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+per-file-ignores = { "apply_fix.py" = ["E501"] }

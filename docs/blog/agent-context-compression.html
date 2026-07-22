@@ -1,258 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practical Context Window Compression for AI Agents</title>
-    <meta name="description" content="Five battle-tested strategies for compressing tool outputs and managing context windows in AI agent systems. Code examples in pure Python.">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "TechArticle",
-        "headline": "Practical Context Window Compression for AI Agents",
-        "description": "Five battle-tested strategies for compressing tool outputs and managing context windows in AI agent systems.",
-        "author": { "@type": "Person", "name": "aaameobius-crypto" },
-        "datePublished": "2026-07-09",
-        "dateModified": "2026-07-09"
-    }
-    </script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
-        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-        h2 { font-size: 1.4rem; margin-top: 2rem; }
-        h3 { font-size: 1.1rem; margin-top: 1.5rem; }
-        code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
-        pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
-        pre code { background: none; padding: 0; }
-        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-        th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
-        th { background: #f8f8f8; }
-        a { color: #0366d6; }
-        .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
-        .metric { font-family: monospace; font-weight: bold; color: #0366d6; }
-        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-        .tip { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>Practical Context Window Compression for AI Agents</title>><meta name="description" content="Five battle-tested strategies for compressing tool outputs and managing context windows in AI agent systems. Code examples in pure Python.">><script type="application/ld+json">>{
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "Practical Context Window Compression for AI Agents",
+ "description": "Five battle-tested strategies for compressing tool outputs and managing context windows in AI agent systems.",
+ "author": { "@type": "Person", "name": "aaameobius-crypto" },
+ "datePublished": "2026-07-09",
+ "dateModified": "2026-07-09"
+ }
+ </script>><style>>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; color: #1a1a1a; }
+ h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+ h2 { font-size: 1.4rem; margin-top: 2rem; }
+ h3 { font-size: 1.1rem; margin-top: 1.5rem; }
+ code { background: #f4f4f4; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; }
+ pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+ pre code { background: none; padding: 0; }
+ table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+ th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+ th { background: #f8f8f8; }
+ a { color: #0366d6; }
+ .tag { display: inline-block; background: #0366d6; color: white; padding: 0.1em 0.5em; border-radius: 3px; font-size: 0.8em; margin-right: 0.3em; }
+ .metric { font-family: monospace; font-weight: bold; color: #0366d6; }
+ .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ .tip { background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 0.75rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+ </style>
 </head>
-<body>
-    <h1>Practical Context Window Compression for AI Agents</h1>
-    <p><span class="tag">MCP</span> <span class="tag">Python</span> <span class="tag">Performance</span></p>
-    <p><em>2026-07-09</em></p>
-
-    <p>Every tool call your agent makes costs context window tokens. Read a file? Tokens. Run a search? Tokens. List a directory? More tokens. After 20 tool calls, your agent has burned through 15,000 tokens of context on tool output alone — tokens that should be reserved for reasoning.</p>
-
-    <p>This article shows five compression strategies used in <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-context-guard">mcp-context-guard</a>, each implementable in under 50 lines of pure Python.</p>
-
-    <h2>The Problem in Numbers</h2>
-
-    <table>
-        <tr><th>Operation</th><th>Raw tokens</th><th>Compressed</th><th>Savings</th></tr>
-        <tr><td><code>read_file(large_config.yaml)</code></td><td>3,200</td><td>480</td><td class="metric">85%</td></tr>
-        <tr><td><code>search_files("import")</code></td><td>5,100</td><td>620</td><td class="metric">88%</td></tr>
-        <tr><td><code>terminal("ls -la")</code></td><td>1,400</td><td>310</td><td class="metric">78%</td></tr>
-        <tr><td>Duplicate content across 5 calls</td><td>8,000</td><td>1,200</td><td class="metric">85%</td></tr>
-    </table>
-
-    <p>Without compression, 50 tool calls can consume 80,000 tokens. With these strategies, the same workload uses 12,000.</p>
-
-    <h2>Strategy 1: Head-Tail Truncation</h2>
-
-    <p>The simplest and most effective technique. Most tool outputs have a "useful prefix" (the answer) and a "useful suffix" (the summary), with noise in the middle.</p>
-
-    <pre><code>def head_tail_truncate(text: str, max_tokens: int = 500) -> str:
-    """Keep the first and last N characters, drop the middle."""
-    max_chars = max_tokens * 4  # rough token-to-char estimate
-    if len(text) <= max_chars:
-        return text
-    
-    head_size = int(max_chars * 0.6)  # 60% from head
-    tail_size = int(max_chars * 0.3)  # 30% from tail
-    # 10% for the truncation marker
-    
-    head = text[:head_size]
-    tail = text[-tail_size:]
-    omitted = len(text) - head_size - tail_size
-    
-    return f"{head}\n\n... [{omitted:,} chars omitted] ...\n\n{tail}"</code></pre>
-
-    <div class="tip">Always include the omission count. The agent needs to know it's seeing partial output to decide whether to request more.</div>
-
-    <h2>Strategy 2: JSON Key Flattening</h2>
-
-    <p>Tool outputs are often deeply nested JSON. Flatten the keys and drop null values:</p>
-
-    <pre><code>def flatten_json(obj: dict, prefix: str = "") -> dict:
-    """Flatten nested dict to dotted keys, drop None values."""
-    result = {}
-    for key, value in obj.items():
-        full_key = f"{prefix}.{key}" if prefix else key
-        if value is None:
-            continue
-        elif isinstance(value, dict):
-            result.update(flatten_json(value, full_key))
-        elif isinstance(value, list):
-            if value:
-                result[full_key] = f"[{len(value)} items]"
-            if len(value) <= 3:
-                for i, item in enumerate(value):
-                    if isinstance(item, dict):
-                        result.update(flatten_json(item, f"{full_key}[{i}]"))
-                    else:
-                        result[f"{full_key}[{i}]"] = item
-        else:
-            result[full_key] = value
-    return result</code></pre>
-
-    <p>Before: 340 tokens of nested JSON. After: 120 tokens of flat key-value pairs.</p>
-
-    <h2>Strategy 3: Content Deduplication</h2>
-
-    <p>When an agent reads the same file twice, or searches for patterns that overlap, you get duplicate content. Track seen hashes and replace with a back-reference:</p>
-
-    <pre><code>import hashlib
+<body>><h1>Practical Context Window Compression for AI Agents</h1>><p><span class="tag">MCP</span><span class="tag">Python</span><span class="tag">Performance</span></p>><p><em>2026-07-09</em></p>><p>Every tool call your agent makes costs context window tokens. Read a file? Tokens. Run a search? Tokens. List a directory? More tokens. After 20 tool calls, your agent has burned through 15,000 tokens of context on tool output alone — tokens that should be reserved for reasoning.</p>><p>This article shows five compression strategies used in <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-context-guard">mcp-context-guard</a>, each implementable in under 50 lines of pure Python.</p>><h2>The Problem in Numbers</h2>><table>><tr><th>Operation</th><th>Raw tokens</th><th>Compressed</th><th>Savings</th></tr>><tr><td><code>read_file(large_config.yaml)</code></td><td>3,200</td><td>480</td><td class="metric">85%</td></tr>><tr><td><code>search_files("import")</code></td><td>5,100</td><td>620</td><td class="metric">88%</td></tr>><tr><td><code>terminal("ls -la")</code></td><td>1,400</td><td>310</td><td class="metric">78%</td></tr>><tr><td>Duplicate content across 5 calls</td><td>8,000</td><td>1,200</td><td class="metric">85%</td></tr>></table>><p>Without compression, 50 tool calls can consume 80,000 tokens. With these strategies, the same workload uses 12,000.</p>><h2>Strategy 1: Head-Tail Truncation</h2>><p>The simplest and most effective technique. Most tool outputs have a "useful prefix" (the answer) and a "useful suffix" (the summary), with noise in the middle.</p>><pre><code>def head_tail_truncate(text: str, max_tokens: int = 500) ->str:
+ """Keep the first and last N characters, drop the middle."""
+ max_chars = max_tokens * 4 # rough token-to-char estimate
+ if len(text) <= max_chars:
+ return text
+ 
+ head_size = int(max_chars * 0.6) # 60% from head
+ tail_size = int(max_chars * 0.3) # 30% from tail
+ # 10% for the truncation marker
+ 
+ head = text[:head_size]
+ tail = text[-tail_size:]
+ omitted = len(text) - head_size - tail_size
+ 
+ return f"{head}\n\n... [{omitted:,} chars omitted] ...\n\n{tail}"</code></pre>><div class="tip">Always include the omission count. The agent needs to know it's seeing partial output to decide whether to request more.</div>><h2>Strategy 2: JSON Key Flattening</h2>><p>Tool outputs are often deeply nested JSON. Flatten the keys and drop null values:</p>><pre><code>def flatten_json(obj: dict, prefix: str = "") ->dict:
+ """Flatten nested dict to dotted keys, drop None values."""
+ result = {}
+ for key, value in obj.items():
+ full_key = f"{prefix}.{key}" if prefix else key
+ if value is None:
+ continue
+ elif isinstance(value, dict):
+ result.update(flatten_json(value, full_key))
+ elif isinstance(value, list):
+ if value:
+ result[full_key] = f"[{len(value)} items]"
+ if len(value) <= 3:
+ for i, item in enumerate(value):
+ if isinstance(item, dict):
+ result.update(flatten_json(item, f"{full_key}[{i}]"))
+ else:
+ result[f"{full_key}[{i}]"] = item
+ else:
+ result[full_key] = value
+ return result</code></pre>><p>Before: 340 tokens of nested JSON. After: 120 tokens of flat key-value pairs.</p>><h2>Strategy 3: Content Deduplication</h2>><p>When an agent reads the same file twice, or searches for patterns that overlap, you get duplicate content. Track seen hashes and replace with a back-reference:</p>><pre><code>import hashlib
 
 class Deduplicator:
-    def __init__(self):
-        self.seen: dict[str, int] = {}  # hash -> call_number
-    
-    def deduplicate(self, text: str, call_num: int) -> str:
-        # Hash each line, track unique content
-        lines = text.split("\n")
-        output = []
-        for line in lines:
-            h = hashlib.md5(line.strip().encode()).hexdigest()[:8]
-            if h in self.seen and line.strip():
-                first_seen = self.seen[h]
-                output.append(f"[↻ see call #{first_seen}]")
-            else:
-                self.seen[h] = call_num
-                output.append(line)
-        return "\n".join(output)</code></pre>
-
-    <h2>Strategy 4: Relevance Filtering</h2>
-
-    <p>When the agent is debugging an import error, it does not need 200 lines of CSS. Filter tool output by keyword relevance:</p>
-
-    <pre><code>def relevance_filter(text: str, query: str, context_lines: int = 3) -> str:
-    """Keep only lines matching the query plus surrounding context."""
-    lines = text.split("\n")
-    query_terms = set(query.lower().split())
-    keep = set()
-    
-    for i, line in enumerate(lines):
-        line_lower = line.lower()
-        if any(term in line_lower for term in query_terms):
-            # Keep this line + N lines of context
-            for j in range(max(0, i - context_lines), min(len(lines), i + context_lines + 1)):
-                keep.add(j)
-    
-    if not keep:
-        # No matches — return first 10 lines as fallback
-        keep = set(range(min(10, len(lines))))
-    
-    result = []
-    prev = -1
-    for i in sorted(keep):
-        if prev >= 0 and i > prev + 1:
-            result.append("...")
-        result.append(lines[i])
-        prev = i
-    
-    return "\n".join(result)</code></pre>
-
-    <h2>Strategy 5: Semantic Bucketing</h2>
-
-    <p>Group related lines and summarize each bucket. Perfect for log output and stack traces:</p>
-
-    <pre><code>def bucket_output(text: str, patterns: dict) -> str:
-    """Group lines matching patterns, summarize counts."""
-    buckets = {name: [] for name in patterns}
-    buckets["_other"] = []
-    
-    for line in text.split("\n"):
-        matched = False
-        for name, pattern in patterns.items():
-            if pattern.lower() in line.lower():
-                buckets[name].append(line)
-                matched = True
-                break
-        if not matched:
-            buckets["_other"].append(line)
-    
-    result = []
-    for name, lines in buckets.items():
-        if not lines:
-            continue
-        if len(lines) <= 2:
-            result.extend(lines)
-        else:
-            result.append(f"### {name} ({len(lines)} lines)")
-            result.extend(lines[:2])
-            if len(lines) > 2:
-                result.append(f"... {len(lines) - 2} more")
-    
-    return "\n".join(result)
+ def __init__(self):
+ self.seen: dict[str, int] = {} # hash ->call_number
+ 
+ def deduplicate(self, text: str, call_num: int) ->str:
+ # Hash each line, track unique content
+ lines = text.split("\n")
+ output = []
+ for line in lines:
+ h = hashlib.md5(line.strip().encode()).hexdigest()[:8]
+ if h in self.seen and line.strip():
+ first_seen = self.seen[h]
+ output.append(f"[↻ see call #{first_seen}]")
+ else:
+ self.seen[h] = call_num
+ output.append(line)
+ return "\n".join(output)</code></pre>><h2>Strategy 4: Relevance Filtering</h2>><p>When the agent is debugging an import error, it does not need 200 lines of CSS. Filter tool output by keyword relevance:</p>><pre><code>def relevance_filter(text: str, query: str, context_lines: int = 3) ->str:
+ """Keep only lines matching the query plus surrounding context."""
+ lines = text.split("\n")
+ query_terms = set(query.lower().split())
+ keep = set()
+ 
+ for i, line in enumerate(lines):
+ line_lower = line.lower()
+ if any(term in line_lower for term in query_terms):
+ # Keep this line + N lines of context
+ for j in range(max(0, i - context_lines), min(len(lines), i + context_lines + 1)):
+ keep.add(j)
+ 
+ if not keep:
+ # No matches — return first 10 lines as fallback
+ keep = set(range(min(10, len(lines))))
+ 
+ result = []
+ prev = -1
+ for i in sorted(keep):
+ if prev >= 0 and i >prev + 1:
+ result.append("...")
+ result.append(lines[i])
+ prev = i
+ 
+ return "\n".join(result)</code></pre>><h2>Strategy 5: Semantic Bucketing</h2>><p>Group related lines and summarize each bucket. Perfect for log output and stack traces:</p>><pre><code>def bucket_output(text: str, patterns: dict) ->str:
+ """Group lines matching patterns, summarize counts."""
+ buckets = {name: [] for name in patterns}
+ buckets["_other"] = []
+ 
+ for line in text.split("\n"):
+ matched = False
+ for name, pattern in patterns.items():
+ if pattern.lower() in line.lower():
+ buckets[name].append(line)
+ matched = True
+ break
+ if not matched:
+ buckets["_other"].append(line)
+ 
+ result = []
+ for name, lines in buckets.items():
+ if not lines:
+ continue
+ if len(lines) <= 2:
+ result.extend(lines)
+ else:
+ result.append(f"### {name} ({len(lines)} lines)")
+ result.extend(lines[:2])
+ if len(lines) >2:
+ result.append(f"... {len(lines) - 2} more")
+ 
+ return "\n".join(result)
 
 # Example patterns for terminal output:
 patterns = {
-    "Errors": "error",
-    "Warnings": "warning", 
-    "Files": "files changed",
-    "Tests": "passed",
-}</code></pre>
-
-    <h2>Putting It All Together</h2>
-
-    <p>Chain these strategies in order of aggressiveness:</p>
-
-    <pre><code>def compress_tool_output(
-    text: str, 
-    query: str = "",
-    max_tokens: int = 500,
-    deduplicator: Deduplicator = None,
-    call_num: int = 0
-) -> str:
-    # 1. Deduplicate (cheapest, highest impact on repeated calls)
-    if deduplicator:
-        text = deduplicator.deduplicate(text, call_num)
-    
-    # 2. Relevance filter (if query provided)
-    if query:
-        text = relevance_filter(text, query)
-    
-    # 3. Bucket (for long structured output)
-    if len(text) > 2000:
-        text = bucket_output(text, {
-            "Errors": "error",
-            "Warnings": "warning",
-        })
-    
-    # 4. Head-tail truncate (last resort)
-    text = head_tail_truncate(text, max_tokens)
-    
-    return text</code></pre>
-
-    <div class="warning">Always inform the agent when output is compressed. Add a header like <code>[COMPRESSED: 3400→480 tokens, 85% reduction]</code> so the agent knows to request full output if needed.</div>
-
-    <h2>Real-World Results</h2>
-
-    <p>In <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a>, these strategies reduced average context consumption per agent turn from 4,200 tokens to 680 tokens — an 84% reduction. The agent could run 50+ tool calls within a 16K context window that previously filled after 12 calls.</p>
-
-    <table>
-        <tr><th>Metric</th><th>Before</th><th>After</th></tr>
-        <tr><td>Avg tokens per tool call</td><td>4,200</td><td class="metric">680</td></tr>
-        <tr><td>Max tool calls before context full</td><td>12</td><td class="metric">50+</td></tr>
-        <tr><td>Duplicate content ratio</td><td>34%</td><td class="metric">2%</td></tr>
-        <tr><td>Agent task completion rate</td><td>71%</td><td class="metric">89%</td></tr>
-    </table>
-
-    <h2>Install</h2>
-
-    <pre><code>pip install mcp-context-guard</code></pre>
-
-    <p>Or browse the full source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-context-guard">mcp-context-guard on GitHub</a>.</p>
-
-    <hr>
-    <p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a> collection — 168 production-ready Python templates. Zero dependencies. Pure stdlib.</em></p>
+ "Errors": "error",
+ "Warnings": "warning", 
+ "Files": "files changed",
+ "Tests": "passed",
+}</code></pre>><h2>Putting It All Together</h2>><p>Chain these strategies in order of aggressiveness:</p>><pre><code>def compress_tool_output(
+ text: str, 
+ query: str = "",
+ max_tokens: int = 500,
+ deduplicator: Deduplicator = None,
+ call_num: int = 0
+) ->str:
+ # 1. Deduplicate (cheapest, highest impact on repeated calls)
+ if deduplicator:
+ text = deduplicator.deduplicate(text, call_num)
+ 
+ # 2. Relevance filter (if query provided)
+ if query:
+ text = relevance_filter(text, query)
+ 
+ # 3. Bucket (for long structured output)
+ if len(text) >2000:
+ text = bucket_output(text, {
+ "Errors": "error",
+ "Warnings": "warning",
+ })
+ 
+ # 4. Head-tail truncate (last resort)
+ text = head_tail_truncate(text, max_tokens)
+ 
+ return text</code></pre>><div class="warning">Always inform the agent when output is compressed. Add a header like <code>[COMPRESSED: 3400→480 tokens, 85% reduction]</code>so the agent knows to request full output if needed.</div>><h2>Real-World Results</h2>><p>In <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a>, these strategies reduced average context consumption per agent turn from 4,200 tokens to 680 tokens — an 84% reduction. The agent could run 50+ tool calls within a 16K context window that previously filled after 12 calls.</p>><table>><tr><th>Metric</th><th>Before</th><th>After</th></tr>><tr><td>Avg tokens per tool call</td><td>4,200</td><td class="metric">680</td></tr>><tr><td>Max tool calls before context full</td><td>12</td><td class="metric">50+</td></tr>><tr><td>Duplicate content ratio</td><td>34%</td><td class="metric">2%</td></tr>><tr><td>Agent task completion rate</td><td>71%</td><td class="metric">89%</td></tr>></table>><h2>Install</h2>><pre><code>pip install mcp-context-guard</code></pre>><p>Or browse the full source: <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates/tree/main/mcp-context-guard">mcp-context-guard on GitHub</a>.</p>><hr>><p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a>collection — 168 production-ready Python templates. Zero dependencies. Pure stdlib.</em></p>
 </body>
 </html>

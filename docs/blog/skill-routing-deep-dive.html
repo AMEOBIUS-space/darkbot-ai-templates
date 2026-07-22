@@ -1,31 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill Routing for AI Agents: How to Match Tasks to the Right Tools</title>
-    <meta name="description" content="Build a skill router that matches task descriptions to relevant tool sets. Keyword scoring, embedding-free matching, multi-skill composition. Pure Python.">
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"TechArticle","headline":"Skill Routing for AI Agents","description":"Match tasks to tools with keyword scoring, tag matching, and multi-skill composition. Pure Python, zero dependencies.","author":{"@type":"Person","name":"AMEOBIUS"},"datePublished":"2026-07-10","dateModified":"2026-07-10"}
-    </script>
-    <style>
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
-        h1{font-size:2rem;margin-bottom:.5rem}h2{font-size:1.4rem;margin-top:2rem}h3{font-size:1.15rem;margin-top:1.5rem}
-        code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
-        pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}pre code{background:none;padding:0}
-        table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd}th{background:#f8f8f8}
-        a{color:#0366d6}.tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
-        .info{background:#d1ecf1;border-left:4px solid #0dcaf0;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
-        .warning{background:#fff3cd;border-left:4px solid #ffc107;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
-    </style>
+<head>><meta charset="UTF-8">><meta name="viewport" content="width=device-width, initial-scale=1.0">><title>Skill Routing for AI Agents: How to Match Tasks to the Right Tools</title>><meta name="description" content="Build a skill router that matches task descriptions to relevant tool sets. Keyword scoring, embedding-free matching, multi-skill composition. Pure Python.">><script type="application/ld+json">>{"@context":"https://schema.org","@type":"TechArticle","headline":"Skill Routing for AI Agents","description":"Match tasks to tools with keyword scoring, tag matching, and multi-skill composition. Pure Python, zero dependencies.","author":{"@type":"Person","name":"AMEOBIUS"},"datePublished":"2026-07-10","dateModified":"2026-07-10"}
+ </script>><style>>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.7;color:#1a1a1a}
+ h1{font-size:2rem;margin-bottom:.5rem}h2{font-size:1.4rem;margin-top:2rem}h3{font-size:1.15rem;margin-top:1.5rem}
+ code{background:#f4f4f4;padding:.15em .4em;border-radius:3px;font-size:.9em}
+ pre{background:#1e1e1e;color:#d4d4d4;padding:1rem;border-radius:6px;overflow-x:auto}pre code{background:none;padding:0}
+ table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{text-align:left;padding:.5rem;border-bottom:1px solid #ddd}th{background:#f8f8f8}
+ a{color:#0366d6}.tag{display:inline-block;background:#0366d6;color:#fff;padding:.1em .5em;border-radius:3px;font-size:.8em;margin-right:.3em}
+ .info{background:#d1ecf1;border-left:4px solid #0dcaf0;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+ .warning{background:#fff3cd;border-left:4px solid #ffc107;padding:.75rem 1rem;margin:1rem 0;border-radius:0 4px 4px 0}
+ </style>
 </head>
 <body>
 <h1>Skill Routing for AI Agents: How to Match Tasks to the Right Tools</h1>
-<p><span class="tag">AI Agents</span> <span class="tag">Skill Routing</span> <span class="tag">Python</span> <span class="tag">MCP</span></p>
-
-<p>An agent with 50 tools averages 25KB of schema data per turn. But a coding task only needs 5 tools and a data task needs 7 different ones. Skill routing matches the task to the tools, cutting schema overhead by 84%.</p>
-
-<h2>What Is a Skill?</h2>
+<p><span class="tag">AI Agents</span><span class="tag">Skill Routing</span><span class="tag">Python</span><span class="tag">MCP</span></p>><p>An agent with 50 tools averages 25KB of schema data per turn. But a coding task only needs 5 tools and a data task needs 7 different ones. Skill routing matches the task to the tools, cutting schema overhead by 84%.</p>><h2>What Is a Skill?</h2>
 <p>A skill is a named collection of tools, prompts, and metadata that handles a category of tasks. Examples:</p>
 <table>
 <tr><th>Skill</th><th>Tools Included</th><th>Handles Tasks Like</th></tr>
@@ -34,9 +22,7 @@
 <tr><td>data</td><td>execute_code, read_file, search_files</td><td>"Analyze this CSV"</td></tr>
 <tr><td>messaging</td><td>send_message, reply_to_message</td><td>"Post to the channel"</td></tr>
 <tr><td>debugging</td><td>read_file, search_files, terminal, browser_console</td><td>"Why is the page blank?"</td></tr>
-</table>
-
-<h2>Step 1: Skill Registry</h2>
+</table>><h2>Step 1: Skill Registry</h2>
 <pre><code>from dataclasses import dataclass, field
 from typing import Any
 import re
@@ -44,219 +30,213 @@ import json
 
 @dataclass
 class Skill:
-    name: str
-    description: str
-    tools: list[str]
-    keywords: list[str]          # Trigger words in user message
-    tags: list[str]              # Categorical tags
-    system_prompt: str = ""      # Additional context for this skill
-    priority: int = 0            # Higher = preferred on tie
-    metadata: dict[str, Any] = field(default_factory=dict)
+ name: str
+ description: str
+ tools: list[str]
+ keywords: list[str] # Trigger words in user message
+ tags: list[str] # Categorical tags
+ system_prompt: str = "" # Additional context for this skill
+ priority: int = 0 # Higher = preferred on tie
+ metadata: dict[str, Any] = field(default_factory=dict)
 
 
 class SkillRegistry:
-    def __init__(self):
-        self._skills: dict[str, Skill] = {}
+ def __init__(self):
+ self._skills: dict[str, Skill] = {}
 
-    def register(self, skill: Skill) -> None:
-        self._skills[skill.name] = skill
+ def register(self, skill: Skill) ->None:
+ self._skills[skill.name] = skill
 
-    def get(self, name: str) -> Skill | None:
-        return self._skills.get(name)
+ def get(self, name: str) ->Skill | None:
+ return self._skills.get(name)
 
-    def list_skills(self) -> list[Skill]:
-        return list(self._skills.values())
+ def list_skills(self) ->list[Skill]:
+ return list(self._skills.values())
 
-    def all_tools(self) -> set[str]:
-        return {t for s in self._skills.values() for t in s.tools}</code></pre>
-
-<h2>Step 2: The Router</h2>
+ def all_tools(self) ->set[str]:
+ return {t for s in self._skills.values() for t in s.tools}</code></pre>><h2>Step 2: The Router</h2>
 <pre><code>class SkillRouter:
-    """Match a user message to the most relevant skills."""
+ """Match a user message to the most relevant skills."""
 
-    def __init__(self, registry: SkillRegistry):
-        self.registry = registry
+ def __init__(self, registry: SkillRegistry):
+ self.registry = registry
 
-    def route(self, message: str, max_skills: int = 3) -> list[dict]:
-        """Return ranked skills with match scores."""
-        scored: list[tuple[float, Skill]] = []
+ def route(self, message: str, max_skills: int = 3) ->list[dict]:
+ """Return ranked skills with match scores."""
+ scored: list[tuple[float, Skill]] = []
 
-        for skill in self.registry.list_skills():
-            score = self._score_match(message, skill)
-            scored.append((score, skill))
+ for skill in self.registry.list_skills():
+ score = self._score_match(message, skill)
+ scored.append((score, skill))
 
-        scored.sort(key=lambda x: (-x[0], -x[1].priority))
+ scored.sort(key=lambda x: (-x[0], -x[1].priority))
 
-        results = []
-        for score, skill in scored[:max_skills]:
-            if score > 0:
-                results.append({
-                    "skill": skill.name,
-                    "score": round(score, 2),
-                    "tools": skill.tools,
-                    "matched": self._what_matched(message, skill),
-                })
+ results = []
+ for score, skill in scored[:max_skills]:
+ if score >0:
+ results.append({
+ "skill": skill.name,
+ "score": round(score, 2),
+ "tools": skill.tools,
+ "matched": self._what_matched(message, skill),
+ })
 
-        return results
+ return results
 
-    def select_tools(self, message: str,
-                     max_skills: int = 3,
-                     always_include: list[str] | None = None) -> list[str]:
-        """Select the full tool set for this message."""
-        routed = self.route(message, max_skills)
+ def select_tools(self, message: str,
+ max_skills: int = 3,
+ always_include: list[str] | None = None) ->list[str]:
+ """Select the full tool set for this message."""
+ routed = self.route(message, max_skills)
 
-        tools: list[str] = []
-        seen: set[str] = set()
+ tools: list[str] = []
+ seen: set[str] = set()
 
-        # Always-included tools (core set)
-        for t in (always_include or []):
-            if t not in seen:
-                tools.append(t)
-                seen.add(t)
+ # Always-included tools (core set)
+ for t in (always_include or []):
+ if t not in seen:
+ tools.append(t)
+ seen.add(t)
 
-        # Skill-matched tools
-        for r in routed:
-            for t in r["tools"]:
-                if t not in seen:
-                    tools.append(t)
-                    seen.add(t)
+ # Skill-matched tools
+ for r in routed:
+ for t in r["tools"]:
+ if t not in seen:
+ tools.append(t)
+ seen.add(t)
 
-        return tools
+ return tools
 
-    def _score_match(self, message: str, skill: Skill) -> float:
-        """Score how well a skill matches the message (0.0-1.0)."""
-        msg_lower = message.lower()
-        msg_words = set(msg_lower.split())
+ def _score_match(self, message: str, skill: Skill) ->float:
+ """Score how well a skill matches the message (0.0-1.0)."""
+ msg_lower = message.lower()
+ msg_words = set(msg_lower.split())
 
-        score = 0.0
+ score = 0.0
 
-        # Direct keyword matches (weighted heavily)
-        kw_matches = sum(1 for kw in skill.keywords if kw.lower() in msg_lower)
-        score += min(kw_matches * 0.15, 0.6)
+ # Direct keyword matches (weighted heavily)
+ kw_matches = sum(1 for kw in skill.keywords if kw.lower() in msg_lower)
+ score += min(kw_matches * 0.15, 0.6)
 
-        # Tag matches (medium weight)
-        tag_matches = sum(1 for tag in skill.tags if tag.lower() in msg_lower)
-        score += min(tag_matches * 0.10, 0.3)
+ # Tag matches (medium weight)
+ tag_matches = sum(1 for tag in skill.tags if tag.lower() in msg_lower)
+ score += min(tag_matches * 0.10, 0.3)
 
-        # Description word overlap (light weight)
-        desc_words = set(skill.description.lower().split())
-        overlap = len(msg_words & desc_words)
-        score += min(overlap * 0.02, 0.2)
+ # Description word overlap (light weight)
+ desc_words = set(skill.description.lower().split())
+ overlap = len(msg_words & desc_words)
+ score += min(overlap * 0.02, 0.2)
 
-        # Skill name in message (strong signal)
-        if skill.name.lower() in msg_lower:
-            score += 0.25
+ # Skill name in message (strong signal)
+ if skill.name.lower() in msg_lower:
+ score += 0.25
 
-        # Apply priority bonus
-        score += skill.priority * 0.05
+ # Apply priority bonus
+ score += skill.priority * 0.05
 
-        return min(score, 1.0)
+ return min(score, 1.0)
 
-    def _what_matched(self, message: str, skill: Skill) -> dict:
-        """Detail what triggered the match (for debugging)."""
-        msg_lower = message.lower()
+ def _what_matched(self, message: str, skill: Skill) ->dict:
+ """Detail what triggered the match (for debugging)."""
+ msg_lower = message.lower()
 
-        matched_kw = [kw for kw in skill.keywords if kw.lower() in msg_lower]
-        matched_tags = [t for t in skill.tags if t.lower() in msg_lower]
-        name_match = skill.name.lower() in msg_lower
+ matched_kw = [kw for kw in skill.keywords if kw.lower() in msg_lower]
+ matched_tags = [t for t in skill.tags if t.lower() in msg_lower]
+ name_match = skill.name.lower() in msg_lower
 
-        return {
-            "keywords": matched_kw,
-            "tags": matched_tags,
-            "name_match": name_match,
-        }</code></pre>
-
-<h2>Step 3: Multi-Skill Composition</h2>
+ return {
+ "keywords": matched_kw,
+ "tags": matched_tags,
+ "name_match": name_match,
+ }</code></pre>><h2>Step 3: Multi-Skill Composition</h2>
 <pre><code>class MultiSkillComposer:
-    """Compose multiple skills for complex tasks."""
+ """Compose multiple skills for complex tasks."""
 
-    def __init__(self, router: SkillRouter):
-        self.router = router
+ def __init__(self, router: SkillRouter):
+ self.router = router
 
-    def compose(self, message: str,
-                max_skills: int = 3) -> dict:
-        """Build a composed skill set for a complex task."""
-        routed = self.router.route(message, max_skills)
+ def compose(self, message: str,
+ max_skills: int = 3) ->dict:
+ """Build a composed skill set for a complex task."""
+ routed = self.router.route(message, max_skills)
 
-        # Merge tools (dedup, preserve order)
-        tools: list[str] = []
-        seen: set[str] = set()
-        for r in routed:
-            for t in r["tools"]:
-                if t not in seen:
-                    tools.append(t)
-                    seen.add(t)
+ # Merge tools (dedup, preserve order)
+ tools: list[str] = []
+ seen: set[str] = set()
+ for r in routed:
+ for t in r["tools"]:
+ if t not in seen:
+ tools.append(t)
+ seen.add(t)
 
-        # Merge system prompts
-        prompts = []
-        for r in routed:
-            skill = self.router.registry.get(r["skill"])
-            if skill and skill.system_prompt:
-                prompts.append(f"## {skill.name.title()} Mode\n{skill.system_prompt}")
+ # Merge system prompts
+ prompts = []
+ for r in routed:
+ skill = self.router.registry.get(r["skill"])
+ if skill and skill.system_prompt:
+ prompts.append(f"## {skill.name.title()} Mode\n{skill.system_prompt}")
 
-        composed_prompt = "\n\n".join(prompts) if prompts else ""
+ composed_prompt = "\n\n".join(prompts) if prompts else ""
 
-        # Calculate context savings
-        total_possible = len(self.router.registry.all_tools())
-        selected = len(tools)
-        savings_pct = (1 - selected / max(total_possible, 1)) * 100
+ # Calculate context savings
+ total_possible = len(self.router.registry.all_tools())
+ selected = len(tools)
+ savings_pct = (1 - selected / max(total_possible, 1)) * 100
 
-        return {
-            "skills_active": [r["skill"] for r in routed],
-            "tools": tools,
-            "tool_count": selected,
-            "total_available": total_possible,
-            "savings_pct": round(savings_pct, 1),
-            "system_prompt": composed_prompt,
-            "routing_detail": routed,
-        }</code></pre>
-
-<h2>The Complete Setup</h2>
+ return {
+ "skills_active": [r["skill"] for r in routed],
+ "tools": tools,
+ "tool_count": selected,
+ "total_available": total_possible,
+ "savings_pct": round(savings_pct, 1),
+ "system_prompt": composed_prompt,
+ "routing_detail": routed,
+ }</code></pre>><h2>The Complete Setup</h2>
 <pre><code># --- Register skills ---
 registry = SkillRegistry()
 
 registry.register(Skill(
-    name="coding",
-    description="Read, write, and modify source code files.",
-    tools=["read_file", "write_file", "patch", "search_files", "terminal"],
-    keywords=["code", "function", "bug", "fix", "refactor", "python", "javascript",
-              "implement", "class", "method", "compile", "syntax"],
-    tags=["file", "code", "terminal"],
-    system_prompt="You are in coding mode. Always use type hints. Prefer patch over write_file for edits.",
-    priority=2,
+ name="coding",
+ description="Read, write, and modify source code files.",
+ tools=["read_file", "write_file", "patch", "search_files", "terminal"],
+ keywords=["code", "function", "bug", "fix", "refactor", "python", "javascript",
+ "implement", "class", "method", "compile", "syntax"],
+ tags=["file", "code", "terminal"],
+ system_prompt="You are in coding mode. Always use type hints. Prefer patch over write_file for edits.",
+ priority=2,
 ))
 
 registry.register(Skill(
-    name="web",
-    description="Search the web and extract content from URLs.",
-    tools=["web_search", "web_extract", "browser_navigate"],
-    keywords=["search", "find online", "url", "website", "google", "look up",
-              "documentation", "api docs", "latest"],
-    tags=["browser", "http", "search"],
-    system_prompt="You are in web mode. Extract key information from pages, don't dump full content.",
-    priority=1,
+ name="web",
+ description="Search the web and extract content from URLs.",
+ tools=["web_search", "web_extract", "browser_navigate"],
+ keywords=["search", "find online", "url", "website", "google", "look up",
+ "documentation", "api docs", "latest"],
+ tags=["browser", "http", "search"],
+ system_prompt="You are in web mode. Extract key information from pages, don't dump full content.",
+ priority=1,
 ))
 
 registry.register(Skill(
-    name="data",
-    description="Analyze data files and run computations.",
-    tools=["execute_code", "read_file", "search_files"],
-    keywords=["analyze", "csv", "json", "data", "statistics", "calculate",
-              "sum", "average", "chart", "table"],
-    tags=["data", "code", "file"],
-    system_prompt="You are in data analysis mode. Show intermediate results.",
-    priority=1,
+ name="data",
+ description="Analyze data files and run computations.",
+ tools=["execute_code", "read_file", "search_files"],
+ keywords=["analyze", "csv", "json", "data", "statistics", "calculate",
+ "sum", "average", "chart", "table"],
+ tags=["data", "code", "file"],
+ system_prompt="You are in data analysis mode. Show intermediate results.",
+ priority=1,
 ))
 
 registry.register(Skill(
-    name="debugging",
-    description="Diagnose errors and find root causes.",
-    tools=["read_file", "search_files", "terminal", "browser_console"],
-    keywords=["error", "crash", "debug", "stack trace", "exception",
-              "fail", "broken", "wrong", "issue", "problem"],
-    tags=["code", "terminal", "browser"],
-    system_prompt="You are in debugging mode. Reproduce the error first, then trace to root cause.",
-    priority=3,
+ name="debugging",
+ description="Diagnose errors and find root causes.",
+ tools=["read_file", "search_files", "terminal", "browser_console"],
+ keywords=["error", "crash", "debug", "stack trace", "exception",
+ "fail", "broken", "wrong", "issue", "problem"],
+ tags=["code", "terminal", "browser"],
+ system_prompt="You are in debugging mode. Reproduce the error first, then trace to root cause.",
+ priority=3,
 ))
 
 # --- Test routing ---
@@ -264,21 +244,19 @@ router = SkillRouter(registry)
 composer = MultiSkillComposer(router)
 
 messages = [
-    "Fix the bug in auth.py where login throws an exception",
-    "Search for the latest Python documentation on async",
-    "Analyze the sales.csv data and show monthly averages",
-    "The page is blank, there's a JavaScript error in the console",
+ "Fix the bug in auth.py where login throws an exception",
+ "Search for the latest Python documentation on async",
+ "Analyze the sales.csv data and show monthly averages",
+ "The page is blank, there's a JavaScript error in the console",
 ]
 
 for msg in messages:
-    result = composer.compose(msg)
-    print(f"\n{'='*60}")
-    print(f"Message: {msg}")
-    print(f"Skills: {', '.join(result['skills_active'])}")
-    print(f"Tools ({result['tool_count']}/{result['total_available']}): {', '.join(result['tools'])}")
-    print(f"Context savings: {result['savings_pct']}%")</code></pre>
-
-<p>Output:</p>
+ result = composer.compose(msg)
+ print(f"\n{'='*60}")
+ print(f"Message: {msg}")
+ print(f"Skills: {', '.join(result['skills_active'])}")
+ print(f"Tools ({result['tool_count']}/{result['total_available']}): {', '.join(result['tools'])}")
+ print(f"Context savings: {result['savings_pct']}%")</code></pre>><p>Output:</p>
 <pre><code>============================================================
 Message: Fix the bug in auth.py where login throws an exception
 Skills: debugging, coding
@@ -301,59 +279,51 @@ Context savings: 72.7%
 Message: The page is blank, there's a JavaScript error in the console
 Skills: debugging, web
 Tools (5/11): read_file, search_files, terminal, browser_console, web_search
-Context savings: 54.5%</code></pre>
-
-<div class="info">
-<strong>Average: 68% context savings.</strong> Instead of sending 11 tool schemas every turn, the router sends 3-6 relevant ones. For a 50-tool system, savings reach 84%+.
-</div>
-
-<h2>Routing with Conversation Context</h2>
+Context savings: 54.5%</code></pre>><div class="info">
+<strong>Average: 68% context savings.</strong>Instead of sending 11 tool schemas every turn, the router sends 3-6 relevant ones. For a 50-tool system, savings reach 84%+.
+</div>><h2>Routing with Conversation Context</h2>
 <pre><code>class ContextualRouter:
-    """Router that considers conversation history, not just the latest message."""
+ """Router that considers conversation history, not just the latest message."""
 
-    def __init__(self, router: SkillRouter):
-        self.router = router
-        self._active_skills: set[str] = set()
-        self._skill_decay: int = 5  # Turns before skill expires
+ def __init__(self, router: SkillRouter):
+ self.router = router
+ self._active_skills: set[str] = set()
+ self._skill_decay: int = 5 # Turns before skill expires
 
-    def route_with_context(self, message: str,
-                           history: list[str],
-                           max_skills: int = 3) -> list[str]:
-        """Route considering recent messages too."""
-        # Route current message
-        current = self.router.route(message, max_skills)
+ def route_with_context(self, message: str,
+ history: list[str],
+ max_skills: int = 3) ->list[str]:
+ """Route considering recent messages too."""
+ # Route current message
+ current = self.router.route(message, max_skills)
 
-        # Route recent history (lighter weight)
-        recent_skills: dict[str, float] = {}
-        for i, past_msg in enumerate(history[-3:]):
-            weight = 1.0 / (i + 2)  # Older = less weight
-            for r in self.router.route(past_msg, max_skills):
-                recent_skills[r["skill"]] = recent_skills.get(r["skill"], 0) + r["score"] * weight
+ # Route recent history (lighter weight)
+ recent_skills: dict[str, float] = {}
+ for i, past_msg in enumerate(history[-3:]):
+ weight = 1.0 / (i + 2) # Older = less weight
+ for r in self.router.route(past_msg, max_skills):
+ recent_skills[r["skill"]] = recent_skills.get(r["skill"], 0) + r["score"] * weight
 
-        # Merge: current message gets full weight, history gets decayed
-        all_skills: dict[str, float] = {}
-        for r in current:
-            all_skills[r["skill"]] = r["score"]
+ # Merge: current message gets full weight, history gets decayed
+ all_skills: dict[str, float] = {}
+ for r in current:
+ all_skills[r["skill"]] = r["score"]
 
-        for skill, score in recent_skills.items():
-            all_skills[skill] = all_skills.get(skill, 0) + score * 0.3
+ for skill, score in recent_skills.items():
+ all_skills[skill] = all_skills.get(skill, 0) + score * 0.3
 
-        # Select top N
-        ranked = sorted(all_skills.items(), key=lambda x: -x[1])
-        return [s for s, _ in ranked[:max_skills] if all_skills[s] > 0.1]</code></pre>
-
-<h2>Common Pitfalls</h2>
+ # Select top N
+ ranked = sorted(all_skills.items(), key=lambda x: -x[1])
+ return [s for s, _ in ranked[:max_skills] if all_skills[s] >0.1]</code></pre>><h2>Common Pitfalls</h2>
 <div class="warning">
-<strong>Pitfall 1: Over-routing.</strong> If every message matches every skill, the router adds overhead without savings. Tune keyword lists to be specific. "code" matches too broadly; "fix the bug" is precise.
+<strong>Pitfall 1: Over-routing.</strong>If every message matches every skill, the router adds overhead without savings. Tune keyword lists to be specific. "code" matches too broadly; "fix the bug" is precise.
 </div>
 <div class="warning">
-<strong>Pitfall 2: Breaking prompt caching.</strong> If the toolset changes every turn, prompt cache misses. Keep routing stable within a conversation — only re-route when the topic clearly changes.
+<strong>Pitfall 2: Breaking prompt caching.</strong>If the toolset changes every turn, prompt cache misses. Keep routing stable within a conversation — only re-route when the topic clearly changes.
 </div>
 <div class="warning">
-<strong>Pitfall 3: Forgetting core tools.</strong> Some tools (read_file, terminal) are needed in almost every task. Always include them regardless of routing.
-</div>
-
-<h2>Integration with MCP</h2>
+<strong>Pitfall 3: Forgetting core tools.</strong>Some tools (read_file, terminal) are needed in almost every task. Always include them regardless of routing.
+</div>><h2>Integration with MCP</h2>
 <pre><code>pip install mcp-skill-router</code></pre>
 <table>
 <tr><th>Tool</th><th>What it does</th></tr>
@@ -363,12 +333,10 @@ Context savings: 54.5%</code></pre>
 <tr><td><code>compose_prompt</code></td><td>Build a merged system prompt from active skills</td></tr>
 <tr><td><code>list_skills</code></td><td>List all registered skills with metadata</td></tr>
 <tr><td><code>get_routing_stats</code></td><td>Analytics: routing accuracy, tool usage by skill</td></tr>
-</table>
-
-<h2>Conclusion</h2>
+</table>><h2>Conclusion</h2>
 <p>Skill routing is the simplest way to cut agent costs: fewer tools in context means fewer input tokens, better cache hit rates, and more accurate tool selection. The system above — skill registry, scoring router, multi-skill composer — is 250 lines of pure Python with zero dependencies.</p>
 <p>The trick is finding the right granularity: too few skills and routing is meaningless; too many and the overhead exceeds the savings. Start with 3-5 broad skills (coding, web, data, messaging, debugging) and split only when routing accuracy suffers.</p>
 <hr>
-<p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a> harness engineering MCP suite.</em></p>
+<p><em>Part of the <a href="https://github.com/aaameobius-crypto/darkbot-ai-templates">darkbot-ai-templates</a>harness engineering MCP suite.</em></p>
 </body>
 </html>

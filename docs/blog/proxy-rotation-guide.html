@@ -22,8 +22,8 @@ a{color:#58a6ff}.back{display:inline-block;margin-bottom:20px;color:#8b949e}
 <p>Pool management, health checks, auto-failover for reliable scraping.</p>
 <h2>1. Proxy Pool</h2>
 <pre><code>proxies = [
-    Proxy("185.199.229.156", 7492, protocol="http"),
-    Proxy("37.26.86.161", 4718, protocol="socks5"),
+ Proxy("185.199.229.156", 7492, protocol="http"),
+ Proxy("37.26.86.161", 4718, protocol="socks5"),
 ]</code></pre>
 <h2>2. Rotation Strategies</h2>
 <pre><code># Round-robin
@@ -33,21 +33,21 @@ proxy = healthy[idx % len(healthy)]
 proxy = random.choice(healthy)</code></pre>
 <h2>3. Health Check</h2>
 <pre><code>async def health_check(proxy):
-    start = time.time()
-    async with session.get(url, proxy=proxy.url) as resp:
-        if resp.status == 200:
-            proxy.healthy = True
-            proxy.latency = time.time() - start</code></pre>
+ start = time.time()
+ async with session.get(url, proxy=proxy.url) as resp:
+ if resp.status == 200:
+ proxy.healthy = True
+ proxy.latency = time.time() - start</code></pre>
 <h2>4. Auto-Failover</h2>
 <pre><code>def mark_failed(proxy):
-    proxy.fail_count += 1
-    if proxy.fail_count >= MAX_FAILS:
-        proxy.healthy = False</code></pre>
+ proxy.fail_count += 1
+ if proxy.fail_count >= MAX_FAILS:
+ proxy.healthy = False</code></pre>
 <h2>Template</h2>
-<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/proxy-rotation-template">Proxy Rotation</a> $39/$149</p>
+<p><a href="https://github.com/AMEOBIUS/darkbot-ai-templates/tree/main/proxy-rotation-template">Proxy Rotation</a>$39/$149</p>
 <a class="btn" href="https://t.me/darkbot_ai_bot">Order →</a>
 <pre><code>python proxy-rotation-template/demo.py</code></pre>
 <hr>
-<p>💬 @darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
+<p>@darkbot_ai_bot | BTC/USDT/ETH/XMR</p>
 </body>
 </html>

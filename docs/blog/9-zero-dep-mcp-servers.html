@@ -11,13 +11,13 @@
 <meta name="keywords" content="MCP, Model Context Protocol, Python, zero dependency, web scraping, crypto, email, SQLite, HTTP, git, process, JSON, AI agent">
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "TechArticle",
-  "headline": "9 Zero-Dependency MCP Servers — 118 Tools, 312 Tests",
-  "description": "9 production-ready MCP servers with zero pip dependencies. 118 tools, 312 tests, pure Python stdlib.",
-  "author": {"@type": "Person", "name": "AMEOBIUS"},
-  "datePublished": "2026-07-06",
-  "url": "https://ameobius.github.io/darkbot-ai-templates/blog/9-zero-dep-mcp-servers.html"
+ "@context": "https://schema.org",
+ "@type": "TechArticle",
+ "headline": "9 Zero-Dependency MCP Servers — 118 Tools, 312 Tests",
+ "description": "9 production-ready MCP servers with zero pip dependencies. 118 tools, 312 tests, pure Python stdlib.",
+ "author": {"@type": "Person", "name": "AMEOBIUS"},
+ "datePublished": "2026-07-06",
+ "url": "https://ameobius.github.io/darkbot-ai-templates/blog/9-zero-dep-mcp-servers.html"
 }
 </script>
 <style>
@@ -45,9 +45,7 @@ th{background:#161b22;color:#58a6ff}
 <span class="tag">Web Scraping</span><span class="tag">Crypto</span><span class="tag">Email</span>
 <span class="tag">SQLite</span><span class="tag">HTTP</span><span class="tag">Git</span>
 <span class="tag">Process</span><span class="tag">JSON</span><span class="tag">AI Agents</span>
-</div>
-
-<h2>The Collection</h2>
+</div>><h2>The Collection</h2>
 <table>
 <tr><th>Server</th><th>Tools</th><th>Tests</th><th>What It Does</th></tr>
 <tr><td><a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">mcp-cdp-scraper</a></td><td>12</td><td>38</td><td>Web scraping via Chrome DevTools Protocol</td></tr>
@@ -60,62 +58,48 @@ th{background:#161b22;color:#58a6ff}
 <tr><td><a href="https://github.com/AMEOBIUS/mcp-process-manager">mcp-process-manager</a></td><td>12</td><td>36</td><td>Process management (list/spawn/kill/system/env)</td></tr>
 <tr><td><a href="https://github.com/AMEOBIUS/mcp-json-tools">mcp-json-tools</a></td><td>18</td><td>37</td><td>JSON/CSV/XML/INI manipulation (parse/convert)</td></tr>
 <tr><td><strong>Total</strong></td><td><strong>118</strong></td><td><strong>312</strong></td><td></td></tr>
-</table>
-
-<h2>Why Zero Dependencies?</h2>
+</table>><h2>Why Zero Dependencies?</h2>
 <ul>
-<li><strong>Docker images ~50MB</strong> vs 250MB+ with Playwright</li>
-<li><strong>No supply chain risk</strong> — no third-party packages to audit</li>
-<li><strong>Fast CI</strong> — no dependency resolution</li>
-<li><strong>Portable</strong> — works in any Python 3.10+ environment</li>
-<li><strong>Auditable</strong> — entire codebase readable in an afternoon</li>
-</ul>
-
-<h2>Architecture</h2>
+<li><strong>Docker images ~50MB</strong>vs 250MB+ with Playwright</li>
+<li><strong>No supply chain risk</strong>— no third-party packages to audit</li>
+<li><strong>Fast CI</strong>— no dependency resolution</li>
+<li><strong>Portable</strong>— works in any Python 3.10+ environment</li>
+<li><strong>Auditable</strong>— entire codebase readable in an afternoon</li>
+</ul>><h2>Architecture</h2>
 <pre><code>MCP Client (Claude / Hermes / any)
-    │  JSON-RPC over STDIO
-    ▼
+ │ JSON-RPC over STDIO
+ ▼
 MCPServer (src/server.py)
-    │  Tool dispatch + schema
-    ▼
+ │ Tool dispatch + schema
+ ▼
 Engine (src/<engine>.py)
-    │  Zero-dep business logic
-    ▼
-External API / Chrome / SMTP / SQLite / Git / OS</code></pre>
-
-<h2>Testing</h2>
-<pre><code>cd mcp-cdp-scraper && python -m pytest tests/ -q    # 38 passed
-cd mcp-crypto-monitor && python -m pytest tests/ -q  # 30 passed
-cd mcp-email-sender && python -m pytest tests/ -q    # 37 passed
-cd mcp-file-manager && python -m pytest tests/ -q    # 36 passed
-cd mcp-sql-query && python -m pytest tests/ -q       # 33 passed
-cd mcp-http-tester && python -m pytest tests/ -q     # 29 passed
-cd mcp-git-manager && python -m pytest tests/ -q     # 36 passed
+ │ Zero-dep business logic
+ ▼
+External API / Chrome / SMTP / SQLite / Git / OS</code></pre>><h2>Testing</h2>
+<pre><code>cd mcp-cdp-scraper && python -m pytest tests/ -q # 38 passed
+cd mcp-crypto-monitor && python -m pytest tests/ -q # 30 passed
+cd mcp-email-sender && python -m pytest tests/ -q # 37 passed
+cd mcp-file-manager && python -m pytest tests/ -q # 36 passed
+cd mcp-sql-query && python -m pytest tests/ -q # 33 passed
+cd mcp-http-tester && python -m pytest tests/ -q # 29 passed
+cd mcp-git-manager && python -m pytest tests/ -q # 36 passed
 cd mcp-process-manager && python -m pytest tests/ -q # 36 passed
-cd mcp-json-tools && python -m pytest tests/ -q      # 37 passed
-# Total: 312 tests, all passing</code></pre>
-
-<h2>Install All 9</h2>
+cd mcp-json-tools && python -m pytest tests/ -q # 37 passed
+# Total: 312 tests, all passing</code></pre>><h2>Install All 9</h2>
 <pre><code>git clone https://github.com/AMEOBIUS/mcp-tools-bundle.git
 cd mcp-tools-bundle
-bash install.sh</code></pre>
-
-<a class="btn" href="https://github.com/AMEOBIUS/mcp-tools-bundle">Get the Bundle →</a>
-
-<h2>Links</h2>
+bash install.sh</code></pre>><a class="btn" href="https://github.com/AMEOBIUS/mcp-tools-bundle">Get the Bundle →</a>><h2>Links</h2>
 <ul>
-<li><a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">mcp-cdp-scraper</a> — 12 scraping tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-crypto-monitor">mcp-crypto-monitor</a> — 10 crypto tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-email-sender">mcp-email-sender</a> — 8 email tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-file-manager">mcp-file-manager</a> — 12 file tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-sql-query">mcp-sql-query</a> — 13 database tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-http-tester">mcp-http-tester</a> — 9 HTTP tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-git-manager">mcp-git-manager</a> — 24 git tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-process-manager">mcp-process-manager</a> — 12 process tools</li>
-<li><a href="https://github.com/AMEOBIUS/mcp-json-tools">mcp-json-tools</a> — 18 data tools</li>
-</ul>
-
-<hr>
-<p>💬 <a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a> | BTC/USDT/ETH/XMR</p>
+<li><a href="https://github.com/AMEOBIUS/mcp-cdp-scraper">mcp-cdp-scraper</a>— 12 scraping tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-crypto-monitor">mcp-crypto-monitor</a>— 10 crypto tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-email-sender">mcp-email-sender</a>— 8 email tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-file-manager">mcp-file-manager</a>— 12 file tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-sql-query">mcp-sql-query</a>— 13 database tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-http-tester">mcp-http-tester</a>— 9 HTTP tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-git-manager">mcp-git-manager</a>— 24 git tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-process-manager">mcp-process-manager</a>— 12 process tools</li>
+<li><a href="https://github.com/AMEOBIUS/mcp-json-tools">mcp-json-tools</a>— 18 data tools</li>
+</ul>><hr>
+<p><a href="https://t.me/darkbot_ai_bot">@darkbot_ai_bot</a>| BTC/USDT/ETH/XMR</p>
 </body>
 </html>
