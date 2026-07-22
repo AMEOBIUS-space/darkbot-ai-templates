@@ -254,3 +254,17 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design principles, template structure
 
 - [Portfolio](https://aaameobius-crypto.github.io/darkbot-ai-templates)
 - [GitHub](https://github.com/aaameobius-crypto/darkbot-ai-templates)
+
+
+## Real-World Use Cases
+
+- **LaborX automation**: 270+ job applications via JWT API + SOCKS proxy
+- **Kwork monitoring**: Real-time dialog tracking across 6+ active clients
+- **Telegram bot deployment**: aiogram 3.x bots with rate limiting + proxy rotation
+- **CDP automation**: Chrome DevTools Protocol scraping with network interception
+- **Freelance pipeline**: End-to-end bid/apply/track system with portfolio
+
+## Articles
+
+- [Building Production Telegram Bots](docs/building-telegram-bots.md)
+
