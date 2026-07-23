@@ -158,3 +158,6 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 - [Proxy Rotation Guide](docs/proxy-rotation-guide.md)
 - [Webhook Server Guide](docs/webhook-server-guide.md)
 - [Task Queue Guide](docs/task-queue-guide.md)
+- [Cron Scheduler Guide](docs/cron-scheduler-guide.md)
+- [File Watcher Guide](docs/file-watcher-guide.md)
+- [CLI Parser Guide](docs/cli-parser-guide.md)
