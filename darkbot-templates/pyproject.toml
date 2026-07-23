@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "darkbot-templates"
+version = "1.8.5"
+description = "44 production-ready Python templates: JWT, rate limiter, webhook, task queue, config, Docker health, crypto wallet, email, cron, HTTP client, SQLite ORM, log, CSV, metrics, cache, pub/sub, state machine, file watcher, retry, signal, plugin, connection pool, JSON-RPC, CLI parser, encrypt/decrypt."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "DarkBot AI", email = "darkbotai@proton.me"}]
+keywords = ["telegram-bot", "web-scraper", "ai-automation", "cdp", "solidity", "fastapi", "discord-bot", "proxy-rotation", "email-scraper", "whatsapp-bot", "captcha-solver", "crypto-payment", "tor", "crypto-trading", "templates", "jwt-auth"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://aaameobius-crypto.github.io/darkbot-ai-templates"
+Repository = "https://github.com/aaameobius-crypto/darkbot-ai-templates"
+Documentation = "https://github.com/aaameobius-crypto/darkbot-ai-templates/blob/main/ARCHITECTURE.md"
+Changelog = "https://github.com/aaameobius-crypto/darkbot-ai-templates/releases"
+
+[tool.setuptools.packages.find]
+where = ["src"]
