@@ -147,3 +147,4 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 - [Rate Limiter Patterns](docs/rate-limiter-patterns.md)
 - [Cache Manager TTL+LRU](docs/cache-manager-ttl-lru.md)
 - [JSON-RPC Server Guide](docs/jsonrpc-server-guide.md)
+- [Config Loader Layers](docs/config-loader-layers.md)
