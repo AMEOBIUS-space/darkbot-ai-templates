@@ -155,3 +155,6 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 - [JWT Auth Guide](docs/jwt-auth-guide.md)
 - [SQLite ORM Guide](docs/sqlite-orm-guide.md)
 - [Email Sender Guide](docs/email-sender-guide.md)
+- [Proxy Rotation Guide](docs/proxy-rotation-guide.md)
+- [Webhook Server Guide](docs/webhook-server-guide.md)
+- [Task Queue Guide](docs/task-queue-guide.md)
