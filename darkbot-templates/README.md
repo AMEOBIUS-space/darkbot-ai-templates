@@ -151,3 +151,4 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 - [Metrics Collector Guide](docs/metrics-collector-guide.md)
 - [Log Analyzer Guide](docs/log-analyzer-guide.md)
 - [CSV Processor Guide](docs/csv-processor-guide.md)
+- [HTTP Client Resilience](docs/http-client-resilience.md)
