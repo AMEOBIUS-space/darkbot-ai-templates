@@ -135,3 +135,7 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 ## Articles
 
 - [Building Production Telegram Bots](https://github.com/AMEOBIUS-space/darkbot-ai-templates/blob/main/docs/building-telegram-bots.md)
+- [Circuit Breaker Resilience](docs/circuit-breaker-resilience.md)
+- [Backpressure Load Shedding](docs/backpressure-load-shedding.md)
+- [Health Checker Probe](docs/health-checker-probe.md)
+- [SimpleCipher Obfuscation](docs/simple-cipher-obfuscation.md)
