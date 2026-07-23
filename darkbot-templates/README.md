@@ -148,3 +148,6 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 - [Cache Manager TTL+LRU](docs/cache-manager-ttl-lru.md)
 - [JSON-RPC Server Guide](docs/jsonrpc-server-guide.md)
 - [Config Loader Layers](docs/config-loader-layers.md)
+- [Metrics Collector Guide](docs/metrics-collector-guide.md)
+- [Log Analyzer Guide](docs/log-analyzer-guide.md)
+- [CSV Processor Guide](docs/csv-processor-guide.md)
