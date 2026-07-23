@@ -1,7 +1,7 @@
 # 🤖 DarkBot AI — 168 Production-Ready Code Templates
 
-[![![PyPI](https://img.shields.io/pypi/v/darkbot-templates)](https://pypi.org/project/darkbot-templates/)
-[CI](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/aaameobius-crypto/darkbot-ai-templates/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/darkbot-templates)](https://pypi.org/project/darkbot-templates/)
+[![CI](https://github.com/AMEOBIUS-space/darkbot-ai-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/AMEOBIUS-space/darkbot-ai-templates/actions/workflows/ci.yml)
 [![Tutorials](https://img.shields.io/badge/tutorials-36-blue)]()
 [![Demos](https://img.shields.io/badge/demos-18-green)]()
 [![Releases](https://img.shields.io/badge/releases-5-orange)]()
@@ -9,7 +9,7 @@
 [![Tests](https://img.shields.io/badge/tests-733%2B-green)]()
 [![Docker](https://img.shields.io/badge/docker-ready-blue)]()
 [![Payment](https://img.shields.io/badge/payment-BTC%20%7C%20USDT%20%7C%20ETH%20%7C%20XMR-orange)]()
-[![GitHub stars](https://img.shields.io/github/stars/aaameobius-crypto/darkbot-ai-templates?style=social)](https://github.com/aaameobius-crypto/darkbot-ai-templates/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/AMEOBIUS-space/darkbot-ai-templates?style=social)](https://github.com/AMEOBIUS-space/darkbot-ai-templates/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Products](https://img.shields.io/badge/templates-168-green)]()
 [![Tests](https://img.shields.io/badge/tests-733%2B-green)]()
@@ -18,7 +18,7 @@
 
 > Python developer with 5+ years experience. Telegram bots, web scrapers, AI automation, CDP browser automation, blockchain, .onion development.
 
-🌐 **Live Portfolio**: [aaameobius-crypto.github.io/darkbot-ai-templates](https://aaameobius-crypto.github.io/darkbot-ai-templates)
+🌐 **Live Portfolio**: [AMEOBIUS-space.github.io/darkbot-ai-templates](https://AMEOBIUS-space.github.io/darkbot-ai-templates)
 
 📺 **Telegram Channel**: [@darkbot_ai_templates](https://t.me/darkbot_ai_templates)
 
@@ -95,11 +95,11 @@ All 17 templates have demos. Run any of them to see the template in action.
 
 ## 📝 Blog
 
-- [Building a Telegram Bot with AI](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/building-telegram-bot-with-ai.html)
-- [Web Scraping with Anti-Detection](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/web-scraping-anti-detection.html)
-- [Crypto Trading Bot Basics](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/crypto-trading-bot-basics.html)
-- [Deploying a Tor Hidden Service](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/deploying-tor-hidden-service.html)
-- [FastAPI JWT Authentication](https://aaameobius-crypto.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html)
+- [Building a Telegram Bot with AI](https://AMEOBIUS-space.github.io/darkbot-ai-templates/blog/building-telegram-bot-with-ai.html)
+- [Web Scraping with Anti-Detection](https://AMEOBIUS-space.github.io/darkbot-ai-templates/blog/web-scraping-anti-detection.html)
+- [Crypto Trading Bot Basics](https://AMEOBIUS-space.github.io/darkbot-ai-templates/blog/crypto-trading-bot-basics.html)
+- [Deploying a Tor Hidden Service](https://AMEOBIUS-space.github.io/darkbot-ai-templates/blog/deploying-tor-hidden-service.html)
+- [FastAPI JWT Authentication](https://AMEOBIUS-space.github.io/darkbot-ai-templates/blog/fastapi-jwt-authentication.html)
 
 
 ## 🚀 GitHub Codespaces
@@ -115,7 +115,7 @@ Try templates in your browser — no install needed:
 Use templates in your CI/CD:
 
 ```yaml
-- uses: aaameobius-crypto/darkbot-ai-templates/.github/actions/setup-templates@main
+- uses: AMEOBIUS-space/darkbot-ai-templates/.github/actions/setup-templates@main
   with:
     template: tg-bot
     destination: ./bot/
@@ -197,7 +197,7 @@ This repo has been used to solve 81 bounty issues across GitHub:
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=aaameobius-crypto/darkbot-ai-templates&type=Date)](https://star-history.com/#aaameobius-crypto/darkbot-ai-templates&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=AMEOBIUS-space/darkbot-ai-templates&type=Date)](https://star-history.com/#AMEOBIUS-space/darkbot-ai-templates&Date)
 
 ## 💬 Contact
 
@@ -208,12 +208,12 @@ This repo has been used to solve 81 bounty issues across GitHub:
 ## ⚡ Quick Install
 
 ```bash
-curl -sL https://raw.githubusercontent.com/aaameobius-crypto/darkbot-ai-templates/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/AMEOBIUS-space/darkbot-ai-templates/main/install.sh | bash
 ```
 
 Or clone manually:
 ```bash
-git clone https://github.com/aaameobius-crypto/darkbot-ai-templates.git
+git clone https://github.com/AMEOBIUS-space/darkbot-ai-templates.git
 cd darkbot-ai-templates
 python tg-bot-template/demo.py  # Try any demo — no API keys needed!
 ```
@@ -252,8 +252,8 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design principles, template structure
 
 ## 🌐 Links
 
-- [Portfolio](https://aaameobius-crypto.github.io/darkbot-ai-templates)
-- [GitHub](https://github.com/aaameobius-crypto/darkbot-ai-templates)
+- [Portfolio](https://AMEOBIUS-space.github.io/darkbot-ai-templates)
+- [GitHub](https://github.com/AMEOBIUS-space/darkbot-ai-templates)
 
 
 ## Real-World Use Cases
