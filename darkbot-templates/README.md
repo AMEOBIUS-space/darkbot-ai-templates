@@ -142,3 +142,5 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 - [Service Registry Discovery](docs/service-registry-discovery.md)
 - [State Machine FSM](docs/state-machine-fsm.md)
 - [Connection Pool Reuse](docs/connection-pool-reuse.md)
+- [Pub/Sub Event Bus](docs/pubsub-event-bus.md)
+- [Retry Queue Backoff](docs/retry-queue-backoff.md)
