@@ -139,3 +139,4 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 - [Backpressure Load Shedding](docs/backpressure-load-shedding.md)
 - [Health Checker Probe](docs/health-checker-probe.md)
 - [SimpleCipher Obfuscation](docs/simple-cipher-obfuscation.md)
+- [Service Registry Discovery](docs/service-registry-discovery.md)
