@@ -140,3 +140,5 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 - [Health Checker Probe](docs/health-checker-probe.md)
 - [SimpleCipher Obfuscation](docs/simple-cipher-obfuscation.md)
 - [Service Registry Discovery](docs/service-registry-discovery.md)
+- [State Machine FSM](docs/state-machine-fsm.md)
+- [Connection Pool Reuse](docs/connection-pool-reuse.md)
