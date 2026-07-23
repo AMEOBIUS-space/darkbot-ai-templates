@@ -144,3 +144,5 @@ Hire on LaborX: [https://laborx.com/gigs/python-automation-telegram-bots-cdp-api
 - [Connection Pool Reuse](docs/connection-pool-reuse.md)
 - [Pub/Sub Event Bus](docs/pubsub-event-bus.md)
 - [Retry Queue Backoff](docs/retry-queue-backoff.md)
+- [Rate Limiter Patterns](docs/rate-limiter-patterns.md)
+- [Cache Manager TTL+LRU](docs/cache-manager-ttl-lru.md)
